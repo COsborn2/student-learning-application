@@ -1,0 +1,14 @@
+# dependencies
+node_modules/
+
+coverage
+
+# production optimized react files
+build/
+
+# misc
+.DS_Store
+*.env
+
+# whitelist only env for react -> this suppresses an error
+!/client/.env

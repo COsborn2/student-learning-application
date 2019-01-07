@@ -1,0 +1,36 @@
+{
+  "name": "student-learning-program",
+  "version": "1.0.0",
+  "description": "",
+  "main": "server.js",
+  "directories": {
+    "test": "tests"
+  },
+  "scripts": {
+    "client": "cd client && npm start",
+    "dev": "concurrently --kill-others-on-fail \"nodemon server.js\" \"npm run client\"",
+    "start": "node server.js",
+    "test": "npm run test-all-standard && mocha ./tests/*.js && cd client && npm test",
+    "heroku-postbuild": "npm run setup && cd client && npm run build",
+    "setup": "npm install && cd client && npm install",
+    "test-server-standard": "standard ./tests/*.js ./server.js | snazzy",
+    "fix-server-standard": "standard ./tests/*.js ./server.js --fix",
+    "test-client-standard": "cd client && npm run test-standard",
+    "fix-client-standard": "cd client && npm run fix-standard",
+    "test-all-standard": "npm run test-server-standard && npm run test-client-standard",
+    "fix-all-standard": "npm run fix-server-standard && npm run fix-client-standard"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "concurrently": "^4.1.0",
+    "mocha": "^5.2.0",
+    "snazzy": "^8.0.0",
+    "standard": "^12.0.1"
+  },
+  "dependencies": {
+    "body-parser": "^1.18.3",
+    "express": "^4.16.4"
+  }
+}
