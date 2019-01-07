@@ -2,6 +2,8 @@ language: node_js
 node_js:
 - stable
 - '6'
+before_install:
+- npm run setup
 deploy:
   provider: heroku
   api_key:
@@ -10,8 +12,9 @@ deploy:
   on:
     repo: COsborn2/student-learning-application
 notifications:
-  slack:
-    secure: ul1oqqeFfUBl4bz7xlRQmcWGilloifKLUMUa2Qi4s+bJGOF06ScV3PL2f8aGkg8MhXFsYHbFQDGA6J5534AFbLEzbL4ayvXcNooWJ6KWvIMC8gb6/0C2lJmmvvi770dEuowZA5JYhe2ZUmduovB5lzIU1Wi4wKy2ewWqCjJ4//11k5rYqMRv0bAprpaoFv7IZQhk13ORD5wOtyFMvl3n7deqMiGA2hOIx7NWy1CwyEX3OGdV2k7mfVZBN1SDlf2HIvccOA/B8k4sKYFPm017dSJs7mU4xiuhQbvrE5vG7Xwc5/iVEDfj8jsvwXU7qdKDreBEeVS24m5gxtjAmWrdjpQLbIPV7o9tuttQui8vqLdgA76VPcMV4zVvsNWhoz+PQAdzi4Sby8L21dH8fQb9oAKSpLh7P+40iMcilykI8I0YWoFHPxQDdCMV3qbxW3li8JUywF7y5oQRCo+k8n3nDEdp4pXHLN5mI63G7gkRHSzD/G9rFbbCz/ISZu9hrdaumWeowUVDOvU1k8wSmmQOWtcHImU9GmkrA6vLn1E3WKe61FHyK2ws0XDmM2Ar+DP+eFeWjSZsaEJJ3VXBF8r4T+1YRG91wyURshhrIESdmH7dEyePKIhg+GYEnzjthW/f9vcoicjMWrCZ3OSHzNLlSRGmMJxgMcQ7Pj6JkOXUIEs=
-    on_success: change` # default: change
-    on_failure: always # default: always
   email: false
+  slack:
+    rooms:
+      secure: uGNXKCYr+5nPgANxA+bu4e+pqKTw4yMeIKvzLhrcOLZosq7A5lIv/PRzLbPbfGIgjGPt1CrU6sboahGMLOpG4ix7x5Gp64BJHqJfzZp0QRIg6a1kDH37WtA4ZTqSlUW5EAUYf19WgaOjStQvxNJucetVSX9aCMYu2t0EpYQ1A+SJ/VVB44e1IcPNIOawky9fljX8SV86N1HR2C/fXc9stbiDe45o2iLax3qaFzPDYb/QnG/ZQhuQlh6nY4No2oMyHgCo5Qa5Pn0Slbxo60CAK/c5VxaPiYrLZrvUsL4gmDiBpMLe+X6adVwU60vvCH7H4/Te1u6C+XQIPWkU7aIWvCB7wnzSzRvkAijkBpFbfRBN7/9GrC6CcQfFxFEjV/afQMSMmtQ2PpXmp+eBT1omMJDwlz88GhMKrjMy0EAADKJcrA88ac4Hjnk/MUtnQEI20IIxnpud9Eqi8rXqMfU3MDEBuacm7SKBNemncPCBHhe1TzyeKObR3XUvPipkE8NiX/uJW5bMZvdISncSWPU5orSsZJQDHD8F1KbiED1d/l9C1d98A7S1IKjZ6akDE7oUkhqesH4bRsJ+jCZDu/Nt3jZB3KW0pCIC9dFmIS7iE4wvgXICwbgnDU+C3AbJ9FUaw8Y2Zcxv+D15StcXfj2/19vVu5m5g8l5C5zvd3MUXlE=
+    on_success: always # default: always
+    on_failure: always # default: always
