@@ -12,7 +12,7 @@ app.use(bodyParser.urlencoded({ extended: true }))
 app.get('/api/getData', (req, res) => {
   res.json([{
     id: 1,
-    username: 'username1'
+    username: 'changed-username'
   }, {
     id: 2,
     username: 'username2'
