@@ -12,3 +12,6 @@ build/
 
 # whitelist only env for react -> this suppresses an error
 !/client/.env
+
+# Remove yarn files
+yarn.lock
