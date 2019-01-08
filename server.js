@@ -37,13 +37,11 @@ app.get('/api/getData', (req, res) => { // send JSON array
   }
 })
 
-if (process.env.NODE_ENV === 'production') {
-  // Serve any static files
+if (process.env.NODE_ENV === 'production') { // flag is set on heroku local and production server
   console.log('production')
   app.use(express.static(path.join(__dirname, '/client/build')))
 
-  // Handle React routing, return all requests to React app
-  app.get('*', function (req, res) {
+  app.get('*', (req, res) => {
     res.sendFile(path.join(__dirname, '/client/build', 'index.html'))
   })
 }
