@@ -4,12 +4,12 @@ import './App.css'
 import fetch from 'isomorphic-fetch'
 
 class App extends Component {
-  state = { users: [] }
+  state = { words: [] }
 
   componentDidMount () {
     fetch('/api/getData')
       .then(res => res.json())
-      .then(users => this.setState({ users }))
+      .then(words => this.setState({ words }))
   }
 
   render () {
@@ -31,9 +31,9 @@ class App extends Component {
         </header>
         <p>{this.state.response}</p>
         <div className='App'>
-          <h1>Users</h1>
-          {this.state.users.map(user =>
-            <div key={user.id}>{user.username}</div>
+          <h1>Words</h1>
+          {this.state.words.map(curWord =>
+            <div key={curWord.id}>{curWord.word}</div>
           )}
         </div>
       </div>
