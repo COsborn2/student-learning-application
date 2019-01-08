@@ -1,5 +1,6 @@
-if (process.env.NODE_ENV !== 'production') {
+if (process.env.NODE_ENV === 'development') {
   require('dotenv').load()
+  console.log('development')
 }
 
 const express = require('express')
