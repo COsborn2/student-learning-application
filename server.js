@@ -1,6 +1,9 @@
-if (process.env.NODE_ENV === 'development') {
+var isProduction = true
+
+if (process.env.NODE_ENV !== 'production' && !process.env.DATABASE_URL) {
   require('dotenv').load()
   console.log('development')
+  isProduction = false
 }
 
 const express = require('express')
@@ -37,7 +40,7 @@ app.get('/api/getData', (req, res) => { // send JSON array
   }
 })
 
-if (process.env.NODE_ENV === 'production') { // flag is set on heroku local and production server
+if (isProduction) {
   console.log('production')
   app.use(express.static(path.join(__dirname, '/client/build')))
 
