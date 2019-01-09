@@ -1,7 +1,8 @@
 import React, { Component } from 'react'
 import './App.css'
 import fetch from 'isomorphic-fetch'
-import Main from './components/Main'
+import MainContent from './components/MainContent'
+import { BrowserRouter as Browser } from 'react-router-dom'
 
 class App extends Component {
   state = { words: [] }
@@ -14,17 +15,17 @@ class App extends Component {
 
   render () {
     return (
-      <div className='App'>
-        <Main />
-
-        <p>{this.state.response}</p>
-        <div className='App'>
-          <h1>Words</h1>
-          {this.state.words.map(curWord =>
-            <div key={curWord.id}>{curWord.word}</div>
-          )}
+      <Browser>
+        <div>
+          <MainContent />
+          <div className='App'>
+            <h1>Words</h1>
+            {this.state.words.map(curWord =>
+              <div key={curWord.id}>{curWord.word}</div>
+            )}
+          </div>
         </div>
-      </div>
+      </Browser>
     )
   }
 }

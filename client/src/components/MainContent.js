@@ -3,13 +3,13 @@ import { Switch, Route } from 'react-router-dom'
 import HomeScreen from './HomeScreen'
 import DragAndDrop from './DragAndDrop'
 
-const Main = () => (
+const MainContent = () => (
   <main>
     <Switch>
       <Route exact path='/' component={HomeScreen} />
-      <Route path='/DragAndDrop' component={DragAndDrop} />
+      <Route path='/spelling' component={DragAndDrop} />
     </Switch>
   </main>
 )
 
-export default Main
+export default MainContent
