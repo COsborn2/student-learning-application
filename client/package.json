@@ -4,7 +4,6 @@
   "private": true,
   "dependencies": {
     "bootstrap": "^4.2.1",
-    "canvas": "^2.2.0",
     "isomorphic-fetch": "^2.2.1",
     "react": "^16.7.0",
     "react-bootstrap": "^0.32.4",
@@ -35,6 +34,7 @@
     "parser": "babel-eslint"
   },
   "devDependencies": {
+    "canvas": "^2.2.0",
     "snazzy": "^8.0.0",
     "standard": "^12.0.1"
   }
