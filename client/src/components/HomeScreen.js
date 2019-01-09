@@ -23,7 +23,7 @@ class HomeScreen extends Component {
           <div className='row'>
             <div className='col-md-6'>
               <div className='card' onClick={() => this.setState({ doRedirect: '/DragAndDrop' })}>
-                <img className='card-img-top' src={spellingImgSrc} alt='Card image cap' />
+                <img className='card-img-top' src={spellingImgSrc} alt='Card cap' />
                 <div className='card-body text-center'>
                   <h5 className='card-title'>Spelling</h5>
                   <p className='card-text'>A simple demo using drag and drop to spell the word using the letter blocks provided</p>
@@ -33,7 +33,7 @@ class HomeScreen extends Component {
 
             <div className='col-md-6'>
               <div className='card' onClick={() => alert('write')}>
-                <img className='card-img-top' src={writingImgSrc} alt='Card image cap' />
+                <img className='card-img-top' src={writingImgSrc} alt='Card cap' />
                 <div className='card-body text-center'>
                   <h5 className='card-title'>Hand Writing</h5>
                   <p className='card-text'>Hand write to spell the words</p>

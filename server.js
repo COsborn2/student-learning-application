@@ -1,10 +1,6 @@
-<<<<<<< HEAD
-if (process.env.NODE_ENV !== 'production') {
-=======
 var isProduction = true
 
 if (process.env.NODE_ENV !== 'production' && !process.env.DATABASE_URL) {
->>>>>>> fix-dependencies
   require('dotenv').load()
   console.log('development')
   isProduction = false

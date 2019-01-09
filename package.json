@@ -8,11 +8,7 @@
   },
   "scripts": {
     "client": "cd client && npm start",
-<<<<<<< HEAD
-    "dev": "concurrently --kill-others-on-fail \" nodemon server.js\" \"npm run client\"",
-=======
     "dev": "concurrently --kill-others-on-fail \"nodemon server.js\" \"npm run client\"",
->>>>>>> fix-dependencies
     "start": "node server.js",
     "test": "npm run test-all-standard && mocha ./tests/*.js && cd client && npm test",
     "heroku-postbuild": "npm run setup && cd client && npm run build",
