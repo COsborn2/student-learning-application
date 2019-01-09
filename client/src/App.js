@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
-import logo from './logo.svg'
 import './App.css'
 import fetch from 'isomorphic-fetch'
+import Main from './components/Main'
 
 class App extends Component {
   state = { words: [] }
@@ -15,20 +15,8 @@ class App extends Component {
   render () {
     return (
       <div className='App'>
-        <header className='App-header'>
-          <img src={logo} className='App-logo' alt='logo' />
-          <p>
-            Edit <code>src/App.js</code> and save to reload.
-          </p>
-          <a
-            className='App-link'
-            href='https://reactjs.org'
-            target='_blank'
-            rel='noopener noreferrer'
-          >
-            Learn React
-          </a>
-        </header>
+        <Main />
+
         <p>{this.state.response}</p>
         <div className='App'>
           <h1>Words</h1>
