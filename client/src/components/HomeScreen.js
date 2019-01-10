@@ -25,7 +25,7 @@ class HomeScreen extends Component {
           </div>
 
           <div className='col-md-6'>
-            <Button bsStyle='info' className='mx-auto mb-4 card badge-success' onClick={() => this.props.history.push('/writing')}>
+            <Button bsStyle='info' className='mx-auto mb-4 card badge-success' onClick={() => alert('writing and stuff')}>
               <Image className='card-img-top' src={writingImgSrc} alt='Hand Writing' />
               <div className='card-body'>
                 <h5 className='card-title'>Hand Writing</h5>
