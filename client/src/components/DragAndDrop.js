@@ -1,6 +1,11 @@
 import React from 'react'
 import './DragAndDrop.css'
 
+function getWord()
+{
+  return 'kite';
+}
+
 function isComplete (words, wordToSpell) {
   let w = ''
   console.log('Passed in: ' + words)
@@ -51,39 +56,41 @@ class DragAndDrop extends React.Component {
   constructor (props) {
     super(props)
     this.state = {
-      wordToSpell: 'bear',
-      letters: getLetters(['b', 'e', 'a', 'r']),
+      wordToSpell: getWord(),
+      reset: getLetters(getWord().split('')),
+      letters: [],
       words: []
     }
-
+    this.state.letters = this.state.reset.slice();
   }
 
   onLetterClick = (id) => {
-    console.log(id)
 
-    this.state.words.push(this.state.letters[id])
-    this.state.letters.splice(id, 1)
+    var newWords = this.state.words
+    newWords.push(this.state.letters[id])
 
-    console.log(this.state.letters)
-    console.log(this.state.words)
+    var newLetters = this.state.letters
+    newLetters.splice(id, 1);
 
-    this.setState({ letters: this.state.letters,
-      words: this.state.words })
-
-    console.log(isComplete(this.state.words, this.state.wordToSpell))
+    this.setState({ letters: newLetters,
+      words: newWords })
   }
 
   onWordClick = (id) => {
-    console.log(id)
 
-    this.state.letters.push(this.state.words[id])
-    this.state.words.splice(id, 1)
+    var newLetters = this.state.letters
+    newLetters.push(this.state.words[id])
 
-    console.log(this.state.letters)
-    console.log(this.state.words)
+    var newWords = this.state.words
+    newWords.splice(id, 1);
 
-    this.setState({ letters: this.state.letters,
-      words: this.state.words })
+    this.setState({ letters: newLetters,
+      words: newWords })
+  }
+
+  onResetClick = () => {
+    var reset = this.state.reset.slice();
+    this.setState({words: [], letters: reset})
   }
 
   renderCard (t, i, func) {
@@ -119,7 +126,7 @@ class DragAndDrop extends React.Component {
 
     return (
       <div className='container-dragDND'>
-        <h1 color={'red'}>hello</h1>
+        <h1 color={'red'}>Spelling Cards!</h1>
         <h2 className='headerDND'>{status}</h2>
 
         <span>WordSpace</span>
@@ -135,6 +142,7 @@ class DragAndDrop extends React.Component {
         >
           {lSpace}
         </div>
+        <button type="button" class="btn btn-danger" onClick={this.onResetClick}>Reset</button>
       </div>)
   }
 }
