@@ -15,3 +15,6 @@ build/
 
 # Remove yarn files
 yarn.lock
+
+#ignore WebStorm 
+.idea/
