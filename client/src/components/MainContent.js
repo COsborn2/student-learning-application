@@ -4,12 +4,14 @@ import HomeScreen from './HomeScreen'
 import StudentSpelling from './StudentSpelling'
 import StudentWriting from './StudentWriting'
 import StudentHomeScreen from './StudentHomeScreen'
+import InstructorHomeScreen from './InstructorHomeScreen'
 
 const MainContent = () => (
   <main>
     <Switch>
       <Route exact path='/' component={HomeScreen} />
       <Route exact path='/student' component={StudentHomeScreen} />
+      <Route exact path='/instructor' component={InstructorHomeScreen} />
       <Route path='/student/spelling' component={StudentSpelling} />
       <Route path='/student/writing' component={StudentWriting} />
     </Switch>
