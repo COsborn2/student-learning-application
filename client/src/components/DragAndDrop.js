@@ -6,25 +6,28 @@ function getWord()
   return 'kite';
 }
 
+function getUnlockedLetters()
+{
+  return ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'z', 'y', 'z'];
+}
+
 function isComplete (words, wordToSpell) {
   let w = ''
-  console.log('Passed in: ' + words)
   words.forEach(function (e) {
     w += e
   })
-  console.log('Output: ' + w)
   if (w === wordToSpell) { return true }
-  return false
+  return false;
 }
 
-function getLetters (wordToSpell) {
-  var alphabet = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'z', 'y', 'z']
-  var letters = []
+function getLetters (wordToSpell, unlockedLetters, extraCards) {
+  var alphabet = unlockedLetters;
+  var letters = wordToSpell.split('');
 
-  wordToSpell.forEach(function (e) {
-    letters.push(alphabet[alphabet.indexOf(e)])
+  for(var i = 0; i < extraCards; i++)
+  {
     letters.push(alphabet[Math.floor(Math.random() * alphabet.length)])
-  })
+  }
 
   return shuffle(letters)
 }
@@ -52,12 +55,19 @@ function shuffle (cards) {
   return cards
 }
 
+function getStatus(YN, word)
+{
+  if(YN)
+    return "Congrats!";
+  return "Spell " + word;
+}
+
 class DragAndDrop extends React.Component {
   constructor (props) {
     super(props)
     this.state = {
       wordToSpell: getWord(),
-      reset: getLetters(getWord().split('')),
+      reset: getLetters(getWord(), getUnlockedLetters(), 1),
       letters: [],
       words: []
     }
@@ -100,10 +110,20 @@ class DragAndDrop extends React.Component {
         value={t} />
     )
   }
+  
+  renderButton(YN)
+  {
+    if(YN)
+      return <button type="button" class="btn btn-success" onClick={() => alert('Working on it')}>Continue</button>;
+    return <button type="button" class="btn btn-danger" onClick={this.onResetClick}>Reset</button>
+  }
 
   render () {
+    var complete = isComplete(this.state.words, this.state.wordToSpell)
     var lSpace = []
     var wSpace = []
+    var button = this.renderButton(complete);
+    var status = getStatus(complete, this.state.wordToSpell);
 
     this.state.letters.forEach((t, i) => {
       lSpace.push(
@@ -116,13 +136,6 @@ class DragAndDrop extends React.Component {
         this.renderCard(t, i, this.onWordClick)
       )
     })
-
-    let status
-    if (!isComplete(this.state.words, this.state.wordToSpell)) {
-      status = 'Spell: ' + this.state.wordToSpell
-    } else {
-      status = 'You did it!'
-    }
 
     return (
       <div className='container-dragDND'>
@@ -142,7 +155,7 @@ class DragAndDrop extends React.Component {
         >
           {lSpace}
         </div>
-        <button type="button" class="btn btn-danger" onClick={this.onResetClick}>Reset</button>
+        {button}
       </div>)
   }
 }
