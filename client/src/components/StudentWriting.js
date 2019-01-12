@@ -3,7 +3,7 @@ import { SketchField, Tools } from 'react-sketch'
 import { Button, ListGroupItem, ListGroup } from 'react-bootstrap'
 import fetch from 'isomorphic-fetch'
 
-class WritingContent extends Component {
+class StudentWriting extends Component {
   constructor (props) {
     super(props)
     this.state = { words: ['pig', 'cat', 'raccoon'] }
@@ -55,4 +55,4 @@ class WritingContent extends Component {
   }
 }
 
-export default WritingContent
+export default StudentWriting

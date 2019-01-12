@@ -1,14 +1,12 @@
 import React from 'react'
-import './DragAndDrop.css'
+import './StudentSpelling.css'
 
-function getWord()
-{
-  return 'kite';
+function getWord () {
+  return 'kite'
 }
 
-function getUnlockedLetters()
-{
-  return ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'z', 'y', 'z'];
+function getUnlockedLetters () {
+  return ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'z', 'y', 'z']
 }
 
 function isComplete (words, wordToSpell) {
@@ -17,15 +15,14 @@ function isComplete (words, wordToSpell) {
     w += e
   })
   if (w === wordToSpell) { return true }
-  return false;
+  return false
 }
 
 function getLetters (wordToSpell, unlockedLetters, extraCards) {
-  var alphabet = unlockedLetters;
-  var letters = wordToSpell.split('');
+  var alphabet = unlockedLetters
+  var letters = wordToSpell.split('')
 
-  for(var i = 0; i < extraCards; i++)
-  {
+  for (var i = 0; i < extraCards; i++) {
     letters.push(alphabet[Math.floor(Math.random() * alphabet.length)])
   }
 
@@ -55,14 +52,12 @@ function shuffle (cards) {
   return cards
 }
 
-function getStatus(YN, word)
-{
-  if(YN)
-    return "Congrats!";
-  return "Spell " + word;
+function getStatus (YN, word) {
+  if (YN) { return 'Congrats!' }
+  return 'Spell ' + word
 }
 
-class DragAndDrop extends React.Component {
+class StudentSpelling extends React.Component {
   constructor (props) {
     super(props)
     this.state = {
@@ -71,36 +66,34 @@ class DragAndDrop extends React.Component {
       letters: [],
       words: []
     }
-    this.state.letters = this.state.reset.slice();
+    this.state.letters = this.state.reset.slice()
   }
 
   onLetterClick = (id) => {
-
     var newWords = this.state.words
     newWords.push(this.state.letters[id])
 
     var newLetters = this.state.letters
-    newLetters.splice(id, 1);
+    newLetters.splice(id, 1)
 
     this.setState({ letters: newLetters,
       words: newWords })
   }
 
   onWordClick = (id) => {
-
     var newLetters = this.state.letters
     newLetters.push(this.state.words[id])
 
     var newWords = this.state.words
-    newWords.splice(id, 1);
+    newWords.splice(id, 1)
 
     this.setState({ letters: newLetters,
       words: newWords })
   }
 
   onResetClick = () => {
-    var reset = this.state.reset.slice();
-    this.setState({words: [], letters: reset})
+    var reset = this.state.reset.slice()
+    this.setState({ words: [], letters: reset })
   }
 
   renderCard (t, i, func) {
@@ -110,20 +103,18 @@ class DragAndDrop extends React.Component {
         value={t} />
     )
   }
-  
-  renderButton(YN)
-  {
-    if(YN)
-      return <button type="button" class="btn btn-success" onClick={() => alert('Working on it')}>Continue</button>;
-    return <button type="button" class="btn btn-danger" onClick={this.onResetClick}>Reset</button>
+
+  renderButton (YN) {
+    if (YN) { return <button type='button' class='btn btn-success' onClick={() => alert('Working on it')}>Continue</button> }
+    return <button type='button' class='btn btn-danger' onClick={this.onResetClick}>Reset</button>
   }
 
   render () {
     var complete = isComplete(this.state.words, this.state.wordToSpell)
     var lSpace = []
     var wSpace = []
-    var button = this.renderButton(complete);
-    var status = getStatus(complete, this.state.wordToSpell);
+    var button = this.renderButton(complete)
+    var status = getStatus(complete, this.state.wordToSpell)
 
     this.state.letters.forEach((t, i) => {
       lSpace.push(
@@ -160,4 +151,4 @@ class DragAndDrop extends React.Component {
   }
 }
 
-export default DragAndDrop
+export default StudentSpelling
