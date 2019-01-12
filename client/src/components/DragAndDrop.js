@@ -1,25 +1,33 @@
 import React from 'react'
 import './DragAndDrop.css'
 
+function getWord()
+{
+  return 'kite';
+}
+
+function getUnlockedLetters()
+{
+  return ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'z', 'y', 'z'];
+}
+
 function isComplete (words, wordToSpell) {
   let w = ''
-  console.log('Passed in: ' + words)
   words.forEach(function (e) {
     w += e
   })
-  console.log('Output: ' + w)
   if (w === wordToSpell) { return true }
-  return false
+  return false;
 }
 
-function getLetters (wordToSpell) {
-  var alphabet = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'z', 'y', 'z']
-  var letters = []
+function getLetters (wordToSpell, unlockedLetters, extraCards) {
+  var alphabet = unlockedLetters;
+  var letters = wordToSpell.split('');
 
-  wordToSpell.forEach(function (e) {
-    letters.push(alphabet[alphabet.indexOf(e)])
+  for(var i = 0; i < extraCards; i++)
+  {
     letters.push(alphabet[Math.floor(Math.random() * alphabet.length)])
-  })
+  }
 
   return shuffle(letters)
 }
@@ -47,43 +55,52 @@ function shuffle (cards) {
   return cards
 }
 
+function getStatus(YN, word)
+{
+  if(YN)
+    return "Congrats!";
+  return "Spell " + word;
+}
+
 class DragAndDrop extends React.Component {
   constructor (props) {
     super(props)
     this.state = {
-      wordToSpell: 'bear',
-      letters: getLetters(['b', 'e', 'a', 'r']),
+      wordToSpell: getWord(),
+      reset: getLetters(getWord(), getUnlockedLetters(), 1),
+      letters: [],
       words: []
     }
-
+    this.state.letters = this.state.reset.slice();
   }
 
   onLetterClick = (id) => {
-    console.log(id)
 
-    this.state.words.push(this.state.letters[id])
-    this.state.letters.splice(id, 1)
+    var newWords = this.state.words
+    newWords.push(this.state.letters[id])
 
-    console.log(this.state.letters)
-    console.log(this.state.words)
+    var newLetters = this.state.letters
+    newLetters.splice(id, 1);
 
-    this.setState({ letters: this.state.letters,
-      words: this.state.words })
-
-    console.log(isComplete(this.state.words, this.state.wordToSpell))
+    this.setState({ letters: newLetters,
+      words: newWords })
   }
 
   onWordClick = (id) => {
-    console.log(id)
 
-    this.state.letters.push(this.state.words[id])
-    this.state.words.splice(id, 1)
+    var newLetters = this.state.letters
+    newLetters.push(this.state.words[id])
 
-    console.log(this.state.letters)
-    console.log(this.state.words)
+    var newWords = this.state.words
+    newWords.splice(id, 1);
 
-    this.setState({ letters: this.state.letters,
-      words: this.state.words })
+    this.setState({ letters: newLetters,
+      words: newWords })
+  }
+
+  onResetClick = () => {
+    var reset = this.state.reset.slice();
+    this.setState({words: [], letters: reset})
   }
 
   renderCard (t, i, func) {
@@ -93,10 +110,20 @@ class DragAndDrop extends React.Component {
         value={t} />
     )
   }
+  
+  renderButton(YN)
+  {
+    if(YN)
+      return <button type="button" class="btn btn-success" onClick={() => alert('Working on it')}>Continue</button>;
+    return <button type="button" class="btn btn-danger" onClick={this.onResetClick}>Reset</button>
+  }
 
   render () {
+    var complete = isComplete(this.state.words, this.state.wordToSpell)
     var lSpace = []
     var wSpace = []
+    var button = this.renderButton(complete);
+    var status = getStatus(complete, this.state.wordToSpell);
 
     this.state.letters.forEach((t, i) => {
       lSpace.push(
@@ -110,16 +137,9 @@ class DragAndDrop extends React.Component {
       )
     })
 
-    let status
-    if (!isComplete(this.state.words, this.state.wordToSpell)) {
-      status = 'Spell: ' + this.state.wordToSpell
-    } else {
-      status = 'You did it!'
-    }
-
     return (
       <div className='container-dragDND'>
-        <h1 color={'red'}>hello</h1>
+        <h1 color={'red'}>Spelling Cards!</h1>
         <h2 className='headerDND'>{status}</h2>
 
         <span>WordSpace</span>
@@ -135,6 +155,7 @@ class DragAndDrop extends React.Component {
         >
           {lSpace}
         </div>
+        {button}
       </div>)
   }
 }
