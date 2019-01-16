@@ -1,16 +1,19 @@
 {
-  "short_name": "Student Learning App",
-  "name": "Student Learning App",
-  "author": "Casey White, Cameron Osborn, Trent Parkey",
+  "name": "Student Learning Application",
+  "short_name": "Student Learning Application",
   "icons": [
-    {
-      "src": "icon.png",
-      "sizes": "64x64",
-      "type": "image/png"
-    }
+      {
+          "src": "/android-chrome-192x192.png",
+          "sizes": "192x192",
+          "type": "image/png"
+      },
+      {
+          "src": "/android-chrome-512x512.png",
+          "sizes": "512x512",
+          "type": "image/png"
+      }
   ],
-  "start_url": ".",
-  "display": "standalone",
-  "theme_color": "#000000",
-  "background_color": "#ffffff"
+  "theme_color": "#ffffff",
+  "background_color": "#ffffff",
+  "display": "standalone"
 }
