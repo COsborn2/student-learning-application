@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 
-class InstructorHomeScreen extends Component {
+class InstructorHome extends Component {
   render () {
     return (
       <div className='container text-center'>
@@ -12,4 +12,4 @@ class InstructorHomeScreen extends Component {
   }
 }
 
-export default InstructorHomeScreen
+export default InstructorHome
