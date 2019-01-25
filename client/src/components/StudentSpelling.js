@@ -33,10 +33,10 @@ function Card (props) {
   return (
     <div key={props.id}
       onClick={props.onClick}
-      className='cardDND'>
-      <div className='letterHolderDND'>
+      className='mx-auto col-md-1 card badge-success'>
+      <h5 className='card-title card badge-light'>
         {props.value}
-      </div>
+      </h5>
     </div>
   )
 }
@@ -55,6 +55,14 @@ function shuffle (cards) {
 function getStatus (YN, word) {
   if (YN) { return 'Congrats!' }
   return 'Spell ' + word
+}
+
+function DropZone(props)
+{
+  return(
+    <div key={"dropzone" + props.id}
+    className='col-md-1 mx-1 card badge-success'>Drag something here!</div>
+  )
 }
 
 class StudentSpelling extends React.Component {
@@ -129,21 +137,19 @@ class StudentSpelling extends React.Component {
     })
 
     return (
-      <div className='container-dragDND'>
+      <div className='container text-center'>
         <h1 color={'red'}>Spelling Cards!</h1>
         <h2 className='headerDND'>{status}</h2>
 
         <span>WordSpace</span>
-        <div className='droppableDND'
-          onDragOver={(e) => this.onDragOver(e)}
-          onDrop={(e) => this.onDrop(e, 'WordSpace')}>
-          {wSpace}
+        <div className='row ext-center'>
+          <DropZone></DropZone>
+          <DropZone></DropZone>
+          <DropZone></DropZone>
+          <DropZone></DropZone>
         </div>
         <span>Letter</span>
-        <div className='LetterDND'
-          onDragOver={(e) => this.onDragOver(e)}
-          onDrop={(e) => this.onDrop(e, 'Letter')}
-        >
+        <div className='row ext-center'>
           {lSpace}
         </div>
         {button}
