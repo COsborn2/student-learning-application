@@ -1,11 +1,10 @@
 import React, { Component } from 'react'
-import { withRouter } from 'react-router-dom'
 import { Button, Image } from 'react-bootstrap'
 
 const instructorImageSrc = 'https://surfberbere.com/wp-content/uploads/2016/04/Teacher-02-256.png'
 const studentImageSrc = 'https://publiciq.com/wp-content/uploads/2018/08/student.png'
 
-class HomeScreen extends Component {
+class Home extends Component {
   render () {
     return (
       <div className='container text-center'>
@@ -39,4 +38,4 @@ class HomeScreen extends Component {
   }
 }
 
-export default withRouter(HomeScreen)
+export default Home
