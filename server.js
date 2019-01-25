@@ -6,7 +6,7 @@ if (process.env.NODE_ENV !== 'production' && !process.env.DATABASE_URL) {
   isProduction = false
 }
 
-const express = require('express')
+const express = require('express');
 const path = require('path')
 const bodyParser = require('body-parser')
 
