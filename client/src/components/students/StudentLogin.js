@@ -1,7 +1,17 @@
 import React, { Component } from 'react'
 import { Button, ModalBody, ModalDialog, ModalFooter, ModalHeader, ModalTitle, Row } from 'react-bootstrap'
 
-
+const messageStyles = {
+  messageFading: {
+    color: 'red',
+    transition: 'opacity 1.0s',
+    opacity: 0
+  },
+  messageShow: {
+    color: 'red',
+    opacity: 1
+  }
+}
 
 class StudentLogin extends Component {
   constructor (props) {
@@ -9,28 +19,44 @@ class StudentLogin extends Component {
     this.state = {
       id: '',
       password: '',
-      failedMessage: ''
+      failedMessage: '',
+      showMessage: false
     }
 
-    this.handleVerifyAuthentication = this.handleVerifyAuthentication.bind(this)
+    this.handleVerifyAuth = this.handleVerifyAuth.bind(this)
+    this.handleSkipAuth = this.handleSkipAuth.bind(this)
   }
 
   // Hit backend for verification
-  handleVerifyAuthentication () {
+  handleVerifyAuth () {
     const { userId, password } = this.state
 
     if (userId === '') {
-      this.setState({ failedMessage: 'A username is required' })
+      this.animateMessage('A username is required')
     } else if (password === '') {
-      this.setState({ failedMessage: 'A password is required' })
+      this.animateMessage('A password is required')
     } else if (this.state.id === 'c' && this.state.password === 'p') {
       this.props.onAuthenticate()
     } else {
-      this.setState({ failedMessage: 'Incorrect password' })
+      this.animateMessage('The username or password is incorrect')
     }
   }
 
-  render (props) {
+  animateMessage (msg) {
+    this.setState({ failedMessage: msg })
+    this.setState({ showMessage: true })
+
+    setTimeout(() => {
+      this.setState({ showMessage: false })
+    }, 500)
+  }
+
+  handleSkipAuth () {
+    this.props.onAuthenticate()// todo remove this for easy access
+  }
+
+  render () {
+    let errorMessageStyle = this.state.showMessage ? messageStyles.messageShow : messageStyles.messageFading
     return (
       <div className='modal-backdrop'>
         <ModalDialog>
@@ -43,20 +69,19 @@ class StudentLogin extends Component {
               <div className='row'>
                 <p>User ID</p>
                 <input type='text' onChange={(event) => this.setState({ id: event.target.value })} />
-                <p>{this.state.id}</p>
               </div>
               <div className='row'>
                 <p>Password</p>
                 <input type='password' onChange={(event) => this.setState({ password: event.target.value })} />
-                <p>{this.state.password}</p>
               </div>
             </div>
           </ModalBody>
 
           <ModalFooter>
-            <p>{this.state.failedMessage}</p>
+            <p style={errorMessageStyle}>{this.state.failedMessage}</p>
             <Button onClick={() => this.props.history.push('/')}>Close</Button>
-            <Button bsStyle='primary' onClick={this.handleVerifyAuthentication}>Log in</Button>
+            <Button bsStyle='primary' onClick={this.handleVerifyAuth}>Log in</Button>
+            <Button bsStyle='primary' onClick={this.handleSkipAuth}>Dev Skip</Button>
           </ModalFooter>
         </ModalDialog>
       </div>
