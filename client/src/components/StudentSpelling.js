@@ -1,5 +1,10 @@
 import React from 'react'
+import { DragDropContextProvider } from 'react-dnd';
+import HTML5Backend from 'react-dnd-html5-backend';
 import './StudentSpelling.css'
+
+import SpellingCard from './Spelling/SpellingCard.js'
+import DropZone from './Spelling/DropZone.js'
 
 function getWord () {
   return 'kite'
@@ -29,18 +34,6 @@ function getLetters (wordToSpell, unlockedLetters, extraCards) {
   return shuffle(letters)
 }
 
-function Card (props) {
-  return (
-    <div key={props.id}
-      onClick={props.onClick}
-      className='mx-auto col-md-1 card badge-success'>
-      <h5 className='card-title card badge-light'>
-        {props.value}
-      </h5>
-    </div>
-  )
-}
-
 function shuffle (cards) {
   var j, x, i
   for (i = cards.length - 1; i > 0; i--) {
@@ -55,14 +48,6 @@ function shuffle (cards) {
 function getStatus (YN, word) {
   if (YN) { return 'Congrats!' }
   return 'Spell ' + word
-}
-
-function DropZone(props)
-{
-  return(
-    <div key={"dropzone" + props.id}
-    className='col-md-1 mx-1 card badge-success'>Drag something here!</div>
-  )
 }
 
 class StudentSpelling extends React.Component {
@@ -106,7 +91,7 @@ class StudentSpelling extends React.Component {
 
   renderCard (t, i, func) {
     return (
-      <Card id={i}
+      <SpellingCard id={i}
         onClick={(e) => func(i)}
         value={t} />
     )
@@ -123,6 +108,7 @@ class StudentSpelling extends React.Component {
     var wSpace = []
     var button = this.renderButton(complete)
     var status = getStatus(complete, this.state.wordToSpell)
+    var dropZone = []
 
     this.state.letters.forEach((t, i) => {
       lSpace.push(
@@ -136,24 +122,28 @@ class StudentSpelling extends React.Component {
       )
     })
 
+    this.state.wordToSpell.split('').forEach((t, i) => {
+      dropZone.push(<DropZone></DropZone>)
+    })
+
+
+    const { connectDragSource, connectDropTarget } = this.props
     return (
+      <DragDropContextProvider backend={HTML5Backend}>
       <div className='container text-center'>
         <h1 color={'red'}>Spelling Cards!</h1>
         <h2 className='headerDND'>{status}</h2>
-
-        <span>WordSpace</span>
+        <span>DropZone</span>
         <div className='row ext-center'>
-          <DropZone></DropZone>
-          <DropZone></DropZone>
-          <DropZone></DropZone>
-          <DropZone></DropZone>
+        {dropZone}
         </div>
-        <span>Letter</span>
+        <span>Letter Cards</span>
         <div className='row ext-center'>
           {lSpace}
         </div>
         {button}
-      </div>)
+      </div>
+      </DragDropContextProvider>)
   }
 }
 
