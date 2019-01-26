@@ -14,8 +14,8 @@
     "test": "npm run test-all-standard && mocha ./server.tests/*.js && cd client && npm test",
     "heroku-postbuild": "npm run setup && cd client && npm run build",
     "setup": "npm install && cd client && npm install",
-    "test-server-standard": "standard ./server.tests/*.js ./server.js | snazzy",
-    "fix-server-standard": "standard ./server.tests/*.js ./server.js --fix",
+    "test-server-standard": "standard ./server.tests/*.js ./server.js ./db/**/*.js ./models/**/*.js ./routes/**/*.js | snazzy",
+    "fix-server-standard": "standard ./server.tests/*.js ./server.js ./db/**/*.js ./models/**/*.js ./routes/**/*.js --fix",
     "test-client-standard": "cd client && npm run test-standard",
     "fix-client-standard": "cd client && npm run fix-standard",
     "test-all-standard": "npm run test-server-standard && npm run test-client-standard",
@@ -35,6 +35,7 @@
     "babel-eslint": "^10.0.1",
     "body-parser": "^1.18.3",
     "express": "^4.16.4",
-    "pg": "^7.7.1"
+    "mongodb": "^3.1.13",
+    "mongoose": "^5.4.6"
   }
 }
