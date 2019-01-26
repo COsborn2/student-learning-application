@@ -10,8 +10,7 @@ const express = require('express')
 const path = require('path')
 const bodyParser = require('body-parser')
 
-// var {mongoose} = require('./db/mongoose')
-var { User } = require('./models/user')
+require('./db/mongoose') // this starts the connection to the server
 
 const app = express()
 const port = process.env.PORT || 5000
@@ -20,17 +19,7 @@ app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({ extended: true }))
 
 // API routes
-app.post('/users', (req, res) => {
-  var user = new User({
-    email: req.body.text
-  })
-
-  user.save().then((doc) => {
-    res.send(doc)
-  }, (e) => {
-    res.status(400).send(e)
-  })
-})
+app.get('/users', require('./routes/usersRoute').allUsers)
 
 if (isProduction) {
   console.log('production')

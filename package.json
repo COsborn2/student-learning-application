@@ -11,7 +11,7 @@
     "dev": "concurrently --kill-others-on-fail \"nodemon server.js\" \"npm run client\"",
     "dev:server": "nodemon server.js",
     "start": "node server.js",
-    "test": "npm run test-all-standard && mocha ./server.tests/*.js && cd client && npm test",
+    "test": "npm run test-all-standard && mocha ./server.tests/*.test.js && cd client && npm test",
     "heroku-postbuild": "npm run setup && cd client && npm run build",
     "setup": "npm install && cd client && npm install",
     "test-server-standard": "standard ./server.tests/*.js ./server.js ./db/**/*.js ./models/**/*.js ./routes/**/*.js | snazzy",
@@ -25,9 +25,11 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
+    "chai": "^4.2.0",
     "concurrently": "^4.1.0",
     "dotenv": "^6.2.0",
     "mocha": "^5.2.0",
+    "sinon": "^7.2.3",
     "snazzy": "^8.0.0",
     "standard": "^12.0.1"
   },
