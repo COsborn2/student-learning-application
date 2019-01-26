@@ -8,13 +8,12 @@ import StudentWriting from './StudentWriting'
 class StudentView extends Component {
   constructor (props) {
     super(props)
-    this.state = { isAuthenticated: false }
-    this.onAuthenticated = this.onAuthenticated.bind(this)
+    this.state = { userId: '', isAuthenticated: false }
   }
 
-  onAuthenticated () {
-    this.setState({ isAuthenticated: true })
-    this.props.history.replace('/student/home')
+  onAuthenticated (userId) {
+    this.setState({ userId: userId, isAuthenticated: true })
+    this.props.history.replace('/student/' + userId)
   }
 
   render () {
@@ -25,10 +24,10 @@ class StudentView extends Component {
     }
     return (
       <Switch>
-        <Route path='/student/login' render={() => <StudentLogin {...this.props} onAuthenticate={this.onAuthenticated} />} />
-        <Route path='/student/home' component={StudentHome} />
-        <Route path='/student/spelling' component={StudentSpelling} />
-        <Route path='/student/writing' component={StudentWriting} />
+        <Route path='/student/login' render={() => <StudentLogin {...this.props} onAuthenticate={(id) => this.onAuthenticated(id)} />} />
+        <Route exact path='/student/:id' component={StudentHome} />
+        <Route path='/student/:id/spelling' component={StudentSpelling} />
+        <Route path='/student/:id/writing' component={StudentWriting} />
       </Switch>
     )
   }

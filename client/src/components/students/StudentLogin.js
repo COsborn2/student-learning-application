@@ -36,14 +36,14 @@ class StudentLogin extends Component {
 
   // Hit backend for verification
   handleVerifyAuth () {
-    const password = this.userPassInput.value
-    const id = this.userIdInput.value
+    const password = this.passwordInput.value
+    const id = this.idInput.value
     if (id === '') {
       this.animateMessage('* A username is required')
     } else if (password === '') {
       this.animateMessage('* A password is required')
-    } else if (id === 'dev' && password === 'password') {
-      this.props.onAuthenticate()
+    } else if (id === 'Developer' && password === 'password') {
+      this.props.onAuthenticate(id)
     } else {
       this.animateMessage('* Incorrect username or password')
     }
@@ -58,7 +58,7 @@ class StudentLogin extends Component {
   }
 
   handleSkipAuth () {
-    this.props.onAuthenticate()// todo remove dev skip for easy access
+    this.props.onAuthenticate('Developer')// todo remove dev skip for easy access
   }
 
   render () {
@@ -77,14 +77,14 @@ class StudentLogin extends Component {
                 <ControlLabel>User Id</ControlLabel>
                 <FormControl type='text'
                   placeholder='Id'
-                  inputRef={(ref) => { this.userIdInput = ref }} />
+                  inputRef={(ref) => { this.idInput = ref }} />
               </FormGroup>
 
               <FormGroup>
                 <ControlLabel>Password</ControlLabel>
                 <FormControl type='password'
                   placeholder='Password'
-                  inputRef={(ref) => { this.userPassInput = ref }} />
+                  inputRef={(ref) => { this.passwordInput = ref }} />
               </FormGroup>
             </Form>
 
