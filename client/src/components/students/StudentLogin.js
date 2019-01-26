@@ -1,5 +1,14 @@
 import React, { Component } from 'react'
-import { Button, Row, ModalBody, ModalDialog, ModalFooter, ModalHeader, ModalTitle } from 'react-bootstrap'
+import {
+  Button,
+  ModalBody,
+  ModalDialog,
+  ModalFooter,
+  ModalHeader,
+  ModalTitle,
+  FormControl,
+  FormGroup, ControlLabel, Form
+} from 'react-bootstrap'
 
 const messageStyles = {
   messageFading: {
@@ -17,8 +26,6 @@ class StudentLogin extends Component {
   constructor (props) {
     super(props)
     this.state = {
-      id: '',
-      password: '',
       failedMessage: '',
       showMessage: false
     }
@@ -29,30 +36,28 @@ class StudentLogin extends Component {
 
   // Hit backend for verification
   handleVerifyAuth () {
-    const { id, password } = this.state
-
+    const password = this.userPassInput.value
+    const id = this.userIdInput.value
     if (id === '') {
-      this.animateMessage('A username is required')
+      this.animateMessage('* A username is required')
     } else if (password === '') {
-      this.animateMessage('A password is required')
-    } else if (this.state.id === 'dev' && this.state.password === 'password') {
+      this.animateMessage('* A password is required')
+    } else if (id === 'dev' && password === 'password') {
       this.props.onAuthenticate()
     } else {
-      this.animateMessage('incorrect username or password')
+      this.animateMessage('* Incorrect username or password')
     }
   }
 
   animateMessage (msg) {
-    this.setState({ failedMessage: msg })
-    this.setState({ showMessage: true })
+    this.setState({ failedMessage: msg, showMessage: true })
 
     setTimeout(() => {
       this.setState({ showMessage: false })
-    }, 500)
+    }, 1000)
   }
 
   handleSkipAuth () {
-    this.props.history.push('/student/home')
     this.props.onAuthenticate()// todo remove dev skip for easy access
   }
 
@@ -63,20 +68,33 @@ class StudentLogin extends Component {
         <ModalDialog>
           <ModalHeader>
             <ModalTitle>Student Login</ModalTitle>
+            <Button bsStyle='warning' onClick={this.handleSkipAuth}>Dev Skip</Button>
           </ModalHeader>
 
           <ModalBody>
-            <p>User ID</p>
-            <input type='text' onChange={(event) => this.setState({ id: event.target.value })} />
-            <p>Password</p>
-            <input type='password' onChange={(event) => this.setState({ password: event.target.value })} />
+            <Form>
+              <FormGroup>
+                <ControlLabel>User Id</ControlLabel>
+                <FormControl type='text'
+                  placeholder='Id'
+                  inputRef={(ref) => { this.userIdInput = ref }} />
+              </FormGroup>
+
+              <FormGroup>
+                <ControlLabel>Password</ControlLabel>
+                <FormControl type='password'
+                  placeholder='Password'
+                  inputRef={(ref) => { this.userPassInput = ref }} />
+              </FormGroup>
+            </Form>
+
           </ModalBody>
 
           <ModalFooter>
             <p style={errorMessageStyle}>{this.state.failedMessage}</p>
+            <div style={{ flex: 1 }} />
             <Button bsStyle='primary' onClick={() => this.props.history.push('/')}>Close</Button>
-            <Button bsStyle='primary' onClick={this.handleVerifyAuth}>Log in</Button>
-            <Button bsStyle='warning' onClick={this.handleSkipAuth}>Dev Skip</Button>
+            <Button bsStyle='primary' type={'submit'} onClick={this.handleVerifyAuth}>Log in</Button>
           </ModalFooter>
         </ModalDialog>
       </div>

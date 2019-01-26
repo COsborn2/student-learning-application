@@ -14,6 +14,7 @@ class StudentView extends Component {
 
   onAuthenticated () {
     this.setState({ isAuthenticated: true })
+    this.props.history.replace('/student/home')
   }
 
   render () {
