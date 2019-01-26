@@ -22,7 +22,7 @@ const messageStyles = {
   }
 }
 
-class StudentLogin extends Component {
+class LoginModal extends Component {
   constructor (props) {
     super(props)
     this.state = {
@@ -64,10 +64,10 @@ class StudentLogin extends Component {
   render () {
     let errorMessageStyle = this.state.showMessage ? messageStyles.messageShow : messageStyles.messageFading
     return (
-      <div className='modal-backdrop'>
+      <div className='modal-dialog-centered'>
         <ModalDialog>
           <ModalHeader>
-            <ModalTitle>Student Login</ModalTitle>
+            <ModalTitle>{this.props.userType} Login</ModalTitle>
             <Button bsStyle='warning' onClick={this.handleSkipAuth}>Dev Skip</Button>
           </ModalHeader>
 
@@ -102,4 +102,4 @@ class StudentLogin extends Component {
   }
 }
 
-export default StudentLogin
+export default LoginModal
