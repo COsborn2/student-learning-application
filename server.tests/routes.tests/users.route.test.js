@@ -29,12 +29,11 @@ describe('test /users/ get all users', () => {
         var res = {
             send: sinon.stub()
         }
-        
+
         stubbedThing.resolves(users)
 
         await userRoute.allUsers(req, res)
 
-        console.log('assert')
         sinon.assert.calledWith(res.send, expectedModels)
     })
 })
