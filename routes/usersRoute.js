@@ -1,10 +1,10 @@
 var { User } = require('../models/user')
 
 module.exports.allUsers = (req, res) => {
-  User.find({}, (err, users) => {
-    if (err) {
-      res.status(400).send(err)
-    }
+  User.find().then((users) => {
     res.send({ users })
+    console.log('sent')
+  }, (e) => {
+    res.status(400).send(e)
   })
 }
