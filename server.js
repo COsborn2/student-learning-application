@@ -10,14 +10,16 @@ const express = require('express')
 const path = require('path')
 const bodyParser = require('body-parser')
 
+require('./db/mongoose') // this starts the connection to the server
+
 const app = express()
 const port = process.env.PORT || 5000
 
 app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({ extended: true }))
 
-// API calls
-app.get('/api/getData', require('./api/getData').getAllData)
+// API routes
+app.get('/users', require('./routes/usersRoute').allUsers)
 
 if (isProduction) {
   console.log('production')
