@@ -1,31 +1,35 @@
 import React, { Component } from 'react'
 import StudentLogin from './StudentLogin'
 import StudentHome from './StudentHome'
-import { Route } from 'react-router-dom'
+import { Redirect, Route, Switch } from 'react-router-dom'
 import StudentSpelling from './StudentSpelling'
 import StudentWriting from './StudentWriting'
-
-const StudentScreens = () => (
-  <div>
-    <Route path='/student/home' component={StudentHome} />
-    <Route path='/student/spelling' component={StudentSpelling} />
-    <Route path='/student/writing' component={StudentWriting} />
-
-  </div>
-)
 
 class StudentView extends Component {
   constructor (props) {
     super(props)
     this.state = { isAuthenticated: false }
+    this.onAuthenticated = this.onAuthenticated.bind(this)
+  }
+
+  onAuthenticated () {
+    this.setState({ isAuthenticated: true })
   }
 
   render () {
     let { isAuthenticated } = this.state
-    if (!isAuthenticated) {
-      return <StudentLogin onAuthenticate={() => this.setState({ isAuthenticated: true })} />
+    let { pathname } = this.props.history.location
+    if (!isAuthenticated && pathname !== '/student/login') {
+      return <Redirect to='/student/login' />
     }
-    return <StudentScreens />
+    return (
+      <Switch>
+        <Route path='/student/login' render={() => <StudentLogin {...this.props} onAuthenticate={this.onAuthenticated} />} />
+        <Route path='/student/home' component={StudentHome} />
+        <Route path='/student/spelling' component={StudentSpelling} />
+        <Route path='/student/writing' component={StudentWriting} />
+      </Switch>
+    )
   }
 }
 

@@ -2,8 +2,6 @@ import React, { Component } from 'react'
 import { BrowserRouter as Browser, Route } from 'react-router-dom'
 import StudentView from './components/students/StudentView'
 import InstructorHome from './components/instructor/InstructorHome'
-import StudentSpelling from './components/students/StudentSpelling'
-import StudentWriting from './components/students/StudentWriting'
 import HeaderBackButton from './components/menu/HeaderBackButton'
 import Home from './components/Home'
 
@@ -18,8 +16,6 @@ const MainContent = () => (
     <Route exact path='/' component={Home} />
     <Route exact path='/instructor' component={InstructorHome} />
     <Route path='/student' component={StudentView} />
-    <Route path='/student/spelling' component={StudentSpelling} />
-    <Route path='/student/writing' component={StudentWriting} />
   </main>
 )
 
