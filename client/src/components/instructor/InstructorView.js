@@ -1,4 +1,5 @@
 import React, { Component } from 'react'
+import PropTypes from 'prop-types'
 import { Redirect, Route, Switch } from 'react-router-dom'
 import InstructorHome from './InstructorHome'
 import LoginModal from '../login/LoginModal'
@@ -23,12 +24,17 @@ class InstructorView extends Component {
     return (
       <div style={{ background: '#a9a9a9' }}>
         <Switch>
-          <Route path='/instructor/login' render={() => <LoginModal {...this.props} onAuthenticate={(id) => this.onAuthenticated(id)} />} />
+          <Route path='/instructor/login' render={() => <LoginModal {...this.props} userType='Instructor' onAuthenticate={(id) => this.onAuthenticated(id)} />} />
           <Route exact path='/instructor/:id' component={InstructorHome} />
         </Switch>
       </div>
     )
   }
+}
+
+InstructorView.propTypes = {
+  match: PropTypes.object.isRequired,
+  history: PropTypes.object.isRequired
 }
 
 export default InstructorView

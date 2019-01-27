@@ -1,4 +1,5 @@
 import React, { Component } from 'react'
+import PropTypes from 'prop-types'
 import LoginModal from '../login/LoginModal'
 import StudentHome from './StudentHome'
 import { Redirect, Route, Switch } from 'react-router-dom'
@@ -33,6 +34,10 @@ class StudentView extends Component {
       </div>
     )
   }
+}
+
+StudentView.propTypes = {
+  history: PropTypes.object.isRequired
 }
 
 export default StudentView
