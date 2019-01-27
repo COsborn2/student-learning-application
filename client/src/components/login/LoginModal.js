@@ -1,4 +1,5 @@
 import React, { Component } from 'react'
+import PropTypes from 'prop-types'
 import {
   Button,
   ModalBody,
@@ -36,8 +37,8 @@ class LoginModal extends Component {
 
   // Hit backend for verification
   handleVerifyAuth () {
-    const password = this.passwordInput.value
-    const id = this.idInput.value
+    const password = this._passwordInput.value
+    const id = this._idInput.value
     if (id === '') {
       this.animateMessage('* A username is required')
     } else if (password === '') {
@@ -77,14 +78,14 @@ class LoginModal extends Component {
                 <ControlLabel>User Id</ControlLabel>
                 <FormControl type='text'
                   placeholder='Id'
-                  inputRef={(ref) => { this.idInput = ref }} />
+                  inputRef={(ref) => { this._idInput = ref }} />
               </FormGroup>
 
               <FormGroup>
                 <ControlLabel>Password</ControlLabel>
                 <FormControl type='password'
                   placeholder='Password'
-                  inputRef={(ref) => { this.passwordInput = ref }} />
+                  inputRef={(ref) => { this._passwordInput = ref }} />
               </FormGroup>
             </Form>
 
@@ -100,6 +101,12 @@ class LoginModal extends Component {
       </div>
     )
   }
+}
+
+LoginModal.propTypes = {
+  onAuthenticate: PropTypes.func.isRequired,
+  userType: PropTypes.string.isRequired,
+  history: PropTypes.object.isRequired
 }
 
 export default LoginModal

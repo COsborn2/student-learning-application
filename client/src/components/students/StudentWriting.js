@@ -19,7 +19,6 @@ class StudentWriting extends Component {
   }
 
   clearCanvas = () => {
-    console.log('clear')
     this._sketch.clear()
     this._sketch.setBackgroundFromDataUrl('')
   };
@@ -31,7 +30,7 @@ class StudentWriting extends Component {
         <div className='bg-dark'>
           <SketchField
             className='badge-info'
-            ref={c => (this._sketch = c)}
+            ref={ref => (this._sketch = ref)}
             tool={Tools.Pencil}
             lineColor='black'
             lineWidth={10} />
