@@ -37,9 +37,9 @@ function SpellingCard (props)
   const {id} = props;
   const {isDragging, connectDragSource} = props;
 
-  return (
+  return connectDragSource(
     <div key={props.id}
-      onClick={props.onClick}
+      //onClick={props.onClick}
       className='mx-1 col-md-1 card badge-success'>
       <h5 className='card-title card badge-light'>
         {props.value}
