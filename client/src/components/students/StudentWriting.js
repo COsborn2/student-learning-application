@@ -1,7 +1,6 @@
 import React, { Component } from 'react'
 import { SketchField, Tools } from 'react-sketch'
 import { Button, ListGroupItem, ListGroup } from 'react-bootstrap'
-import fetch from 'isomorphic-fetch'
 
 class StudentWriting extends Component {
   constructor (props) {
@@ -10,17 +9,16 @@ class StudentWriting extends Component {
   }
 
   componentDidMount () {
-    fetch('/api/getData')
-      .then(res => res.json())
-      .then(wordItems => {
-        let updatedWords = this.state.words
-        wordItems.map(wordItem => updatedWords.push(wordItem.word))
-        this.setState({ words: updatedWords })
-      })
+    // fetch('/api/getData')
+    //   .then(res => res.json())
+    //   .then(wordItems => {
+    //     let updatedWords = this.state.words
+    //     wordItems.map(wordItem => updatedWords.push(wordItem.word))
+    //     this.setState({ words: updatedWords })
+    //   })
   }
 
   clearCanvas = () => {
-    console.log('clear')
     this._sketch.clear()
     this._sketch.setBackgroundFromDataUrl('')
   };
@@ -32,7 +30,7 @@ class StudentWriting extends Component {
         <div className='bg-dark'>
           <SketchField
             className='badge-info'
-            ref={c => (this._sketch = c)}
+            ref={ref => (this._sketch = ref)}
             tool={Tools.Pencil}
             lineColor='black'
             lineWidth={10} />
