@@ -8,7 +8,8 @@ const Types = {
 const spellingCardSource = {
     beginDrag(props)
     {
-      const item = { id: props.id };
+      const item = { id: props.id, 
+                    value: props.value};
       return item;
     },
   
@@ -34,15 +35,15 @@ function collect(connect, monitor)
 
 function SpellingCard (props) 
 {
-  const {id} = props;
+  const {id, value} = props;
   const {isDragging, connectDragSource} = props;
 
   return connectDragSource(
-    <div key={props.id}
+    <div key={id}
       //onClick={props.onClick}
       className='mx-1 col-md-1 card badge-success'>
       <h5 className='card-title card badge-light'>
-        {props.value}
+        {value}
       </h5>
     </div>
   )

@@ -3,8 +3,8 @@ import { DragDropContextProvider } from 'react-dnd';
 import HTML5Backend from 'react-dnd-html5-backend';
 import './StudentSpelling.css'
 
-import SpellingCard from './Spelling/SpellingCard.js'
-import DropZone from './Spelling/DropZone.js'
+import SpellingCard from './spelling/SpellingCard.js'
+import DropZone from './spelling/DropZone.js'
 
 function getWord () {
   return 'kite'
@@ -57,7 +57,7 @@ class StudentSpelling extends React.Component {
       wordToSpell: getWord(),
       reset: getLetters(getWord(), getUnlockedLetters(), 1),
       letters: [],
-      words: []
+      words: [],
     }
     this.state.letters = this.state.reset.slice()
   }
