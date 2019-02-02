@@ -7,12 +7,12 @@ let ClassroomSchema = new mongoose.Schema({
     minlength: 1,
     trim: true
   },
-  assignments: {
+  assignments: [{
     type: mongoose.Schema.Types.ObjectId
-  },
-  students: {
+  }],
+  students: [{
     type: mongoose.Schema.Types.ObjectId
-  },
+  }],
   instructor: {
     type: mongoose.Schema.Types.ObjectId
   }

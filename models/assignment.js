@@ -7,9 +7,9 @@ let AssignmentSchema = new mongoose.Schema({
     maxlength: 1,
     trim: true
   }],
-  words: {
+  words: [{
     type: mongoose.Schema.Types.ObjectId
-  }
+  }]
 })
 
 let Assignment = mongoose.model('Assignment', AssignmentSchema)
