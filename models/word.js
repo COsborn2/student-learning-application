@@ -1,7 +1,7 @@
 const mongoose = require('mongoose')
 
 let WordSchema = new mongoose.Schema({
-  word: {
+  text: {
     type: String,
     required: true,
     minlength: 1,
@@ -17,4 +17,4 @@ let WordSchema = new mongoose.Schema({
 
 let Word = mongoose.model('Word', WordSchema)
 
-module.exports = { Word }
+module.exports = { Word, WordSchema }

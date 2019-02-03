@@ -24,7 +24,8 @@ let InstructorSchema = new mongoose.Schema({
     minlength: 10
   },
   token: {
-    type: mongoose.Schema.Types.ObjectId
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Token'
   }
 })
 
