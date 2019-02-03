@@ -17,4 +17,4 @@ let WordSchema = new mongoose.Schema({
 
 let Word = mongoose.model('Word', WordSchema)
 
-module.exports = { Word, WordSchema }
+module.exports = { Word }
