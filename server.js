@@ -9,8 +9,9 @@ if (process.env.NODE_ENV !== 'production' && !process.env.DATABASE_URL) {
 const express = require('express')
 const path = require('path')
 const bodyParser = require('body-parser')
-const _  = require('lodash')
-const {ObjectID} = require('mongodb')
+// temporarily unused
+// const _ = require('lodash')
+// const { ObjectID } = require('mongodb')
 
 require('./db/mongoose') // this starts the connection to the server
 
