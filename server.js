@@ -9,6 +9,9 @@ if (process.env.NODE_ENV !== 'production' && !process.env.DATABASE_URL) {
 const express = require('express')
 const path = require('path')
 const bodyParser = require('body-parser')
+// temporarily unused
+// const _ = require('lodash')
+// const { ObjectID } = require('mongodb')
 
 require('./db/mongoose') // this starts the connection to the server
 
@@ -19,7 +22,7 @@ app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({ extended: true }))
 
 // API routes
-app.get('/users', require('./routes/usersRoute').allUsers)
+app.get('/instructors', require('./routes/instructorsRoute').allInstructors)
 
 if (isProduction) {
   console.log('production')

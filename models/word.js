@@ -1,7 +1,7 @@
 const mongoose = require('mongoose')
 
 let WordSchema = new mongoose.Schema({
-  word: {
+  text: {
     type: String,
     required: true,
     minlength: 1,

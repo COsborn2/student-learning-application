@@ -8,13 +8,16 @@ let ClassroomSchema = new mongoose.Schema({
     trim: true
   },
   assignments: [{
-    type: mongoose.Schema.Types.ObjectId
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Assignment'
   }],
   students: [{
-    type: mongoose.Schema.Types.ObjectId
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Student'
   }],
   instructor: {
-    type: mongoose.Schema.Types.ObjectId
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Instructor'
   }
 })
 
