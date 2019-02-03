@@ -19,7 +19,7 @@ app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({ extended: true }))
 
 // API routes
-app.get('/users', require('./routes/usersRoute').allUsers)
+app.get('/instructors', require('./routes/instructorsRoute').allInstructors)
 
 if (isProduction) {
   console.log('production')
