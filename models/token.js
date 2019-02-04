@@ -1,13 +1,18 @@
 const mongoose = require('mongoose')
 
 let TokenSchema = new mongoose.Schema({
+  _id: {
+    type: mongoose.Schema.Types.ObjectId,
+    required: true
+  },
   token: {
     type: String,
     required: true
   },
   access: {
     type: String,
-    required: true
+    required: true,
+    trim: true
   },
   salt: {
     type: String,
@@ -17,4 +22,4 @@ let TokenSchema = new mongoose.Schema({
 
 let Token = mongoose.model('Token', TokenSchema)
 
-module.exports = { Token }
+module.exports = { Token, TokenSchema }
