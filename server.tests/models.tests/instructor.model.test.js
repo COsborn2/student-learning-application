@@ -42,18 +42,6 @@ describe('instructor model tests', () => {
         })
     })
 
-    it('invalid if salt does not exist', (done) => {
-        let instructor = new Instructor({
-            email: 'test-email@gmail.com',
-            hashedPassword: 'small'
-        })
-
-        instructor.validate((err) => {
-            expect(err.errors.salt).to.exist
-            done()
-        })
-    })
-
     it('invalid if password is not of valid length', (done) => {
         let instructor = new Instructor({
             email: 'test-email@gmail.com',

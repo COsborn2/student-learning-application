@@ -24,8 +24,8 @@ app.use(bodyParser.urlencoded({ extended: true }))
 app.get('/instructors', require('./routes/instructorsRoute').allInstructors)
 
 // --- TEST ---
-const {authenticateStudent, authenticateInstructor} = require('./middleware/authenticate')
-const {Student} = require('./models/student')
+const { authenticateStudent } = require('./middleware/authenticate')
+const { Student } = require('./models/student')
 
 app.post('/student/validate', authenticateStudent, (req, res) => {
   console.log('valid and back here')
@@ -50,6 +50,10 @@ app.post('/student', (req, res) => {
 app.get('/student', (req, res) => {
   console.log('Getting all student data')
   Student.find().populate('token').exec((err, items) => {
+    if (err) {
+      res.status(404).send()
+    }
+
     console.log('every student')
     console.log(JSON.stringify(items, undefined, 5))
     res.send(items)
