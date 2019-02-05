@@ -9,8 +9,6 @@ if (process.env.NODE_ENV !== 'production' && !process.env.DATABASE_URL) {
 const express = require('express')
 const path = require('path')
 const bodyParser = require('body-parser')
-// temporarily unused
-// const _ = require('lodash')
 
 require('./db/mongoose') // this starts the connection to the server
 
@@ -26,6 +24,8 @@ app.get('/instructors', require('./routes/instructorsRoute').allInstructors)
 // --- TEST ---
 const { authenticateStudent } = require('./middleware/authenticate')
 const { Student } = require('./models/student')
+const { Token } = require('./models/token')
+const _ = require('lodash')
 
 app.post('/student/validate', authenticateStudent, (req, res) => {
   console.log('valid and back here')
@@ -37,16 +37,23 @@ app.post('/student/validate', authenticateStudent, (req, res) => {
 })
 
 app.post('/student', (req, res) => {
+  let body = _.pick(req.body, ['classcode', 'username'])
+
   var student = new Student({
     classcode: 'classcode',
-    username: 'userName'
+    username: 'username'
   })
 
-  student.generateTokenAndSave(() => {
-    res.header('x-auth', student.token.token).send()
+  Token.generateAuthToken('Student').then((token) => {
+    student.token = token
+    student.save()
+    res.header('x-auth', student.token.token).send(student)
+  }).catch((err) => {
+    console.log(err)
   })
 })
 
+// test this path
 app.get('/student', (req, res) => {
   console.log('Getting all student data')
   Student.find().populate('token').exec((err, items) => {
