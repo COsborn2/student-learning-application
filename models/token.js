@@ -16,16 +16,19 @@ let TokenSchema = new mongoose.Schema({
     required: true,
     trim: true
   },
+  userType: {
+    type: String,
+    required: true,
+    trim: true
+  },
   salt: {
     type: String,
     required: true
   }
 })
 
-TokenSchema.statics.generateAuthToken = function (access) {
-  console.log(access)
-
-  let Token = this  
+TokenSchema.statics.generateAuthToken = function (access, userType) {
+  let Token = this
 
   return new Promise((resolve, reject) => {
     bcrypt.genSalt(12, (err, salt) => {
@@ -35,16 +38,40 @@ TokenSchema.statics.generateAuthToken = function (access) {
 
       let tokenId = mongoose.Types.ObjectId()
 
-      let tokenVal = jwt.sign({ _id: tokenId, access }, salt, { expiresIn: '4h' }).toString()
+      let tokenVal = jwt.sign({ _id: tokenId, userType, access }, salt, { expiresIn: '4h' }).toString()
 
       let token = new Token({
         _id: tokenId,
         token: tokenVal,
         access,
+        userType,
         salt
       })
 
       resolve(token)
+    })
+  })
+}
+
+TokenSchema.statics.validateToken = function (rawToken, unvalidatedUserType, unvalidatedTokenId) {
+  return new Promise((resolve, reject) => {
+    mongoose.model(unvalidatedUserType).findOne({
+      'token._id': unvalidatedTokenId
+    }).then((doc) => {
+      if (!doc) {
+        reject(new TypeError())
+      }
+
+      let realToken = doc.token
+      let realSalt = realToken.salt
+
+      jwt.verify(rawToken, realSalt, (err) => {
+        if (err) {
+          reject(new TypeError())
+        }
+
+        resolve(doc)
+      })
     })
   })
 }

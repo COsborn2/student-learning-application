@@ -1,5 +1,6 @@
 const mongoose = require('mongoose')
 const { TokenSchema } = require('./token')
+const _ = require('lodash')
 
 let StudentSchema = new mongoose.Schema({
   classcode: {
@@ -16,6 +17,13 @@ let StudentSchema = new mongoose.Schema({
   },
   token: TokenSchema
 })
+
+StudentSchema.methods.toJSON = function () {
+  let student = this
+  let studentObject = student.toObject()
+
+  return _.pick(studentObject, ['classcode', 'username'])
+}
 
 let Student = mongoose.model('Student', StudentSchema)
 

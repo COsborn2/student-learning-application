@@ -1,6 +1,5 @@
 const jwt = require('jsonwebtoken')
-const { ObjectID } = require('mongodb')
-const mongoose = require('mongoose')
+const { Token } = require('../models/token')
 
 let authenticate = (req, res, next) => {
   let rawToken = req.header('x-auth')
@@ -8,30 +7,21 @@ let authenticate = (req, res, next) => {
   let unvalidatedHeader = jwt.decode(rawToken)
 
   let unvalidatedTokenId = unvalidatedHeader._id
-  let unvalidatedUserType = unvalidatedHeader.access
+  let unvalidatedUserType = unvalidatedHeader.userType
+  let unvalidatedAccessTypes = unvalidatedHeader.access
 
-  mongoose.model(unvalidatedUserType).findOne({
-    'token._id': unvalidatedTokenId
-  }).then((doc) => {
-    if (!doc) {
-      return Promise.reject(new TypeError())
-    }
-
-    let realToken = doc.token
-    let realSalt = realToken.salt
-
-    try {
-      let decoded = jwt.verify(rawToken, realSalt)
-
-      req.token = decoded
+  if (unvalidatedAccessTypes.indexOf(req.userType) > -1) { // contains required permissions
+    Token.validateToken(rawToken, unvalidatedUserType, unvalidatedTokenId).then((doc) => {
       req.user = doc
+
       next()
-    } catch (error) {
-      return Promise.reject(new TypeError('Token validation failed'))
-    }
-  }).catch(() => {
-    res.status(404).send('invalid token')
-  })
+    }).catch(() => {
+      res.status(401).send()
+    })
+  } else {
+    console.log('invalid permissions')
+    res.status(401).send('Improper permissions')
+  }
 }
 
 let authenticateStudent = (req, res, next) => {
