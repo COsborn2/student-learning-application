@@ -26,44 +26,57 @@ const { authenticateStudent, authenticateInstructor } = require('./middleware/au
 const { Student } = require('./models/student')
 const { Instructor } = require('./models/instructor')
 const { Token } = require('./models/token')
+const _ = require('lodash')
 
 app.post('/student', (req, res) => {
-  // let body = _.pick(req.body, ['classcode', 'username'])
+  let body = _.pick(req.body, ['classcode', 'username'])
 
-  var student = new Student({
-    classcode: 'classcode',
-    username: 'username'
+  let student = new Student({
+    username: body.username,
+    classcode: body.classcode
   })
 
-  Token.generateAuthToken(new Array('Student'), 'Student').then((token) => {
+  Token.generateAuthToken(['Student'], 'Student').then((token) => {
     student.token = token
-    student.save()
-    res.header('x-auth', student.token.token).send(student)
+    student.save((err) => {
+      if (err) {
+        res.json({ error: 'error' })
+      } else {
+        res.header('x-auth', token.token).send(student)
+      }
+    })
   }).catch((err) => {
     console.log(err)
+    res.status(400).send('here')
+  })
+})
+
+app.post('/instructor', (req, res) => {
+  let body = _.pick(req.body, ['email', 'password'])
+
+  let instructor = new Instructor({
+    email: body.email,
+    hashedPassword: body.password
+  })
+
+  Token.generateAuthToken(['Instructor', 'Student'], 'Instructor').then((token) => {
+    instructor.token = token
+    instructor.save((err) => {
+      if (err) {
+        res.json({ error: 'error' })
+      } else {
+        res.header('x-auth', token.token).send(instructor)
+      }
+    })
+  }).catch((err) => {
+    console.log(err)
+    res.status(400).send('here')
   })
 })
 
 app.post('/student/validate', authenticateStudent, (req, res) => {
   console.log('student validated')
   res.send(req.user)
-})
-
-app.post('/instructor', (req, res) => {
-  // let body = _.pick(req.body, ['classcode', 'username'])
-
-  var instructor = new Instructor({
-    email: 'sampleemail@gmail.com',
-    hashedPassword: 'password!'
-  })
-
-  Token.generateAuthToken(['Instructor', 'Student'], 'Instructor').then((token) => {
-    instructor.token = token
-    instructor.save()
-    res.header('x-auth', instructor.token.token).send(instructor)
-  }).catch((err) => {
-    console.log(err)
-  })
 })
 
 app.post('/instructor/validate', authenticateInstructor, (req, res) => {

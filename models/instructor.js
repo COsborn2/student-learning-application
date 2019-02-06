@@ -9,7 +9,7 @@ let InstructorSchema = new mongoose.Schema({
     required: true,
     minlength: 1,
     trim: true,
-    // unique: true,
+    unique: true,
     validate: {
       validator: validator.isEmail,
       message: '{VALUE} is not a valid email'
@@ -27,7 +27,7 @@ InstructorSchema.methods.toJSON = function () {
   let instructor = this
   let instructorObject = instructor.toObject()
 
-  return _.pick(instructorObject, ['email', 'hashedPassword'])
+  return _.pick(instructorObject, ['email'])
 }
 
 let Instructor = mongoose.model('Instructor', InstructorSchema)
