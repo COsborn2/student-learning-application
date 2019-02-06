@@ -1,5 +1,10 @@
 import React from 'react'
+import { DragDropContextProvider } from 'react-dnd';
+import HTML5Backend from 'react-dnd-html5-backend';
 import './StudentSpelling.css'
+
+import SpellingCard from './spelling/SpellingCard.js'
+import DropZone from './spelling/DropZone.js'
 
 function getWord () {
   return 'kite'
@@ -29,18 +34,6 @@ function getLetters (wordToSpell, unlockedLetters, extraCards) {
   return shuffle(letters)
 }
 
-function Card (props) {
-  return (
-    <div key={props.id}
-      onClick={props.onClick}
-      className='cardDND'>
-      <div className='letterHolderDND'>
-        {props.value}
-      </div>
-    </div>
-  )
-}
-
 function shuffle (cards) {
   var j, x, i
   for (i = cards.length - 1; i > 0; i--) {
@@ -57,6 +50,17 @@ function getStatus (YN, word) {
   return 'Spell ' + word
 }
 
+function initializeDropZone(howMany)
+{
+  var dropZone = [];
+
+  for (var i = 0; i < howMany; i++)
+  {
+    dropZone.push('');
+  }
+  return dropZone;
+}
+
 class StudentSpelling extends React.Component {
   constructor (props) {
     super(props)
@@ -64,41 +68,19 @@ class StudentSpelling extends React.Component {
       wordToSpell: getWord(),
       reset: getLetters(getWord(), getUnlockedLetters(), 1),
       letters: [],
-      words: []
+      dropZoneState: initializeDropZone(getWord().split().length),
     }
     this.state.letters = this.state.reset.slice()
   }
 
-  onLetterClick = (id) => {
-    var newWords = this.state.words
-    newWords.push(this.state.letters[id])
-
-    var newLetters = this.state.letters
-    newLetters.splice(id, 1)
-
-    this.setState({ letters: newLetters,
-      words: newWords })
-  }
-
-  onWordClick = (id) => {
-    var newLetters = this.state.letters
-    newLetters.push(this.state.words[id])
-
-    var newWords = this.state.words
-    newWords.splice(id, 1)
-
-    this.setState({ letters: newLetters,
-      words: newWords })
-  }
-
   onResetClick = () => {
     var reset = this.state.reset.slice()
-    this.setState({ words: [], letters: reset })
+    this.setState({letters: reset })
   }
 
   renderCard (t, i, func) {
     return (
-      <Card id={i}
+      <SpellingCard id={i}
         onClick={(e) => func(i)}
         value={t} />
     )
@@ -109,12 +91,20 @@ class StudentSpelling extends React.Component {
     return <button type='button' class='btn btn-danger' onClick={this.onResetClick}>Reset</button>
   }
 
+  setDropZone = (id, data) =>
+  {
+    //alert(id + " " + data);
+    var updateDropZone = this.state.dropZoneState
+    updateDropZone[id] = data;
+    this.setState({dropZoneState: updateDropZone})
+  }
+
   render () {
-    var complete = isComplete(this.state.words, this.state.wordToSpell)
+    var complete = isComplete(this.state.dropZoneState, this.state.wordToSpell)
     var lSpace = []
-    var wSpace = []
     var button = this.renderButton(complete)
     var status = getStatus(complete, this.state.wordToSpell)
+    var renderDropZone = []
 
     this.state.letters.forEach((t, i) => {
       lSpace.push(
@@ -122,32 +112,27 @@ class StudentSpelling extends React.Component {
       )
     })
 
-    this.state.words.forEach((t, i) => {
-      wSpace.push(
-        this.renderCard(t, i, this.onWordClick)
-      )
+    this.state.wordToSpell.split('').forEach((t, i) => {
+      renderDropZone.push(<DropZone id={i} parentTest={this.setDropZone} value={this.state.dropZoneState[i]}></DropZone>)
     })
 
+    const { connectDragSource, connectDropTarget } = this.props
     return (
-      <div className='container-dragDND'>
+      <DragDropContextProvider backend={HTML5Backend}>
+      <div className='container text-center'>
         <h1 color={'red'}>Spelling Cards!</h1>
         <h2 className='headerDND'>{status}</h2>
-
-        <span>WordSpace</span>
-        <div className='droppableDND'
-          onDragOver={(e) => this.onDragOver(e)}
-          onDrop={(e) => this.onDrop(e, 'WordSpace')}>
-          {wSpace}
+        <span>DropZone</span>
+        <div className='row ext-center'>
+        {renderDropZone}
         </div>
-        <span>Letter</span>
-        <div className='LetterDND'
-          onDragOver={(e) => this.onDragOver(e)}
-          onDrop={(e) => this.onDrop(e, 'Letter')}
-        >
+        <span>Letter Cards</span>
+        <div className='row ext-center'>
           {lSpace}
         </div>
         {button}
-      </div>)
+      </div>
+      </DragDropContextProvider>)
   }
 }
 
