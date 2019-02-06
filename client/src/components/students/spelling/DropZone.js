@@ -1,6 +1,8 @@
 import React from 'react';
 import { DropTarget } from 'react-dnd';
 
+var dropZoneID = null;
+
 const Types = {
   SPELLINGCARD: 'spellingCard'
 }
@@ -8,8 +10,7 @@ const Types = {
 const dropTarget = {
   drop(props, monitor){
     const item = monitor.getItem();
-    alert(item.value);
-    //Research way to pass it to student spelling
+    props.parentTest(dropZoneID, item.value);
   }
 }
 
@@ -23,19 +24,14 @@ function collect(connect, monitor)
 
 function DropZone(props)
 {
-  const {id} = props;
+  const {id, value} = props;
   const {isOver, connectDropTarget} = props;
+  dropZoneID = id;
 
-  if(!isOver)
-    return connectDropTarget(
-      <div key={"dropzone" + id}
-      className='col-md-1 mx-1 card badge-warning'>Drag something here!</div>
-    )
-  else
+
   return connectDropTarget(
     <div key={"dropzone" + id}
-    className='col-md-1 mx-1 card badge-success'>Drag something here!</div>
-  )
+    className='col-md-1 mx-1 card badge-warning'>[{id}][{value}]Drag a letter here!</div>)
 }
 
 export default DropTarget(Types.SPELLINGCARD, dropTarget, collect)(DropZone);
