@@ -39,12 +39,16 @@ class LoginModal extends Component {
   handleVerifyAuth () {
     const password = this._passwordInput.value
     const id = this._idInput.value
+
     if (id === '') {
       this.animateMessage('* A username is required')
     } else if (password === '') {
       this.animateMessage('* A password is required')
-    } else if (id === 'Developer' && password === 'password') {
-      this.props.onAuthenticate(id)
+    }
+
+    let isAuth = this.props.user.verifyAuth(id, password)
+    if (isAuth) {
+      this.props.onAuthenticate()
     } else {
       this.animateMessage('* Incorrect username or password')
     }
@@ -59,7 +63,9 @@ class LoginModal extends Component {
   }
 
   handleSkipAuth () {
-    this.props.onAuthenticate('Developer')// todo remove dev skip for easy access
+    let isAuth = this.props.user.verifyAuth('StudentDev', 'password')
+    console.log(isAuth)
+    if (isAuth) this.props.onAuthenticate()// todo remove dev skip for easy access
   }
 
   render () {
@@ -68,7 +74,7 @@ class LoginModal extends Component {
       <div className='modal-dialog-centered'>
         <ModalDialog>
           <ModalHeader>
-            <ModalTitle>{this.props.userType} Login</ModalTitle>
+            <ModalTitle>{this.props.user.TYPE} Login</ModalTitle>
             <Button bsStyle='warning' onClick={this.handleSkipAuth}>Dev Skip</Button>
           </ModalHeader>
 
@@ -105,7 +111,7 @@ class LoginModal extends Component {
 
 LoginModal.propTypes = {
   onAuthenticate: PropTypes.func.isRequired,
-  userType: PropTypes.string.isRequired,
+  user: PropTypes.object.isRequired,
   history: PropTypes.object.isRequired
 }
 

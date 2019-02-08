@@ -5,28 +5,32 @@ import StudentHome from './StudentHome'
 import { Redirect, Route, Switch } from 'react-router-dom'
 import StudentSpelling from './StudentSpelling'
 import StudentWriting from './StudentWriting'
+import StudentObj from './StudentObj'
 
 class StudentView extends Component {
   constructor (props) {
     super(props)
-    this.state = { userId: '', isAuthenticated: false }
+    this.state = {
+      user: new StudentObj()
+
+    }
+    this.onAuthenticated = this.onAuthenticated.bind(this)
   }
 
-  onAuthenticated (userId) {
-    this.setState({ userId: userId, isAuthenticated: true })
-    this.props.history.replace('/student/' + userId)
+  onAuthenticated () {
+    this.props.history.replace('/student/' + this.state.user.id)
   }
 
   render () {
-    let { isAuthenticated } = this.state
+    let { user } = this.state
     let { pathname } = this.props.history.location
-    if (!isAuthenticated && pathname !== '/student/login') {
+    if (!user.isAuth && pathname !== '/student/login') {
       return <Redirect to='/student/login' />
     }
     return (
       <div style={{ background: '#a9a9a9' }}>
         <Switch>
-          <Route path='/student/login' render={() => <LoginModal {...this.props} userType='Student' onAuthenticate={(id) => this.onAuthenticated(id)} />} />
+          <Route path='/student/login' render={() => <LoginModal history={this.props.history} user={user} onAuthenticate={this.onAuthenticated} />} />
           <Route exact path='/student/:id' component={StudentHome} />
           <Route path='/student/:id/spelling' component={StudentSpelling} />
           <Route path='/student/:id/writing' component={StudentWriting} />
