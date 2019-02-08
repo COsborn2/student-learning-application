@@ -38,15 +38,27 @@ function SpellingCard (props)
   const {id, value} = props;
   const {isDragging, connectDragSource} = props;
 
-  return connectDragSource(
-    <div key={id}
+  if(!isDragging)
+  {
+    return connectDragSource(
+      <div key={id}
+        //onClick={props.onClick}
+        className='mx-1 col-md-1 card badge-success'>
+        <h5 className='card-title card badge-light'>
+          {value}
+        </h5>
+      </div>
+    )
+  }
+  else
+  {
+    return connectDragSource(
+      <div key={id}
       //onClick={props.onClick}
-      className='mx-1 col-md-1 card badge-success'>
-      <h5 className='card-title card badge-light'>
-        {value}
-      </h5>
+      className='mx-1 col-md-1'>
     </div>
-  )
+    )
+  }
 }
 
 export default DragSource(Types.SPELLINGCARD, spellingCardSource, collect)(SpellingCard);

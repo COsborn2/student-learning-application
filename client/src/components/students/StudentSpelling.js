@@ -56,7 +56,7 @@ function initializeDropZone(howMany)
 
   for (var i = 0; i < howMany; i++)
   {
-    dropZone.push('');
+    dropZone.push("[]");
   }
   return dropZone;
 }
@@ -68,20 +68,20 @@ class StudentSpelling extends React.Component {
       wordToSpell: getWord(),
       reset: getLetters(getWord(), getUnlockedLetters(), 1),
       letters: [],
-      dropZoneState: initializeDropZone(getWord().split().length),
+      dropZoneState: initializeDropZone(getWord().length),
     }
     this.state.letters = this.state.reset.slice()
   }
 
   onResetClick = () => {
-    var reset = this.state.reset.slice()
-    this.setState({letters: reset })
+    alert("Currently Broken")
+    /*var reset = this.state.reset.slice()
+    this.setState({letters: reset })*/
   }
 
-  renderCard (t, i, func) {
+  renderCard (t, i) {
     return (
       <SpellingCard id={i}
-        onClick={(e) => func(i)}
         value={t} />
     )
   }
@@ -91,29 +91,36 @@ class StudentSpelling extends React.Component {
     return <button type='button' class='btn btn-danger' onClick={this.onResetClick}>Reset</button>
   }
 
-  setDropZone = (id, data) =>
+  setDropZone = (dropZoneID, data, cardID) =>
   {
-    //alert(id + " " + data);
-    var updateDropZone = this.state.dropZoneState
-    updateDropZone[id] = data;
+    var updateDropZone = this.state.dropZoneState;
+    var newLetters = this.state.letters;
+    updateDropZone[dropZoneID] = data;
+  
+    if(updateDropZone[dropZoneID] === this.state.wordToSpell[dropZoneID])
+    {
+      newLetters.splice(cardID, 1)
+    }
+
     this.setState({dropZoneState: updateDropZone})
+    this.setState({letters: newLetters})
   }
 
   render () {
     var complete = isComplete(this.state.dropZoneState, this.state.wordToSpell)
-    var lSpace = []
+    var renderLetterCards = []
     var button = this.renderButton(complete)
     var status = getStatus(complete, this.state.wordToSpell)
     var renderDropZone = []
 
     this.state.letters.forEach((t, i) => {
-      lSpace.push(
-        this.renderCard(t, i, this.onLetterClick)
+      renderLetterCards.push(
+        this.renderCard(t, i)
       )
     })
 
     this.state.wordToSpell.split('').forEach((t, i) => {
-      renderDropZone.push(<DropZone id={i} parentTest={this.setDropZone} value={this.state.dropZoneState[i]}></DropZone>)
+      renderDropZone.push(<DropZone id={i} onDrop={this.setDropZone} passedLetter={this.state.dropZoneState[i]} setLetter={t}></DropZone>)
     })
 
     const { connectDragSource, connectDropTarget } = this.props
@@ -128,7 +135,7 @@ class StudentSpelling extends React.Component {
         </div>
         <span>Letter Cards</span>
         <div className='row ext-center'>
-          {lSpace}
+          {renderLetterCards}
         </div>
         {button}
       </div>
