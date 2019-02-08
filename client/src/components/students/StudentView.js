@@ -5,21 +5,16 @@ import StudentHome from './StudentHome'
 import { Redirect, Route, Switch } from 'react-router-dom'
 import StudentSpelling from './StudentSpelling'
 import StudentWriting from './StudentWriting'
-import StudentObj from './StudentObj'
+import StudentObj from '../../javascript/StudentObj'
 
 class StudentView extends Component {
   constructor (props) {
     super(props)
     this.state = {
       user: new StudentObj()
-
     }
-    this.onAuthenticated = this.onAuthenticated.bind(this)
   }
 
-  onAuthenticated () {
-    this.props.history.replace('/student/' + this.state.user.id)
-  }
 
   render () {
     let { user } = this.state
@@ -30,7 +25,7 @@ class StudentView extends Component {
     return (
       <div style={{ background: '#a9a9a9' }}>
         <Switch>
-          <Route path='/student/login' render={() => <LoginModal history={this.props.history} user={user} onAuthenticate={this.onAuthenticated} />} />
+          <Route path='/student/login' render={() => <LoginModal history={this.props.history} user={user}/>} />
           <Route exact path='/student/:id' component={StudentHome} />
           <Route path='/student/:id/spelling' component={StudentSpelling} />
           <Route path='/student/:id/writing' component={StudentWriting} />
