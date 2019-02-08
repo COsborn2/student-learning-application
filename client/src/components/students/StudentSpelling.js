@@ -1,8 +1,8 @@
 import React from 'react'
 import { DragDropContextProvider } from 'react-dnd';
+import { Image } from 'react-bootstrap'
 import HTML5Backend from 'react-dnd-html5-backend';
 import './StudentSpelling.css'
-
 import SpellingCard from './spelling/SpellingCard.js'
 import DropZone from './spelling/DropZone.js'
 
@@ -14,6 +14,11 @@ function getUnlockedLetters () {
   return ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'z', 'y', 'z']
 }
 
+function getSpellingPicture ()
+{
+  return "https://www.lifebreeze.co.uk/product_images/27.gif"
+}
+
 function isComplete (words, wordToSpell) {
   let w = ''
   words.forEach(function (e) {
@@ -23,12 +28,15 @@ function isComplete (words, wordToSpell) {
   return false
 }
 
-function getLetters (wordToSpell, unlockedLetters, extraCards) {
+function getLetters (wordToSpell, unlockedLetters, extraLetters) {
   var alphabet = unlockedLetters
   var letters = wordToSpell.split('')
 
-  for (var i = 0; i < extraCards; i++) {
-    letters.push(alphabet[Math.floor(Math.random() * alphabet.length)])
+  if(extraLetters !== null)
+  {
+    for (var i = 0; i < extraLetters.length; i++) {
+      letters.push(extraLetters[i])
+    }
   }
 
   return shuffle(letters)
@@ -47,7 +55,7 @@ function shuffle (cards) {
 
 function getStatus (YN, word) {
   if (YN) { return 'Congrats!' }
-  return 'Spell ' + word
+  return 'Spell this image'
 }
 
 function initializeDropZone(howMany)
@@ -66,18 +74,18 @@ class StudentSpelling extends React.Component {
     super(props)
     this.state = {
       wordToSpell: getWord(),
-      reset: getLetters(getWord(), getUnlockedLetters(), 1),
-      letters: [],
+      initualHand: [],
+      currentHand: getLetters(getWord(), getUnlockedLetters(), null),
       dropZoneState: initializeDropZone(getWord().length),
+      spellingPicture: getSpellingPicture(),
     }
-    this.state.letters = this.state.reset.slice()
+    //this.state.currentHand = this.state.initualHand.slice()
   }
 
-  onResetClick = () => {
-    alert("Currently Broken")
-    /*var reset = this.state.reset.slice()
-    this.setState({letters: reset })*/
-  }
+  /*onResetClick = () => {
+    this.setState({currentHand: getLetters(getWord(), getUnlockedLetters(), null),
+                    dropZoneState: initializeDropZone(getWord().length)})
+  }*/
 
   renderCard (t, i) {
     return (
@@ -87,23 +95,31 @@ class StudentSpelling extends React.Component {
   }
 
   renderButton (YN) {
-    if (YN) { return <button type='button' class='btn btn-success' onClick={() => alert('Working on it')}>Continue</button> }
-    return <button type='button' class='btn btn-danger' onClick={this.onResetClick}>Reset</button>
+    if (YN) 
+    { 
+      return <button type='button' className='btn btn-success' onClick={() => alert('Working on it')}>Continue</button>
+    }
+    return <button type='button' className='btn btn-secondary'>Continue</button>
+    //return <button type='button' className='btn btn-danger' onClick={this.onResetClick}>Reset</button>
   }
 
   setDropZone = (dropZoneID, data, cardID) =>
   {
     var updateDropZone = this.state.dropZoneState;
-    var newLetters = this.state.letters;
-    updateDropZone[dropZoneID] = data;
-  
-    if(updateDropZone[dropZoneID] === this.state.wordToSpell[dropZoneID])
+    var newLetters = this.state.currentHand;
+
+    if(updateDropZone[dropZoneID] !== this.state.wordToSpell[dropZoneID])
     {
-      newLetters.splice(cardID, 1)
-    }
+      updateDropZone[dropZoneID] = data;
+      if(data === this.state.wordToSpell[dropZoneID])
+      {
+        newLetters.splice(cardID, 1)
+      }
+    } 
+
 
     this.setState({dropZoneState: updateDropZone})
-    this.setState({letters: newLetters})
+    this.setState({currentHand: newLetters})
   }
 
   render () {
@@ -113,7 +129,7 @@ class StudentSpelling extends React.Component {
     var status = getStatus(complete, this.state.wordToSpell)
     var renderDropZone = []
 
-    this.state.letters.forEach((t, i) => {
+    this.state.currentHand.forEach((t, i) => {
       renderLetterCards.push(
         this.renderCard(t, i)
       )
@@ -128,7 +144,7 @@ class StudentSpelling extends React.Component {
       <DragDropContextProvider backend={HTML5Backend}>
       <div className='container text-center'>
         <h1 color={'red'}>Spelling Cards!</h1>
-        <h2 className='headerDND'>{status}</h2>
+        <h2 className='headerDND'>{status}<Image className="img-fluid" alt="Responsive image" src={this.state.spellingPicture}/></h2>
         <span>DropZone</span>
         <div className='row ext-center'>
         {renderDropZone}
