@@ -20,8 +20,8 @@
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
-    "test-standard": "standard ./src/*.js ./src/components/**/*.js | snazzy",
-    "fix-standard": "standard ./src/*.js ./src/components/**/*.js --fix"
+    "test-standard": "standard \"./src/*.js\" \"./src/components/**/*.js\" | snazzy",
+    "fix-standard": "standard \"./src/*.js\" \"./src/components/**/*.js\" --fix"
   },
   "proxy": "http://localhost:5000/",
   "eslintConfig": {
