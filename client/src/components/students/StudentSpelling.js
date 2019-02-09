@@ -105,7 +105,7 @@ class StudentSpelling extends React.Component {
   }
 
   renderButton (YN) {
-    if (YN) { return <button type='button' class='btn btn-success' onClick={() => alert('Working on it')}>Continue</button> }
+    if (YN) { return <button type='button' class='btn btn-success' onClick={() => window.alert('Working on it')}>Continue</button> }
     return <button type='button' class='btn btn-danger' onClick={this.onResetClick}>Reset</button>
   }
 
