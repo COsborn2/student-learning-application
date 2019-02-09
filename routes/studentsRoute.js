@@ -14,10 +14,10 @@ let createStudent = (req, res) => {
     student.token = token
     student.save((err) => {
       if (err) {
-        if(err.code === 11000)  {
-            return res.status(400).send({ error: 'User already exists with that username' })
+        if (err.code === 11000) {
+          return res.status(400).send({ error: 'User already exists with that username' })
         }
-        return res.status(400).send({ error: 'error'})
+        return res.status(400).send({ error: 'error' })
       }
       res.header('x-auth', token.token).send(student)
     })

@@ -22,10 +22,10 @@ let createInstructor = (req, res) => {
     instructor.token = token
     instructor.save((err) => {
       if (err) {
-        if(err.code === 11000)  {
-            return res.status(400).send({ error: 'User already exists with that email' })
+        if (err.code === 11000) {
+          return res.status(400).send({ error: 'User already exists with that email' })
         }
-        return res.status(400).send({ error: 'error'})
+        return res.status(400).send({ error: 'error' })
       }
       res.header('x-auth', token.token).send(instructor)
     })
