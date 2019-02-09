@@ -1,5 +1,5 @@
 class StudentObj {
-  TYPE = 'Student'
+  TYPE = 'student'
   id
   JWT
   isAuth
@@ -11,16 +11,28 @@ class StudentObj {
 
   // This is where backend api call is made
   verifyAuth (id, pass) {
-    if (id === 'StudentDev' && pass === 'password') {
+    if (id === 'studentDev' && pass === 'password') {
       this.id = id
       this.JWT = 'Valid JWT'
       this.isAuth = true
       return true
     }
-    console.log('Expected api call.')// todo
+    console.log('Expected api login call.')// todo
     this.id = -1
     this.JWT = null
     this.isAuth = false
+    return false
+  }
+
+  // This is where backend api call is made
+  verifySignup (id, pass) {
+    if (id.length > 3 && pass.length > 3) {
+      this.id = id
+      this.JWT = 'Valid JWT'
+      this.isAuth = true
+      return true
+    }
+    console.log('Expected api signup call.')// todo
     return false
   }
 }

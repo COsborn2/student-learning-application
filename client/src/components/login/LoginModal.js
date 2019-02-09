@@ -32,6 +32,7 @@ class LoginModal extends Component {
     }
     this.handleVerifyAuth = this.handleVerifyAuth.bind(this)
     this.handleSkipAuth = this.handleSkipAuth.bind(this)
+    this.handleSignup = this.handleSignup.bind(this)
   }
 
   // Hit backend for verification
@@ -69,15 +70,22 @@ class LoginModal extends Component {
     }
   }
 
+  handleSignup () {
+    let user = this.props.user
+    console.log('login signin user: ' + user)
+    this.props.history.replace('/signup/' + user.TYPE) // todo remove dev skip for easy access
+  }
+
   render () {
     let errorMessageStyle = this.state.showMessage ? messageStyles.messageShow : messageStyles.messageFading
+    let type = this.props.user.TYPE.charAt(0).toLocaleUpperCase() + this.props.user.TYPE.slice(1)
     return (
       <div className='modal-dialog-centered'>
         <ModalDialog>
           <ModalHeader>
-            <ModalTitle>{this.props.user.TYPE} Login</ModalTitle>
-
+            <ModalTitle>{type} Login</ModalTitle>
             <Button bsStyle='warning' onClick={this.handleSkipAuth}>Dev Skip</Button>
+            <Button bsStyle='info' onClick={this.handleSignup}>Signup</Button>
           </ModalHeader>
 
           <ModalBody>

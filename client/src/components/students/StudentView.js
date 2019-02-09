@@ -15,7 +15,6 @@ class StudentView extends Component {
     }
   }
 
-
   render () {
     let { user } = this.state
     let { pathname } = this.props.history.location
@@ -25,7 +24,7 @@ class StudentView extends Component {
     return (
       <div style={{ background: '#a9a9a9' }}>
         <Switch>
-          <Route path='/student/login' render={() => <LoginModal history={this.props.history} user={user}/>} />
+          <Route path='/student/login' render={() => <LoginModal history={this.props.history} user={user} />} />
           <Route exact path='/student/:id' component={StudentHome} />
           <Route path='/student/:id/spelling' component={StudentSpelling} />
           <Route path='/student/:id/writing' component={StudentWriting} />
