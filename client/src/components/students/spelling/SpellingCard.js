@@ -1,46 +1,42 @@
-import React from 'react';
-import { DragSource } from 'react-dnd';
+import React from 'react'
+import { DragSource } from 'react-dnd'
 
 const Types = {
-    SPELLINGCARD: 'spellingCard'
-  }
-  
+  SPELLINGCARD: 'spellingCard'
+}
+
 const spellingCardSource = {
-    beginDrag(props)
-    {
-      const item = { id: props.id, 
-                    value: props.value};
-      return item;
-    },
-  
-    endDrag(props, monitor, component)
-    {
-      if(!monitor.didDrop())
-      {
-        return;
-      }
-      const item = monitor.getItem();
-      const dropResult = monitor.getDropResult();
+  beginDrag (props) {
+    const item = { id: props.id,
+      value: props.value }
+    return item
+  },
+
+  endDrag (props, monitor, component) {
+    if (!monitor.didDrop()) {
+      return
     }
+    /* eslint-disable */
+    const item = monitor.getItem()
+    const dropResult = monitor.getDropResult()
+    /* eslint-enable */
+  }
 }
 
-function collect(connect, monitor)
-{
-    return{
-        connectDragSource: connect.dragSource(),
-        isDragging: monitor.isDragging()
-    }
+function collect (connect, monitor) {
+  return {
+    connectDragSource: connect.dragSource(),
+    isDragging: monitor.isDragging()
+  }
 }
 
-
-function SpellingCard (props) 
-{
-  const {id, value} = props;
-  const {isDragging, connectDragSource} = props;
+function SpellingCard (props) {
+  const { id, value } = props
+  const { connectDragSource } = props
 
   return connectDragSource(
     <div key={id}
-      //onClick={props.onClick}
+      // onClick={props.onClick}
       className='mx-1 col-md-1 card badge-success'>
       <h5 className='card-title card badge-light'>
         {value}
@@ -49,6 +45,6 @@ function SpellingCard (props)
   )
 }
 
-export default DragSource(Types.SPELLINGCARD, spellingCardSource, collect)(SpellingCard);
+export default DragSource(Types.SPELLINGCARD, spellingCardSource, collect)(SpellingCard)
 
-//export default SpellingCard
+// export default SpellingCard

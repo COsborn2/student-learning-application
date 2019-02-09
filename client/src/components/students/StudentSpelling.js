@@ -1,6 +1,6 @@
 import React from 'react'
-import { DragDropContextProvider } from 'react-dnd';
-import HTML5Backend from 'react-dnd-html5-backend';
+import { DragDropContextProvider } from 'react-dnd'
+import HTML5Backend from 'react-dnd-html5-backend'
 import './StudentSpelling.css'
 
 import SpellingCard from './spelling/SpellingCard.js'
@@ -50,15 +50,13 @@ function getStatus (YN, word) {
   return 'Spell ' + word
 }
 
-function initializeDropZone(howMany)
-{
-  var dropZone = [];
+function initializeDropZone (howMany) {
+  var dropZone = []
 
-  for (var i = 0; i < howMany; i++)
-  {
-    dropZone.push('');
+  for (var i = 0; i < howMany; i++) {
+    dropZone.push('')
   }
-  return dropZone;
+  return dropZone
 }
 
 class StudentSpelling extends React.Component {
@@ -68,14 +66,14 @@ class StudentSpelling extends React.Component {
       wordToSpell: getWord(),
       reset: getLetters(getWord(), getUnlockedLetters(), 1),
       letters: [],
-      dropZoneState: initializeDropZone(getWord().split().length),
+      dropZoneState: initializeDropZone(getWord().split().length)
     }
     this.state.letters = this.state.reset.slice()
   }
 
   onResetClick = () => {
     var reset = this.state.reset.slice()
-    this.setState({letters: reset })
+    this.setState({ letters: reset })
   }
 
   renderCard (t, i, func) {
@@ -87,16 +85,15 @@ class StudentSpelling extends React.Component {
   }
 
   renderButton (YN) {
-    if (YN) { return <button type='button' class='btn btn-success' onClick={() => alert('Working on it')}>Continue</button> }
+    if (YN) { return <button type='button' class='btn btn-success' onClick={() => window.alert('Working on it')}>Continue</button> }
     return <button type='button' class='btn btn-danger' onClick={this.onResetClick}>Reset</button>
   }
 
-  setDropZone = (id, data) =>
-  {
-    //alert(id + " " + data);
+  setDropZone = (id, data) => {
+    // alert(id + " " + data);
     var updateDropZone = this.state.dropZoneState
-    updateDropZone[id] = data;
-    this.setState({dropZoneState: updateDropZone})
+    updateDropZone[id] = data
+    this.setState({ dropZoneState: updateDropZone })
   }
 
   render () {
@@ -113,25 +110,25 @@ class StudentSpelling extends React.Component {
     })
 
     this.state.wordToSpell.split('').forEach((t, i) => {
-      renderDropZone.push(<DropZone id={i} parentTest={this.setDropZone} value={this.state.dropZoneState[i]}></DropZone>)
+      renderDropZone.push(<DropZone id={i} parentTest={this.setDropZone} value={this.state.dropZoneState[i]} />)
     })
 
-    const { connectDragSource, connectDropTarget } = this.props
+    // const { connectDragSource, connectDropTarget } = this.props
     return (
       <DragDropContextProvider backend={HTML5Backend}>
-      <div className='container text-center'>
-        <h1 color={'red'}>Spelling Cards!</h1>
-        <h2 className='headerDND'>{status}</h2>
-        <span>DropZone</span>
-        <div className='row ext-center'>
-        {renderDropZone}
+        <div className='container text-center'>
+          <h1 color={'red'}>Spelling Cards!</h1>
+          <h2 className='headerDND'>{status}</h2>
+          <span>DropZone</span>
+          <div className='row ext-center'>
+            {renderDropZone}
+          </div>
+          <span>Letter Cards</span>
+          <div className='row ext-center'>
+            {lSpace}
+          </div>
+          {button}
         </div>
-        <span>Letter Cards</span>
-        <div className='row ext-center'>
-          {lSpace}
-        </div>
-        {button}
-      </div>
       </DragDropContextProvider>)
   }
 }

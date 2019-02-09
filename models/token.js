@@ -12,7 +12,7 @@ let TokenSchema = new mongoose.Schema({
     required: true
   },
   access: {
-    type: String,
+    type: [String],
     required: true,
     trim: true
   },
