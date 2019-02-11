@@ -18,7 +18,7 @@ class InstructorView extends Component {
 
   render () {
     let { user } = this.state
-    if (user === null || !user.isAuth) {
+    if (!user || !user.isAuth) {
       return <Redirect to='/login/instructor' />
     }
     return (
