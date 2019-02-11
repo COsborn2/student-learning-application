@@ -51,8 +51,9 @@ class SignupScreen extends Component {
     }
 
     let isAuth = user.verifySignup(id, password)
+    this.setState({ user })
     if (isAuth) {
-      this.props.history.replace('/' + this.state.user.TYPE + '/' + this.state.user.id, this.state.user) // navigates to the proper user screen, passing the authenticated user as a prop
+      this.props.history.replace('/' + user.TYPE + '/' + user.id, user) // navigates to the proper user screen, passing the authenticated user as a prop
     } else {
       this.animateMessage('* Invalid username or password')
     }
@@ -108,8 +109,7 @@ class SignupScreen extends Component {
 }
 
 SignupScreen.propTypes = {
-  history: PropTypes.object.isRequired,
-  match: PropTypes.object.isRequired
+  history: PropTypes.object.isRequired
 }
 
 export default SignupScreen

@@ -3,10 +3,19 @@ class StudentObj {
   id
   JWT
   isAuth
-  constructor (id) {
-    this.id = (id !== undefined) ? id : -1
-    this.JWT = null
-    this.isAuth = false
+  assignments
+  constructor (user) {
+    if (user) {
+      this.id = user.id
+      this.JWT = user.JWT
+      this.isAuth = user.isAuth
+      this.assignments = user.assignments
+    } else {
+      this.id = -1
+      this.JWT = null
+      this.isAuth = false
+      this.assignments = null
+    }
   }
 
   // This is where backend api call is made
@@ -18,9 +27,6 @@ class StudentObj {
       return true
     }
     console.log('Expected api login call.')// todo
-    this.id = -1
-    this.JWT = null
-    this.isAuth = false
     return false
   }
 
@@ -34,6 +40,20 @@ class StudentObj {
     }
     console.log('Expected api signup call.')// todo
     return false
+  }
+
+  // This is where the api call is made to retrieve the specific studnet's assignments
+  // IMPORTANT: THE STUDENTOBJ MUST BE SAVED USING SET STATE AFTER THIS CALL
+  updateAssignment () {
+    let assignments = [{
+      letters: [],
+      words: [{
+        word: 'kite',
+        imageURL: 'https://www.lifebreeze.co.uk/product_images/27.gif'
+      }]
+    }]
+    this.assignments = assignments
+    return true
   }
 }
 

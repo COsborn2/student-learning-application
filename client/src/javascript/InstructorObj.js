@@ -3,10 +3,19 @@ class InstructorObj {
   id
   JWT
   isAuth
-  constructor (id) {
-    this.id = (id !== undefined) ? id : -1
-    this.JWT = null
-    this.isAuth = false
+  classrooms
+  constructor (user) {
+    if (user) {
+      this.id = user.id
+      this.JWT = user.JWT
+      this.isAuth = user.isAuth
+      this.classrooms = user.classrooms
+    } else {
+      this.id = -1
+      this.JWT = null
+      this.isAuth = false
+      this.classrooms = null
+    }
   }
 
   // This is where backend api call is made
@@ -34,6 +43,17 @@ class InstructorObj {
     }
     console.log('Expected instructor api signup call.')// todo
     return false
+  }
+
+  // This is where the api call is made to retrieve the specific instructor's classes
+  // IMPORTANT: THE INSTRUCTOROBJ MUST BE SAVED USING SET STATE AFTER THIS CALL
+  updateClasses () {
+    let classrooms = [{
+      classCode: 1,
+      students: [{ userName: 'devStudent' }]
+    }]
+    this.classrooms = classrooms
+    return true
   }
 }
 
