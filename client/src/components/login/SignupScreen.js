@@ -1,5 +1,4 @@
 import React, { Component } from 'react'
-import PropTypes from 'prop-types'
 import {
   Button,
   ModalBody,
@@ -10,6 +9,7 @@ import {
   FormControl,
   FormGroup, ControlLabel, Form
 } from 'react-bootstrap'
+import PropTypes from 'prop-types'
 
 const messageStyles = {
   messageFading: {
@@ -23,30 +23,38 @@ const messageStyles = {
   }
 }
 
-class LoginModal extends Component {
+/* The signupModal creates a new user object based on the type parameter in the url
+it uses this to create a new user. When a new user is succesfully created, the client is redirected
+to the proper user screen and is signed in
+ */
+
+class SignupScreen extends Component {
   constructor (props) {
     super(props)
     this.state = {
       failedMessage: '',
-      showMessage: false
+      showMessage: false,
+      user: this.props.history.location.state
     }
-
-    this.handleVerifyAuth = this.handleVerifyAuth.bind(this)
-    this.handleSkipAuth = this.handleSkipAuth.bind(this)
+    this.handleSignup = this.handleSignup.bind(this)
   }
 
-  // Hit backend for verification
-  handleVerifyAuth () {
+  handleSignup () {
     const password = this._passwordInput.value
     const id = this._idInput.value
+    let user = this.state.user
+
     if (id === '') {
       this.animateMessage('* A username is required')
     } else if (password === '') {
       this.animateMessage('* A password is required')
-    } else if (id === 'Developer' && password === 'password') {
-      this.props.onAuthenticate(id)
+    }
+
+    let isAuth = user.verifySignup(id, password)
+    if (isAuth) {
+      this.props.history.replace('/' + this.state.user.TYPE + '/' + this.state.user.id, this.state.user) // navigates to the proper user screen, passing the authenticated user as a prop
     } else {
-      this.animateMessage('* Incorrect username or password')
+      this.animateMessage('* Invalid username or password')
     }
   }
 
@@ -58,18 +66,14 @@ class LoginModal extends Component {
     }, 1000)
   }
 
-  handleSkipAuth () {
-    this.props.onAuthenticate('Developer')// todo remove dev skip for easy access
-  }
-
   render () {
     let errorMessageStyle = this.state.showMessage ? messageStyles.messageShow : messageStyles.messageFading
+    let type = this.props.match.arguments
     return (
       <div className='modal-dialog-centered'>
         <ModalDialog>
           <ModalHeader>
-            <ModalTitle>{this.props.userType} Login</ModalTitle>
-            <Button bsStyle='warning' onClick={this.handleSkipAuth}>Dev Skip</Button>
+            <ModalTitle>{type} Sign Up</ModalTitle>
           </ModalHeader>
 
           <ModalBody>
@@ -95,7 +99,7 @@ class LoginModal extends Component {
             <p style={errorMessageStyle}>{this.state.failedMessage}</p>
             <div style={{ flex: 1 }} />
             <Button bsStyle='primary' onClick={() => this.props.history.push('/')}>Close</Button>
-            <Button bsStyle='primary' type={'submit'} onClick={this.handleVerifyAuth}>Log in</Button>
+            <Button bsStyle='primary' type={'submit'} onClick={this.handleSignup}>Sign Up</Button>
           </ModalFooter>
         </ModalDialog>
       </div>
@@ -103,10 +107,9 @@ class LoginModal extends Component {
   }
 }
 
-LoginModal.propTypes = {
-  onAuthenticate: PropTypes.func.isRequired,
-  userType: PropTypes.string.isRequired,
-  history: PropTypes.object.isRequired
+SignupScreen.propTypes = {
+  history: PropTypes.object.isRequired,
+  match: PropTypes.object.isRequired
 }
 
-export default LoginModal
+export default SignupScreen
