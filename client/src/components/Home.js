@@ -24,7 +24,7 @@ const Home = () => (
     </header>
 
     <Row style={styles.row}>
-      <Link to='/Instructor' className='mx-auto mb-4 card badge-success' style={styles.links}>
+      <Link to='/login/instructor' className='mx-auto mb-4 card badge-success' style={styles.links}>
         <Image className='card-img-top w-auto' src={instructorImageSrc} alt='Instructor' />
         <div className='card-body'>
           <h5 className='card-title'>Instructor</h5>
@@ -32,7 +32,7 @@ const Home = () => (
         </div>
       </Link>
 
-      <Link to='/Student' className='mx-auto mb-4 card badge-success' style={styles.links}>
+      <Link to='/login/student' className='mx-auto mb-4 card badge-success' style={styles.links}>
         <Image className='card-img-top w-auto' src={studentImageSrc} alt='Student' />
         <div className='card-body'>
           <h5 className='card-title'>Student</h5>

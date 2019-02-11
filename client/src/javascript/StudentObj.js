@@ -11,7 +11,7 @@ class StudentObj {
 
   // This is where backend api call is made
   verifyAuth (id, pass) {
-    if (id === 'studentDev' && pass === 'password') {
+    if (id === 'studentDev' && pass === 'password') { // this is just for the devSkip button
       this.id = id
       this.JWT = 'Valid JWT'
       this.isAuth = true
@@ -26,7 +26,7 @@ class StudentObj {
 
   // This is where backend api call is made
   verifySignup (id, pass) {
-    if (id.length > 3 && pass.length > 3) {
+    if (id.length > 3 && pass.length > 3) { // this is just to test that signup is working
       this.id = id
       this.JWT = 'Valid JWT'
       this.isAuth = true

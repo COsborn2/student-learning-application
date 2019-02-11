@@ -10,8 +10,6 @@ import {
   FormGroup, ControlLabel, Form
 } from 'react-bootstrap'
 import PropTypes from 'prop-types'
-import InstructorObj from '../../javascript/InstructorObj'
-import StudentObj from '../../javascript/StudentObj'
 
 const messageStyles = {
   messageFading: {
@@ -25,15 +23,18 @@ const messageStyles = {
   }
 }
 
+/* The signupModal creates a new user object based on the type parameter in the url
+it uses this to create a new user. When a new user is succesfully created, the client is redirected
+to the proper user screen and is signed in
+ */
+
 class SignupModal extends Component {
   constructor (props) {
     super(props)
-    let type = this.props.match.params.type
-    let user = type === 'instructor' ? new InstructorObj() : new StudentObj()
     this.state = {
       failedMessage: '',
       showMessage: false,
-      user: user
+      user: this.props.history.location.state
     }
     this.handleSignup = this.handleSignup.bind(this)
   }
@@ -51,7 +52,7 @@ class SignupModal extends Component {
 
     let isAuth = user.verifySignup(id, password)
     if (isAuth) {
-      this.props.history.replace('/')
+      this.props.history.replace('/' + this.state.user.TYPE + '/' + this.state.user.id, this.state.user) // navigates to the proper user screen, passing the authenticated user as a prop
     } else {
       this.animateMessage('* Invalid username or password')
     }

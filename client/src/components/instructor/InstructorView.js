@@ -2,28 +2,28 @@ import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 import { Redirect, Route, Switch } from 'react-router-dom'
 import InstructorHome from './InstructorHome'
-import LoginModal from '../login/LoginModal'
-import InstructorObj from '../../javascript/InstructorObj'
+
+/* The instructor view manages all screens and routes for a specific instructor user
+ the login screen creates and authenticates an instructor object, and passes it
+ to this component. If the user object ever becomes null or not authentic, it redirects
+ to the login screen */
 
 class InstructorView extends Component {
   constructor (props) {
     super(props)
     this.state = {
-      user: new InstructorObj()
+      user: this.props.history.location.state
     }
   }
 
-
   render () {
     let { user } = this.state
-    let { pathname } = this.props.history.location
-    if (!user.isAuth && pathname !== '/instructor/login') {
-      return <Redirect to='/instructor/login' />
+    if (user === null || !user.isAuth) {
+      return <Redirect to='/login/instructor' />
     }
     return (
       <div style={{ background: '#a9a9a9' }}>
         <Switch>
-          <Route path='/instructor/login' render={() => <LoginModal history={this.props.history} user={user} />} />
           <Route exact path='/instructor/:id' component={InstructorHome} />
         </Switch>
       </div>

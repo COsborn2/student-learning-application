@@ -4,6 +4,7 @@ import StudentView from './components/students/StudentView'
 import Home from './components/Home'
 import InstructorView from './components/instructor/InstructorView'
 import SignupModal from './components/login/SignupModal'
+import LoginModal from './components/login/LoginModal'
 
 class App extends Component {
   render () {
@@ -14,6 +15,7 @@ class App extends Component {
           <Route path='/instructor' component={InstructorView} />
           <Route path='/student' component={StudentView} />
           <Route path='/signup/:type' component={SignupModal} />
+          <Route path='/login/:type' component={LoginModal} />
         </Switch>
       </Browser>
     )

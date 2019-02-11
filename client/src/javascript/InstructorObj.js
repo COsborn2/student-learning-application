@@ -11,7 +11,7 @@ class InstructorObj {
 
   // This is where backend api call is made
   verifyAuth (id, pass) {
-    if (id === 'instructorDev' && pass === 'password') {
+    if (id === 'instructorDev' && pass === 'password') { // this is just for the devSkip button
       this.id = id
       this.JWT = 'Valid JWT'
       this.isAuth = true

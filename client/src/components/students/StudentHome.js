@@ -19,6 +19,7 @@ const StudentHome = ({ history, match }) => (
             <h5 className='card-title'>Spelling</h5>
             <p className='card-text'>Spell the word using the letter blocks provided</p>
           </div>
+
         </Button>
       </div>
 

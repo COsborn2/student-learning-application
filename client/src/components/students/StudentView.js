@@ -1,30 +1,31 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
-import LoginModal from '../login/LoginModal'
 import StudentHome from './StudentHome'
 import { Redirect, Route, Switch } from 'react-router-dom'
 import StudentSpelling from './StudentSpelling'
 import StudentWriting from './StudentWriting'
-import StudentObj from '../../javascript/StudentObj'
+
+/* The student view manages all screens and routes for a specific student user
+ the login screen creates and authenticates a student object, and passes it
+ to this component. If the user object ever becomes null or not authentic, it redirects
+ to the login screen */
 
 class StudentView extends Component {
   constructor (props) {
     super(props)
     this.state = {
-      user: new StudentObj()
+      user: this.props.history.location.state
     }
   }
 
   render () {
     let { user } = this.state
-    let { pathname } = this.props.history.location
-    if (!user.isAuth && pathname !== '/student/login') {
-      return <Redirect to='/student/login' />
+    if (user === null || !user.isAuth) {
+      return <Redirect to='/login/student' />
     }
     return (
       <div style={{ background: '#a9a9a9' }}>
         <Switch>
-          <Route path='/student/login' render={() => <LoginModal history={this.props.history} user={user} />} />
           <Route exact path='/student/:id' component={StudentHome} />
           <Route path='/student/:id/spelling' component={StudentSpelling} />
           <Route path='/student/:id/writing' component={StudentWriting} />
