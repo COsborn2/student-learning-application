@@ -28,7 +28,7 @@ it uses this to create a new user. When a new user is succesfully created, the c
 to the proper user screen and is signed in
  */
 
-class SignupModal extends Component {
+class SignupScreen extends Component {
   constructor (props) {
     super(props)
     this.state = {
@@ -107,9 +107,9 @@ class SignupModal extends Component {
   }
 }
 
-SignupModal.propTypes = {
+SignupScreen.propTypes = {
   history: PropTypes.object.isRequired,
   match: PropTypes.object.isRequired
 }
 
-export default SignupModal
+export default SignupScreen

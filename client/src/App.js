@@ -3,19 +3,19 @@ import { BrowserRouter as Browser, Route, Switch } from 'react-router-dom'
 import StudentView from './components/students/StudentView'
 import Home from './components/Home'
 import InstructorView from './components/instructor/InstructorView'
-import SignupModal from './components/login/SignupModal'
-import LoginModal from './components/login/LoginModal'
+import SignupScreen from './components/login/SignupScreen'
+import LoginScreen from './components/login/LoginScreen'
 
 class App extends Component {
   render () {
     return (
       <Browser>
-        <Switch style={{ borderRadius: 50, backgroundColor: '#c0c0c0' }}>
+        <Switch>
           <Route exact path='/' component={Home} />
           <Route path='/instructor' component={InstructorView} />
           <Route path='/student' component={StudentView} />
-          <Route path='/signup/:type' component={SignupModal} />
-          <Route path='/login/:type' component={LoginModal} />
+          <Route path='/signup/:type' component={SignupScreen} />
+          <Route path='/login/:type' component={LoginScreen} />
         </Switch>
       </Browser>
     )

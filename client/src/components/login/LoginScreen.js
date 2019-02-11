@@ -31,7 +31,7 @@ const messageStyles = {
  correct screen with the userObj passed as a property
  */
 
-class LoginModal extends Component {
+class LoginScreen extends Component {
   constructor (props) {
     super(props)
     let type = this.props.match.params.type
@@ -129,8 +129,8 @@ class LoginModal extends Component {
   }
 }
 
-LoginModal.propTypes = {
+LoginScreen.propTypes = {
   history: PropTypes.object.isRequired
 }
 
-export default LoginModal
+export default LoginScreen
