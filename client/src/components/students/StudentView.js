@@ -53,7 +53,7 @@ class StudentView extends Component {
   render () {
     let { user, curAssignmentIndex } = this.state
     if (!user || !user.isAuth) {
-      return <Redirect path='/login/student' />
+      return <Redirect to='/login/student' />
     }
     if (!this._isMounted) return <div /> // this is because the component is rendered one time before componentDidMount is called. ie the users assignments will be null
 

@@ -1,5 +1,6 @@
 import React from 'react'
 import { DragSource } from 'react-dnd'
+import PropTypes from 'prop-types'
 
 const Types = {
   SPELLINGCARD: 'spellingCard'
@@ -7,17 +8,14 @@ const Types = {
 
 const spellingCardSource = {
   beginDrag (props) {
-    const item = { id: props.id,
-      value: props.value }
-    return item
+    return { id: props.id, letter: props.letter }
   },
 
-  endDrag (props, monitor, component) {
-    if (!monitor.didDrop()) {
-      return
+  endDrag (props, monitor) {
+    if (monitor.didDrop()) {
+      monitor.getItem()
+      monitor.getDropResult()
     }
-    const item = monitor.getItem()
-    const dropResult = monitor.getDropResult()
   }
 }
 
@@ -29,26 +27,25 @@ function collect (connect, monitor) {
 }
 
 function SpellingCard (props) {
-  const { id, value } = props
-  const { isDragging, connectDragSource } = props
+  const { id, letter, isDragging, connectDragSource } = props
 
   if (!isDragging) {
     return connectDragSource(
-      <div key={id}
-        // onClick={props.onClick}
-        className='mx-1 col-md-1 card badge-success'>
+      <div key={id} className='col-md-2 mx-auto card badge-success'>
         <h5 className='card-title card badge-light'>
-          {value}
+          {letter}
         </h5>
       </div>
     )
   } else {
-    return connectDragSource(
-      <div key={id}
-      // onClick={props.onClick}
-        className='mx-1 col-md-1' />
-    )
+    return connectDragSource(<div key={id} className='mx-1 col-md-1' />)
   }
+}
+
+SpellingCard.proptypes = {
+  id: PropTypes.number.isRequired,
+  key: PropTypes.number.isRequired,
+  letter: PropTypes.string.isRequired
 }
 
 export default DragSource(Types.SPELLINGCARD, spellingCardSource, collect)(SpellingCard)

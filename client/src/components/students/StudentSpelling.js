@@ -7,23 +7,14 @@ import SpellingCard from './spelling/SpellingCard.js'
 import DropZone from './spelling/DropZone.js'
 import PropTypes from 'prop-types'
 
-function getUnlockedLetters () {
-  return ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'z', 'y', 'z']
+function isWordSpelled (curWord, wordToSpell) {
+  return curWord.join('') === wordToSpell
 }
 
-function isComplete (words, wordToSpell) {
-  let w = ''
-  words.forEach(function (e) {
-    w += e
-  })
-  return w === wordToSpell
-}
-
-function getLetters (wordToSpell, unlockedLetters, extraLetters) {
-  let alphabet = unlockedLetters
+function getLetters (wordToSpell, extraLetters) {
   let letters = wordToSpell.split('')
 
-  if (extraLetters !== null) {
+  if (extraLetters) {
     for (let i = 0; i < extraLetters.length; i++) {
       letters.push(extraLetters[i])
     }
@@ -34,7 +25,7 @@ function getLetters (wordToSpell, unlockedLetters, extraLetters) {
 
 function shuffle (cards) {
   let j, x, i
-  for (i = cards.length - 1; i > 0; i--) {
+  for (i = 0; i < cards.length - 1; i++) {
     j = Math.floor(Math.random() * (i + 1))
     x = cards[i]
     cards[i] = cards[j]
@@ -43,17 +34,13 @@ function shuffle (cards) {
   return cards
 }
 
-function getStatus (YN, word) {
-  if (YN) { return 'Congrats!' }
-  return 'Spell this image'
+function getStatus (isSpelled) {
+  return isSpelled ? 'Congrats!' : 'Spell this image'
 }
 
-function initializeDropZone (howMany) {
+function initializeDropZone (numCharsInWord) {
   let dropZone = []
-
-  for (let i = 0; i < howMany; i++) {
-    dropZone.push('[]')
-  }
+  for (let i = 0; i < numCharsInWord; i++) { dropZone.push('_') }
   return dropZone
 }
 
@@ -73,75 +60,51 @@ class StudentSpelling extends React.Component {
       wordsToSpell: wordsToSpell,
       wordToSpell: firstWordToSpell,
       imageURL: imageURL,
-      initialHand: [],
-      currentHand: getLetters(firstWordToSpell, getUnlockedLetters(), null),
-      dropZoneState: initializeDropZone(firstWordToSpell.length)
+      curHand: getLetters(firstWordToSpell),
+      curDropZone: initializeDropZone(firstWordToSpell.length)
     }
-    // this.state.currentHand = this.state.initialHand.slice()
   }
 
-  /* onResetClick = () => {
-    this.setState({currentHand: getLetters(getWord(), getUnlockedLetters(), null),
-                    dropZoneState: initializeDropZone(getWord().length)})
-  } */
-
-  renderCard (t, i) {
-    return <SpellingCard key={i} id={i} value={t} />
-  }
-
-  renderButton (YN) {
-    if (YN) {
-      return <button type='button' className='btn btn-success' onClick={this.props.onSpellingCompletion}>Continue</button>
-    }
-    return <button type='button' className='btn btn-secondary'>Continue</button>
+  renderButton (isSpelled) {
+    const buttonStyle = 'btn btn-' + (isSpelled ? 'success' : 'secondary')
+    return <button type='button' className={buttonStyle} onClick={this.props.onSpellingCompletion} disabled={!isSpelled}>Continue</button>
     // return <button type='button' className='btn btn-danger' onClick={this.onResetClick}>Reset</button>
   }
 
-  setDropZone = (dropZoneID, data, cardID) => {
-    let updateDropZone = this.state.dropZoneState
-    let newLetters = this.state.currentHand
+  setDropZone = (dropZoneID, letterDropped, cardID) => {
+    let { curDropZone, curHand, wordToSpell } = this.state
+    const expectedLetter = wordToSpell[dropZoneID]
 
-    if (updateDropZone[dropZoneID] !== this.state.wordToSpell[dropZoneID]) {
-      updateDropZone[dropZoneID] = data
-      if (data === this.state.wordToSpell[dropZoneID]) {
-        newLetters.splice(cardID, 1)
-      }
-    }
+    curDropZone[dropZoneID] = letterDropped
+    if (letterDropped === expectedLetter) curHand.splice(cardID, 1)
 
-    this.setState({ dropZoneState: updateDropZone })
-    this.setState({ currentHand: newLetters })
+    this.setState({ curDropZone, curHand })
   }
 
   render () {
-    let complete = isComplete(this.state.dropZoneState, this.state.wordToSpell)
-    let renderLetterCards = []
-    let button = this.renderButton(complete)
-    let status = getStatus(complete, this.state.wordToSpell)
-    let renderDropZone = []
+    const { curHand, curDropZone, wordToSpell } = this.state
+    let isSpelled = isWordSpelled(curDropZone, wordToSpell)
+    let button = this.renderButton(isSpelled)
+    let status = getStatus(isSpelled, wordToSpell)
+    let letterCards = curHand.map((letter, i) => <SpellingCard key={i} id={i} letter={letter} />)
+    let dropZoneCards = wordToSpell.split('').map((letter, index) =>
+      <DropZone id={index} key={index} onDrop={this.setDropZone} currentLetter={curDropZone[index]} expectedLetter={letter} />)
 
-    this.state.currentHand.forEach((t, i) => {
-      renderLetterCards.push(
-        this.renderCard(t, i)
-      )
-    })
-
-    this.state.wordToSpell.split('').forEach((t, i) => {
-      renderDropZone.push(<DropZone key={i} id={i} onDrop={this.setDropZone} passedLetter={this.state.dropZoneState[i]} setLetter={t} />)
-    })
-
-    const { connectDragSource, connectDropTarget } = this.props
     return (
       <DragDropContextProvider backend={HTML5Backend}>
         <div className='container text-center'>
           <h1 color={'red'}>Spelling Cards!</h1>
-          <h2 className='headerDND'>{status}<Image className='img-fluid' alt='Responsive image' src={this.state.imageURL} /></h2>
+          <h2 className='headerDND'>
+            {status}
+            <Image className='img-fluid' alt='Responsive image' src={this.state.imageURL} />
+          </h2>
           <span>DropZone</span>
-          <div className='row ext-center'>
-            {renderDropZone}
+          <div className='row'>
+            {dropZoneCards}
           </div>
           <span>Letter Cards</span>
-          <div className='row ext-center'>
-            {renderLetterCards}
+          <div className='row'>
+            {letterCards}
           </div>
           {button}
         </div>
