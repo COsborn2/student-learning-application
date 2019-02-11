@@ -50,6 +50,7 @@ class LoginScreen extends Component {
   handleVerifyAuth () {
     const password = this._passwordInput.value
     const id = this._idInput.value
+    let user = this.state.user
 
     if (id === '') {
       this.animateMessage('* A username is required')
@@ -57,9 +58,10 @@ class LoginScreen extends Component {
       this.animateMessage('* A password is required')
     }
 
-    let isAuth = this.state.user.verifyAuth(id, password)
+    let isAuth = user.verifyAuth(id, password)
+    this.setState({ user })
     if (isAuth) {
-      this.props.history.replace('/' + this.state.user.TYPE + '/' + this.state.user.id, this.state.user) // navigates to the proper user screen, passing the authenticated user as a prop
+      this.props.history.replace('/' + user.TYPE + '/' + user.id, user) // navigates to the proper user screen, passing the authenticated user as a prop
     } else {
       this.animateMessage('* Incorrect username or password')
     }
@@ -76,8 +78,9 @@ class LoginScreen extends Component {
   handleSkipAuth () {
     let user = this.state.user
     let isAuth = user.verifyAuth(user.TYPE + 'Dev', 'password')
+    this.setState({ user })
     if (isAuth) {
-      this.props.history.replace('/' + user.TYPE + '/' + user.id, this.state.user) // todo remove dev skip for easy access
+      this.props.history.replace('/' + user.TYPE + '/' + user.id, user) // todo remove dev skip for easy access
     }
   }
 

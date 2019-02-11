@@ -4,6 +4,7 @@ import StudentHome from './StudentHome'
 import { Redirect, Route, Switch } from 'react-router-dom'
 import StudentSpelling from './StudentSpelling'
 import StudentWriting from './StudentWriting'
+import StudentObj from '../../javascript/StudentObj'
 
 /* The student view manages all screens and routes for a specific student user
  the login screen creates and authenticates a student object, and passes it
@@ -14,7 +15,18 @@ class StudentView extends Component {
   constructor (props) {
     super(props)
     this.state = {
-      user: this.props.history.location.state
+      user: new StudentObj(this.props.history.location.state)
+    }
+    if (!this.state.user) {
+      console.error('StudentView ctor error: user is null')
+    }
+  }
+
+  componentDidMount () {
+    let user = this.state.user
+    if (user && user.isAuth) { // makes sure api isn't called if user is not valid
+      let succeeded = user.updateAssignment()
+      if (succeeded) { this.setState({ user }) }
     }
   }
 
