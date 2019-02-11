@@ -16,8 +16,7 @@ function isComplete (words, wordToSpell) {
   words.forEach(function (e) {
     w += e
   })
-  if (w === wordToSpell) { return true }
-  return false
+  return w === wordToSpell
 }
 
 function getLetters (wordToSpell, unlockedLetters, extraLetters) {
@@ -87,10 +86,7 @@ class StudentSpelling extends React.Component {
   } */
 
   renderCard (t, i) {
-    return (
-      <SpellingCard id={i}
-        value={t} />
-    )
+    return <SpellingCard key={i} id={i} value={t} />
   }
 
   renderButton (YN) {
@@ -130,7 +126,7 @@ class StudentSpelling extends React.Component {
     })
 
     this.state.wordToSpell.split('').forEach((t, i) => {
-      renderDropZone.push(<DropZone id={i} onDrop={this.setDropZone} passedLetter={this.state.dropZoneState[i]} setLetter={t} />)
+      renderDropZone.push(<DropZone key={i} id={i} onDrop={this.setDropZone} passedLetter={this.state.dropZoneState[i]} setLetter={t} />)
     })
 
     const { connectDragSource, connectDropTarget } = this.props
