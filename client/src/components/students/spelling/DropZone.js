@@ -30,7 +30,7 @@ function DropZone (props) {
 
   return connectDropTarget(
     <div key={'dropzone' + id} className={'col-md-2 mx-auto card ' + cardStyle}>
-      <h5 className='card-title card badge-light'>
+      <h5 className='card-title card badge-light '>
         {currentLetter}
       </h5>
     </div>
