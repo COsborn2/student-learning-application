@@ -5,6 +5,8 @@ import { Redirect, Route, Switch } from 'react-router-dom'
 import StudentSpelling from './StudentSpelling'
 import StudentWriting from './StudentWriting'
 import StudentObj from '../../javascript/StudentObj'
+import { DragDropContextProvider } from 'react-dnd'
+import HTML5Backend from 'react-dnd-html5-backend'
 
 /* The student view manages all screens and routes for a specific student user
  the login screen creates and authenticates a student object, and passes it
@@ -17,7 +19,7 @@ class StudentView extends Component {
     this.state = {
       user: new StudentObj(this.props.history.location.state),
       curAssignmentIndex: 0,
-      curWordsCompleted: false
+      curWordIndex: 0
     }
     this.onSpellingCompletion = this.onSpellingCompletion.bind(this)
     this._isMounted = false
@@ -51,18 +53,21 @@ class StudentView extends Component {
   }
 
   render () {
-    let { user, curAssignmentIndex } = this.state
+    const { user, curAssignmentIndex } = this.state
     if (!user || !user.isAuth) {
       return <Redirect to='/login/student' />
     }
     if (!this._isMounted) return <div /> // this is because the component is rendered one time before componentDidMount is called. ie the users assignments will be null
 
-    let wordsToSpell = user.assignments[curAssignmentIndex].words
+    const wordsToSpell = user.assignments[curAssignmentIndex].words
     return (
       <div style={{ background: '#a9a9a9' }}>
         <Switch>
           <Route exact path='/student/:id' component={StudentHome} />
-          <Route path='/student/:id/spelling' render={() => <StudentSpelling wordsToSpell={wordsToSpell} onSpellingCompletion={this.onSpellingCompletion} />} />
+          <Route path='/student/:id/spelling' render={() =>
+            <DragDropContextProvider backend={HTML5Backend}>  { /* this needed to be moved up from StudentSpelling because advancing to the next word would cause multiple HTML5Backend's to be instantiated */ }
+              <StudentSpelling wordsToSpell={wordsToSpell} onSpellingCompletion={this.onSpellingCompletion} />
+            </DragDropContextProvider>} />
           <Route path='/student/:id/writing' component={StudentWriting} />
         </Switch>
       </div>

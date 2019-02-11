@@ -47,10 +47,10 @@ class StudentObj {
   updateAssignment () {
     let assignments = [{
       letters: [],
-      words: [{
-        word: 'kite',
-        imageURL: 'https://www.lifebreeze.co.uk/product_images/27.gif'
-      }]
+      words: [
+        { word: 'kite', imageURL: 'https://www.shareicon.net/download/2016/07/09/118997_activity.ico' },
+        { word: 'car', imageURL: 'https://images.vexels.com/media/users/3/154391/isolated/lists/430c48555fb4c80d9e77fc83d74fdb85-convertible-car-side-view-silhouette.png' }
+      ]
     }]
     this.assignments = assignments
     return true
