@@ -9,9 +9,6 @@ if (process.env.NODE_ENV !== 'production' && !process.env.DATABASE_URL) {
 const express = require('express')
 const path = require('path')
 const bodyParser = require('body-parser')
-// temporarily unused
-// const _ = require('lodash')
-// const { ObjectID } = require('mongodb')
 
 require('./db/mongoose') // this starts the connection to the server
 
@@ -22,7 +19,16 @@ app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({ extended: true }))
 
 // API routes
-app.get('/instructors', require('./routes/instructorsRoute').allInstructors)
+const { authenticateStudent, authenticateInstructor } = require('./middleware/authenticate')
+const instructorsRoute = require('./routes/instructorsRoute')
+const studentsRoute = require('./routes/studentsRoute')
+
+app.get('/instructor', authenticateInstructor, instructorsRoute.allInstructors)
+app.post('/instructor', instructorsRoute.createInstructor)
+app.post('/instructor/validate', authenticateInstructor, instructorsRoute.validateInstructor)
+
+app.post('/student', studentsRoute.createStudent)
+app.post('/student/validate', authenticateStudent, studentsRoute.validateStudent)
 
 if (isProduction) {
   console.log('production')

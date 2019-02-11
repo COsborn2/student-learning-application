@@ -1,5 +1,7 @@
 const mongoose = require('mongoose')
 const validator = require('validator')
+const { TokenSchema } = require('./token')
+const _ = require('lodash')
 
 let InstructorSchema = new mongoose.Schema({
   email: {
@@ -18,16 +20,15 @@ let InstructorSchema = new mongoose.Schema({
     required: true,
     minlength: 6
   },
-  salt: {
-    type: String,
-    required: true,
-    minlength: 10
-  },
-  token: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'Token'
-  }
+  token: TokenSchema
 })
+
+InstructorSchema.methods.toJSON = function () {
+  let instructor = this
+  let instructorObject = instructor.toObject()
+
+  return _.pick(instructorObject, ['email'])
+}
 
 let Instructor = mongoose.model('Instructor', InstructorSchema)
 

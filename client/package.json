@@ -8,6 +8,8 @@
     "prop-types": "^15.6.2",
     "react": "^16.7.0",
     "react-bootstrap": "^0.32.4",
+    "react-dnd": "^7.0.2",
+    "react-dnd-html5-backend": "^7.0.2",
     "react-dom": "^16.7.0",
     "react-router-dom": "^4.3.1",
     "react-scripts": "2.1.3",
@@ -18,8 +20,8 @@
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
-    "test-standard": "standard ./src/*.js | snazzy",
-    "fix-standard": "standard ./src/*.js --fix"
+    "test-standard": "standard \"./src/*.js\" \"./src/components/**/*.js\" | snazzy",
+    "fix-standard": "standard \"./src/*.js\" \"./src/components/**/*.js\" --fix"
   },
   "proxy": "http://localhost:5000/",
   "eslintConfig": {
