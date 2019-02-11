@@ -45,7 +45,7 @@ function initializeDropZone (numCharsInWord) {
 /*
   We pass an array of wordObjects as a property. Each item in the array consists of a word, and an imageURL
   You can access them like shown below. When a word is completed move on to the next word.
-  When the last word is completed, call the `onSpellingCompletion()` method passed as a property.
+  When each word is completed, call the `onWordCompletion()` method passed as a property.
  */
 
 class StudentSpelling extends React.Component {
@@ -66,20 +66,17 @@ class StudentSpelling extends React.Component {
 
   advanceToNextWord () {
     let { wordsToSpell, wordIndex, curWordToSpell, curImageURL, curHand, curDropZone } = this.state
-    if (wordIndex < wordsToSpell.length - 1) {
-      wordIndex++
+    const allWordsSpelled = wordIndex >= wordsToSpell.length - 1
+    wordIndex++
+    if (!allWordsSpelled) {
       const nextWordItem = wordsToSpell[wordIndex]
-      console.log('nextWordItem: ' + nextWordItem)
       curWordToSpell = nextWordItem.word
-      console.log('nextWord: ' + curWordToSpell)
       curImageURL = nextWordItem.imageURL
-      console.log('nextURL: ' + curImageURL)
       curHand = getLetters(curWordToSpell)
-      console.log('nextHand: ' + curHand)
       curDropZone = initializeDropZone(curWordToSpell.length)
-      console.log('nextDropZone: ' + curDropZone)
       this.setState({ wordsToSpell, wordIndex, curWordToSpell, curImageURL, curHand, curDropZone })
-    } else this.props.onSpellingCompletion()
+    }
+    this.props.onWordCompletion(wordIndex, allWordsSpelled)
   }
 
   renderButton (isSpelled) {
@@ -131,7 +128,7 @@ class StudentSpelling extends React.Component {
 
 StudentSpelling.propTypes = {
   wordsToSpell: PropTypes.array.isRequired,
-  onSpellingCompletion: PropTypes.func.isRequired
+  onWordCompletion: PropTypes.func.isRequired
 }
 
 export default StudentSpelling
