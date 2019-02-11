@@ -5,17 +5,10 @@ import HTML5Backend from 'react-dnd-html5-backend'
 import './StudentSpelling.css'
 import SpellingCard from './spelling/SpellingCard.js'
 import DropZone from './spelling/DropZone.js'
-
-function getWord () {
-  return 'kite'
-}
+import PropTypes from 'prop-types'
 
 function getUnlockedLetters () {
   return ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'z', 'y', 'z']
-}
-
-function getSpellingPicture () {
-  return 'https://www.lifebreeze.co.uk/product_images/27.gif'
 }
 
 function isComplete (words, wordToSpell) {
@@ -32,7 +25,7 @@ function getLetters (wordToSpell, unlockedLetters, extraLetters) {
   let letters = wordToSpell.split('')
 
   if (extraLetters !== null) {
-    for (var i = 0; i < extraLetters.length; i++) {
+    for (let i = 0; i < extraLetters.length; i++) {
       letters.push(extraLetters[i])
     }
   }
@@ -65,17 +58,27 @@ function initializeDropZone (howMany) {
   return dropZone
 }
 
+/*
+  We pass an array of wordObjects as a property. Each item in the array consists of a word, and an imageURL
+  You can access them like shown below. When a word is completed move on to the next word.
+  When the last word is completed, call the `onSpellingCompletion()` method passed as a property.
+ */
+
 class StudentSpelling extends React.Component {
   constructor (props) {
     super(props)
+    let wordsToSpell = props.wordsToSpell
+    let firstWordToSpell = wordsToSpell[0].word
+    let imageURL = wordsToSpell[0].imageURL
     this.state = {
-      wordToSpell: getWord(),
-      initualHand: [],
-      currentHand: getLetters(getWord(), getUnlockedLetters(), null),
-      dropZoneState: initializeDropZone(getWord().length),
-      spellingPicture: getSpellingPicture()
+      wordsToSpell: wordsToSpell,
+      wordToSpell: firstWordToSpell,
+      imageURL: imageURL,
+      initialHand: [],
+      currentHand: getLetters(firstWordToSpell, getUnlockedLetters(), null),
+      dropZoneState: initializeDropZone(firstWordToSpell.length)
     }
-    // this.state.currentHand = this.state.initualHand.slice()
+    // this.state.currentHand = this.state.initialHand.slice()
   }
 
   /* onResetClick = () => {
@@ -92,7 +95,7 @@ class StudentSpelling extends React.Component {
 
   renderButton (YN) {
     if (YN) {
-      return <button type='button' className='btn btn-success' onClick={() => alert('Working on it')}>Continue</button>
+      return <button type='button' className='btn btn-success' onClick={this.props.onSpellingCompletion}>Continue</button>
     }
     return <button type='button' className='btn btn-secondary'>Continue</button>
     // return <button type='button' className='btn btn-danger' onClick={this.onResetClick}>Reset</button>
@@ -135,7 +138,7 @@ class StudentSpelling extends React.Component {
       <DragDropContextProvider backend={HTML5Backend}>
         <div className='container text-center'>
           <h1 color={'red'}>Spelling Cards!</h1>
-          <h2 className='headerDND'>{status}<Image className='img-fluid' alt='Responsive image' src={this.state.spellingPicture} /></h2>
+          <h2 className='headerDND'>{status}<Image className='img-fluid' alt='Responsive image' src={this.state.imageURL} /></h2>
           <span>DropZone</span>
           <div className='row ext-center'>
             {renderDropZone}
@@ -148,6 +151,11 @@ class StudentSpelling extends React.Component {
         </div>
       </DragDropContextProvider>)
   }
+}
+
+StudentSpelling.propTypes = {
+  wordsToSpell: PropTypes.array.isRequired,
+  onSpellingCompletion: PropTypes.func.isRequired
 }
 
 export default StudentSpelling
