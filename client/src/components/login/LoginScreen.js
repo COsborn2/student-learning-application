@@ -10,6 +10,8 @@ import {
   FormControl,
   FormGroup, ControlLabel, Form
 } from 'react-bootstrap'
+import InstructorObj from '../../javascript/InstructorObj'
+import StudentObj from '../../javascript/StudentObj'
 
 const messageStyles = {
   messageFading: {
@@ -23,28 +25,43 @@ const messageStyles = {
   }
 }
 
-class LoginModal extends Component {
+/* The loginModal creates a new user object based on the type parameter in the url
+ ie '/login/student' will create a new studentObj and use it to authenticate using
+ the credentials entered. When auth is validated, the client is redirected to the
+ correct screen with the userObj passed as a property
+ */
+
+class LoginScreen extends Component {
   constructor (props) {
     super(props)
+    let type = this.props.match.params.type
+    let user = type === 'instructor' ? new InstructorObj() : new StudentObj()
     this.state = {
       failedMessage: '',
-      showMessage: false
+      showMessage: false,
+      user: user
     }
-
     this.handleVerifyAuth = this.handleVerifyAuth.bind(this)
     this.handleSkipAuth = this.handleSkipAuth.bind(this)
+    this.handleSignup = this.handleSignup.bind(this)
   }
 
   // Hit backend for verification
   handleVerifyAuth () {
     const password = this._passwordInput.value
     const id = this._idInput.value
+    let user = this.state.user
+
     if (id === '') {
       this.animateMessage('* A username is required')
     } else if (password === '') {
       this.animateMessage('* A password is required')
-    } else if (id === 'Developer' && password === 'password') {
-      this.props.onAuthenticate(id)
+    }
+
+    let isAuth = user.verifyAuth(id, password)
+    this.setState({ user })
+    if (isAuth) {
+      this.props.history.replace('/' + user.TYPE + '/' + user.id, user) // navigates to the proper user screen, passing the authenticated user as a prop
     } else {
       this.animateMessage('* Incorrect username or password')
     }
@@ -59,17 +76,29 @@ class LoginModal extends Component {
   }
 
   handleSkipAuth () {
-    this.props.onAuthenticate('Developer')// todo remove dev skip for easy access
+    let user = this.state.user
+    let isAuth = user.verifyAuth(user.TYPE + 'Dev', 'password')
+    this.setState({ user })
+    if (isAuth) {
+      this.props.history.replace('/' + user.TYPE + '/' + user.id, user) // todo remove dev skip for easy access
+    }
+  }
+
+  handleSignup () {
+    let user = this.state.user
+    this.props.history.replace('/signup/' + user.TYPE, user) // todo remove dev skip for easy access
   }
 
   render () {
     let errorMessageStyle = this.state.showMessage ? messageStyles.messageShow : messageStyles.messageFading
+    let type = this.state.user.TYPE.charAt(0).toLocaleUpperCase() + this.state.user.TYPE.slice(1)
     return (
       <div className='modal-dialog-centered'>
         <ModalDialog>
           <ModalHeader>
-            <ModalTitle>{this.props.userType} Login</ModalTitle>
+            <ModalTitle>{type} Login</ModalTitle>
             <Button bsStyle='warning' onClick={this.handleSkipAuth}>Dev Skip</Button>
+            <Button bsStyle='info' onClick={this.handleSignup}>Signup</Button>
           </ModalHeader>
 
           <ModalBody>
@@ -103,10 +132,8 @@ class LoginModal extends Component {
   }
 }
 
-LoginModal.propTypes = {
-  onAuthenticate: PropTypes.func.isRequired,
-  userType: PropTypes.string.isRequired,
+LoginScreen.propTypes = {
   history: PropTypes.object.isRequired
 }
 
-export default LoginModal
+export default LoginScreen

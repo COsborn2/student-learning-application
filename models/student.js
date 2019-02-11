@@ -3,13 +3,14 @@ const { TokenSchema } = require('./token')
 const _ = require('lodash')
 
 let StudentSchema = new mongoose.Schema({
-  classcode: {
+  username: {
     type: String,
     required: true,
     minlength: 1,
-    trim: true
+    trim: true,
+    unique: true
   },
-  username: {
+  classcode: {
     type: String,
     required: true,
     minlength: 1,
@@ -22,7 +23,7 @@ StudentSchema.methods.toJSON = function () {
   let student = this
   let studentObject = student.toObject()
 
-  return _.pick(studentObject, ['classcode', 'username'])
+  return _.pick(studentObject, ['username', 'classcode'])
 }
 
 let Student = mongoose.model('Student', StudentSchema)

@@ -1,7 +1,7 @@
 import React from 'react'
-import { DragDropContextProvider } from 'react-dnd';
+import { DragDropContextProvider } from 'react-dnd'
 import { Image } from 'react-bootstrap'
-import HTML5Backend from 'react-dnd-html5-backend';
+import HTML5Backend from 'react-dnd-html5-backend'
 import './StudentSpelling.css'
 import SpellingCard from './spelling/SpellingCard.js'
 import DropZone from './spelling/DropZone.js'
@@ -14,9 +14,8 @@ function getUnlockedLetters () {
   return ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'z', 'y', 'z']
 }
 
-function getSpellingPicture ()
-{
-  return "https://www.lifebreeze.co.uk/product_images/27.gif"
+function getSpellingPicture () {
+  return 'https://www.lifebreeze.co.uk/product_images/27.gif'
 }
 
 function isComplete (words, wordToSpell) {
@@ -29,11 +28,10 @@ function isComplete (words, wordToSpell) {
 }
 
 function getLetters (wordToSpell, unlockedLetters, extraLetters) {
-  var alphabet = unlockedLetters
-  var letters = wordToSpell.split('')
+  let alphabet = unlockedLetters
+  let letters = wordToSpell.split('')
 
-  if(extraLetters !== null)
-  {
+  if (extraLetters !== null) {
     for (var i = 0; i < extraLetters.length; i++) {
       letters.push(extraLetters[i])
     }
@@ -43,7 +41,7 @@ function getLetters (wordToSpell, unlockedLetters, extraLetters) {
 }
 
 function shuffle (cards) {
-  var j, x, i
+  let j, x, i
   for (i = cards.length - 1; i > 0; i--) {
     j = Math.floor(Math.random() * (i + 1))
     x = cards[i]
@@ -58,15 +56,13 @@ function getStatus (YN, word) {
   return 'Spell this image'
 }
 
-function initializeDropZone(howMany)
-{
-  var dropZone = [];
+function initializeDropZone (howMany) {
+  let dropZone = []
 
-  for (var i = 0; i < howMany; i++)
-  {
-    dropZone.push("[]");
+  for (let i = 0; i < howMany; i++) {
+    dropZone.push('[]')
   }
-  return dropZone;
+  return dropZone
 }
 
 class StudentSpelling extends React.Component {
@@ -77,15 +73,15 @@ class StudentSpelling extends React.Component {
       initualHand: [],
       currentHand: getLetters(getWord(), getUnlockedLetters(), null),
       dropZoneState: initializeDropZone(getWord().length),
-      spellingPicture: getSpellingPicture(),
+      spellingPicture: getSpellingPicture()
     }
-    //this.state.currentHand = this.state.initualHand.slice()
+    // this.state.currentHand = this.state.initualHand.slice()
   }
 
-  /*onResetClick = () => {
+  /* onResetClick = () => {
     this.setState({currentHand: getLetters(getWord(), getUnlockedLetters(), null),
                     dropZoneState: initializeDropZone(getWord().length)})
-  }*/
+  } */
 
   renderCard (t, i) {
     return (
@@ -95,39 +91,34 @@ class StudentSpelling extends React.Component {
   }
 
   renderButton (YN) {
-    if (YN) 
-    { 
+    if (YN) {
       return <button type='button' className='btn btn-success' onClick={() => alert('Working on it')}>Continue</button>
     }
     return <button type='button' className='btn btn-secondary'>Continue</button>
-    //return <button type='button' className='btn btn-danger' onClick={this.onResetClick}>Reset</button>
+    // return <button type='button' className='btn btn-danger' onClick={this.onResetClick}>Reset</button>
   }
 
-  setDropZone = (dropZoneID, data, cardID) =>
-  {
-    var updateDropZone = this.state.dropZoneState;
-    var newLetters = this.state.currentHand;
+  setDropZone = (dropZoneID, data, cardID) => {
+    let updateDropZone = this.state.dropZoneState
+    let newLetters = this.state.currentHand
 
-    if(updateDropZone[dropZoneID] !== this.state.wordToSpell[dropZoneID])
-    {
-      updateDropZone[dropZoneID] = data;
-      if(data === this.state.wordToSpell[dropZoneID])
-      {
+    if (updateDropZone[dropZoneID] !== this.state.wordToSpell[dropZoneID]) {
+      updateDropZone[dropZoneID] = data
+      if (data === this.state.wordToSpell[dropZoneID]) {
         newLetters.splice(cardID, 1)
       }
-    } 
+    }
 
-
-    this.setState({dropZoneState: updateDropZone})
-    this.setState({currentHand: newLetters})
+    this.setState({ dropZoneState: updateDropZone })
+    this.setState({ currentHand: newLetters })
   }
 
   render () {
-    var complete = isComplete(this.state.dropZoneState, this.state.wordToSpell)
-    var renderLetterCards = []
-    var button = this.renderButton(complete)
-    var status = getStatus(complete, this.state.wordToSpell)
-    var renderDropZone = []
+    let complete = isComplete(this.state.dropZoneState, this.state.wordToSpell)
+    let renderLetterCards = []
+    let button = this.renderButton(complete)
+    let status = getStatus(complete, this.state.wordToSpell)
+    let renderDropZone = []
 
     this.state.currentHand.forEach((t, i) => {
       renderLetterCards.push(
@@ -136,25 +127,25 @@ class StudentSpelling extends React.Component {
     })
 
     this.state.wordToSpell.split('').forEach((t, i) => {
-      renderDropZone.push(<DropZone id={i} onDrop={this.setDropZone} passedLetter={this.state.dropZoneState[i]} setLetter={t}></DropZone>)
+      renderDropZone.push(<DropZone id={i} onDrop={this.setDropZone} passedLetter={this.state.dropZoneState[i]} setLetter={t} />)
     })
 
     const { connectDragSource, connectDropTarget } = this.props
     return (
       <DragDropContextProvider backend={HTML5Backend}>
-      <div className='container text-center'>
-        <h1 color={'red'}>Spelling Cards!</h1>
-        <h2 className='headerDND'>{status}<Image className="img-fluid" alt="Responsive image" src={this.state.spellingPicture}/></h2>
-        <span>DropZone</span>
-        <div className='row ext-center'>
-        {renderDropZone}
+        <div className='container text-center'>
+          <h1 color={'red'}>Spelling Cards!</h1>
+          <h2 className='headerDND'>{status}<Image className='img-fluid' alt='Responsive image' src={this.state.spellingPicture} /></h2>
+          <span>DropZone</span>
+          <div className='row ext-center'>
+            {renderDropZone}
+          </div>
+          <span>Letter Cards</span>
+          <div className='row ext-center'>
+            {renderLetterCards}
+          </div>
+          {button}
         </div>
-        <span>Letter Cards</span>
-        <div className='row ext-center'>
-          {renderLetterCards}
-        </div>
-        {button}
-      </div>
       </DragDropContextProvider>)
   }
 }

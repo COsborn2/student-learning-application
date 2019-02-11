@@ -1,32 +1,47 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
-import LoginModal from '../login/LoginModal'
 import StudentHome from './StudentHome'
 import { Redirect, Route, Switch } from 'react-router-dom'
 import StudentSpelling from './StudentSpelling'
 import StudentWriting from './StudentWriting'
+import StudentObj from '../../javascript/StudentObj'
+
+/* The student view manages all screens and routes for a specific student user
+ the login screen creates and authenticates a student object, and passes it
+ to this component. If the user object ever becomes null or not authentic, it redirects
+ to the login screen */
 
 class StudentView extends Component {
   constructor (props) {
     super(props)
-    this.state = { userId: '', isAuthenticated: false }
+    this.state = {
+      user: new StudentObj(this.props.history.location.state)
+    }
+    if (!this.state.user) {
+      console.error('StudentView ctor error: user is null')
+    }
   }
 
-  onAuthenticated (userId) {
-    this.setState({ userId: userId, isAuthenticated: true })
-    this.props.history.replace('/student/' + userId)
+  componentDidMount () {
+    let user = this.state.user
+    if (user && user.isAuth) { // makes sure api isn't called if user is not valid
+      let succeeded = user.updateAssignment()
+      if (succeeded) { this.setState({ user }) }
+    }
+  }
+
+  determineSectionToRender () {
+
   }
 
   render () {
-    let { isAuthenticated } = this.state
-    let { pathname } = this.props.history.location
-    if (!isAuthenticated && pathname !== '/student/login') {
-      return <Redirect to='/student/login' />
+    let { user } = this.state
+    if (!user || !user.isAuth) {
+      return <Redirect to='/login/student' />
     }
     return (
       <div style={{ background: '#a9a9a9' }}>
         <Switch>
-          <Route path='/student/login' render={() => <LoginModal {...this.props} userType='Student' onAuthenticate={(id) => this.onAuthenticated(id)} />} />
           <Route exact path='/student/:id' component={StudentHome} />
           <Route path='/student/:id/spelling' component={StudentSpelling} />
           <Route path='/student/:id/writing' component={StudentWriting} />

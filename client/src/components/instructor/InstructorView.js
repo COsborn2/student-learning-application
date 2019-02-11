@@ -2,29 +2,40 @@ import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 import { Redirect, Route, Switch } from 'react-router-dom'
 import InstructorHome from './InstructorHome'
-import LoginModal from '../login/LoginModal'
+import InstructorObj from '../../javascript/InstructorObj'
+
+/* The instructor view manages all screens and routes for a specific instructor user
+ the login screen creates and authenticates an instructor object, and passes it
+ to this component. If the user object ever becomes null or not authentic, it redirects
+ to the login screen */
 
 class InstructorView extends Component {
   constructor (props) {
     super(props)
-    this.state = { userId: '', isAuthenticated: false }
+    this.state = {
+      user: new InstructorObj(this.props.history.location.state)
+    }
+    if (!this.state.user) {
+      console.error('InstructorView ctor error: user is null')
+    }
   }
 
-  onAuthenticated (userId) {
-    this.setState({ userId: userId, isAuthenticated: true })
-    this.props.history.replace('/instructor/' + userId)
+  componentDidMount () {
+    let user = this.state.user
+    if (user && user.isAuth) { // makes sure api isn't called if user is not valid
+      let succeeded = user.updateClasses()
+      if (succeeded) { this.setState({ user }) }
+    }
   }
 
   render () {
-    let { isAuthenticated } = this.state
-    let { pathname } = this.props.history.location
-    if (!isAuthenticated && pathname !== '/instructor/login') {
-      return <Redirect to='/instructor/login' />
+    let user = this.state.user
+    if (!user || !user.isAuth) {
+      return <Redirect to='/login/instructor' />
     }
     return (
       <div style={{ background: '#a9a9a9' }}>
         <Switch>
-          <Route path='/instructor/login' render={() => <LoginModal {...this.props} userType='Instructor' onAuthenticate={(id) => this.onAuthenticated(id)} />} />
           <Route exact path='/instructor/:id' component={InstructorHome} />
         </Switch>
       </div>
@@ -33,8 +44,7 @@ class InstructorView extends Component {
 }
 
 InstructorView.propTypes = {
-  match: PropTypes.object.isRequired,
-  history: PropTypes.object.isRequired
+  match: PropTypes.object.isRequired
 }
 
 export default InstructorView
