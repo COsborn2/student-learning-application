@@ -20,6 +20,10 @@ let InstructorSchema = new mongoose.Schema({
     required: true,
     minlength: 6
   },
+  class: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Class'
+  }],
   token: TokenSchema
 })
 

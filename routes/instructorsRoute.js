@@ -2,14 +2,6 @@ const _ = require('lodash')
 const { Token } = require('../models/token')
 var { Instructor } = require('../models/instructor')
 
-let allInstructors = (req, res) => {
-  Instructor.find().then((instructors) => {
-    res.send({ instructors })
-  }, (e) => {
-    res.status(400).send(e)
-  })
-}
-
 let createInstructor = (req, res) => {
   let body = _.pick(req.body, ['email', 'password'])
 
@@ -40,4 +32,4 @@ let validateInstructor = (req, res) => {
   res.send(req.user)
 }
 
-module.exports = { allInstructors, createInstructor, validateInstructor }
+module.exports = { createInstructor, validateInstructor }

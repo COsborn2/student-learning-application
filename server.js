@@ -23,7 +23,6 @@ const { authenticateStudent, authenticateInstructor } = require('./middleware/au
 const instructorsRoute = require('./routes/instructorsRoute')
 const studentsRoute = require('./routes/studentsRoute')
 
-app.get('/instructor', authenticateInstructor, instructorsRoute.allInstructors)
 app.post('/instructor', instructorsRoute.createInstructor)
 app.post('/instructor/validate', authenticateInstructor, instructorsRoute.validateInstructor)
 
