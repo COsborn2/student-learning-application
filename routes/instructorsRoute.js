@@ -10,8 +10,11 @@ let createInstructor = (req, res) => {
     hashedPassword: body.password
   })
 
-  Token.generateAuthToken(['Instructor', 'Student'], 'Instructor').then((token) => {
+  Token.generateAuthToken(['Instructor', 'Student'], 'Instructor').then(async (token) => {
     instructor.token = token
+
+    await instructor.hashPassword()
+
     instructor.save((err) => {
       if (err) {
         if (err.code === 11000) {
