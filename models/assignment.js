@@ -2,7 +2,7 @@ const mongoose = require('mongoose')
 
 let AssignmentSchema = new mongoose.Schema({
   order: { // what place the assignment falls in the course
-    type: number,
+    type: Number,
     required: true
   },
   letters: {
