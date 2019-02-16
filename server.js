@@ -22,14 +22,17 @@ app.use(bodyParser.urlencoded({ extended: true }))
 const { authenticateStudent, authenticateInstructor } = require('./middleware/authenticate')
 const instructorsRoute = require('./routes/instructorsRoute')
 const studentsRoute = require('./routes/studentsRoute')
+const wordsRoute = require('./routes/wordsRoute')
 
-app.post('/instructor', instructorsRoute.createInstructor)
-app.post('/instructor/login', instructorsRoute.loginInstructor)
-app.post('/instructor/testToken', authenticateInstructor, instructorsRoute.validateInstructor)
+app.post('/api/instructor', instructorsRoute.createInstructor)
+app.post('/api/instructor/login', instructorsRoute.loginInstructor)
+app.post('/api/instructor/testToken', authenticateInstructor, instructorsRoute.validateInstructor)
 
-app.post('/student', studentsRoute.createStudent)
-app.post('/student/login', studentsRoute.loginStudent)
-app.post('/student/testToken', authenticateStudent, studentsRoute.validateStudent)
+app.post('/api/student', studentsRoute.createStudent)
+app.post('/api/student/login', studentsRoute.loginStudent)
+app.post('/api/student/testToken', authenticateStudent, studentsRoute.validateStudent)
+
+app.post('/api/word', authenticateInstructor, wordsRoute.createWord)
 
 if (isProduction) {
   console.log('production')
