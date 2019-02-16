@@ -24,9 +24,11 @@ const instructorsRoute = require('./routes/instructorsRoute')
 const studentsRoute = require('./routes/studentsRoute')
 
 app.post('/instructor', instructorsRoute.createInstructor)
+app.post('/instructor/login', instructorsRoute.loginInstructor)
 app.post('/instructor/testToken', authenticateInstructor, instructorsRoute.validateInstructor)
 
 app.post('/student', studentsRoute.createStudent)
+app.post('/student/login', studentsRoute.loginStudent)
 app.post('/student/testToken', authenticateStudent, studentsRoute.validateStudent)
 
 if (isProduction) {

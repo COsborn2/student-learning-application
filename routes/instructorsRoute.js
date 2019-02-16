@@ -1,6 +1,7 @@
 const _ = require('lodash')
 const { Token } = require('../models/token')
 var { Instructor } = require('../models/instructor')
+const bcrypt = require('bcrypt')
 
 let createInstructor = (req, res) => {
   let body = _.pick(req.body, ['email', 'password'])
@@ -14,6 +15,7 @@ let createInstructor = (req, res) => {
     instructor.token = token
 
     await instructor.hashPassword()
+    console.log(instructor.hashedPassword)
 
     instructor.save((err) => {
       if (err) {
@@ -30,9 +32,27 @@ let createInstructor = (req, res) => {
   })
 }
 
+let loginInstructor = async (req, res) => { // need to find instructor from email
+  let body = _.pick(req.body, ['email', 'password'])
+
+  let instructor = await Instructor.findOne({ email: body.email })
+
+  let hashResult = await bcrypt.compare(body.password, instructor.hashedPassword)
+
+  if (!hashResult) {
+    return res.status(401).send({ error: 'invalid password' })
+  }
+
+  let newToken = await Token.generateAuthToken(['Instructor', 'Student'], 'Instructor')
+
+  let updatedInstructor = await Instructor.findOneAndUpdate({ email: body.email }, { token: newToken })
+
+  res.header('x-auth', newToken.token).send(updatedInstructor)
+}
+
 let validateInstructor = (req, res) => {
   console.log('instructor validated')
   res.send(req.user)
 }
 
-module.exports = { createInstructor, validateInstructor }
+module.exports = { createInstructor, loginInstructor, validateInstructor }
