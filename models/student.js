@@ -16,6 +16,22 @@ let StudentSchema = new mongoose.Schema({
     minlength: 1,
     trim: true
   },
+  class: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Class'
+  },
+  currentAssignment: {
+    type: Number,
+    default: 0
+  },
+  currentLetter: {
+    type: Number,
+    default: 0
+  },
+  currentWord: {
+    type: Number,
+    default: 0
+  },
   token: TokenSchema
 })
 
