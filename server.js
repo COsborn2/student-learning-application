@@ -23,12 +23,13 @@ const { authenticateStudent, authenticateInstructor } = require('./middleware/au
 const instructorsRoute = require('./routes/instructorsRoute')
 const studentsRoute = require('./routes/studentsRoute')
 
-app.get('/instructor', authenticateInstructor, instructorsRoute.allInstructors)
 app.post('/instructor', instructorsRoute.createInstructor)
-app.post('/instructor/validate', authenticateInstructor, instructorsRoute.validateInstructor)
+app.post('/instructor/login', instructorsRoute.loginInstructor)
+app.post('/instructor/testToken', authenticateInstructor, instructorsRoute.validateInstructor)
 
 app.post('/student', studentsRoute.createStudent)
-app.post('/student/validate', authenticateStudent, studentsRoute.validateStudent)
+app.post('/student/login', studentsRoute.loginStudent)
+app.post('/student/testToken', authenticateStudent, studentsRoute.validateStudent)
 
 if (isProduction) {
   console.log('production')

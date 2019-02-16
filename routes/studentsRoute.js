@@ -27,9 +27,34 @@ let createStudent = (req, res) => {
   })
 }
 
+let loginStudent = async (req, res) => {
+  let body = _.pick(req.body, ['classcode', 'username'])
+
+  try {
+    let student = await Student.findOne({ classcode: body.classcode, username: body.username })
+
+    if (!student) {
+      throw TypeError('Student does not exist')
+    }
+
+    let newToken = await Token.generateAuthToken(['Student'], 'Student')
+
+    let updatedStudent = await Student.findOneAndUpdate({
+      classcode: body.classcode,
+      username: body.username
+    }, {
+      token: newToken
+    })
+
+    res.header('x-auth', newToken.token).send(updatedStudent)
+  } catch (err) {
+    res.status(401).send({ error: err.message })
+  }
+}
+
 let validateStudent = (req, res) => {
   console.log('student validated')
   res.send(req.user)
 }
 
-module.exports = { createStudent, validateStudent }
+module.exports = { createStudent, loginStudent, validateStudent }
