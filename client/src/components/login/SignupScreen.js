@@ -1,15 +1,15 @@
 import React, { Component } from 'react'
-import {
-  Button,
-  ModalBody,
-  ModalDialog,
-  ModalFooter,
-  ModalHeader,
-  ModalTitle,
-  FormControl,
-  FormGroup, ControlLabel, Form
-} from 'react-bootstrap'
 import PropTypes from 'prop-types'
+import ModalHeader from 'react-bootstrap/ModalHeader'
+import ModalDialog from 'react-bootstrap/ModalDialog'
+import ModalTitle from 'react-bootstrap/ModalTitle'
+import Button from 'react-bootstrap/Button'
+import Form from 'react-bootstrap/Form'
+import ModalBody from 'react-bootstrap/ModalBody'
+import FormGroup from 'react-bootstrap/FormGroup'
+import ModalFooter from 'react-bootstrap/ModalFooter'
+import FormLabel from 'react-bootstrap/es/FormLabel'
+import FormControl from 'react-bootstrap/es/FormControl'
 
 const messageStyles = {
   messageFading: {
@@ -71,7 +71,7 @@ class SignupScreen extends Component {
     let errorMessageStyle = this.state.showMessage ? messageStyles.messageShow : messageStyles.messageFading
     let type = this.props.match.arguments
     return (
-      <div className='modal-dialog-centered'>
+      <React.Fragment>
         <ModalDialog>
           <ModalHeader>
             <ModalTitle>{type} Sign Up</ModalTitle>
@@ -80,14 +80,14 @@ class SignupScreen extends Component {
           <ModalBody>
             <Form>
               <FormGroup>
-                <ControlLabel>User Id</ControlLabel>
+                <FormLabel>User Id</FormLabel>
                 <FormControl type='text'
                   placeholder='Id'
                   inputRef={(ref) => { this._idInput = ref }} />
               </FormGroup>
 
               <FormGroup>
-                <ControlLabel>Password</ControlLabel>
+                <FormLabel>Password</FormLabel>
                 <FormControl type='password'
                   placeholder='Password'
                   inputRef={(ref) => { this._passwordInput = ref }} />
@@ -103,7 +103,7 @@ class SignupScreen extends Component {
             <Button bsStyle='primary' type={'submit'} onClick={this.handleSignup}>Sign Up</Button>
           </ModalFooter>
         </ModalDialog>
-      </div>
+      </React.Fragment>
     )
   }
 }

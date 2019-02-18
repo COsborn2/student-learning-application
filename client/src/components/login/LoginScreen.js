@@ -1,17 +1,17 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
-import {
-  Button,
-  ModalBody,
-  ModalDialog,
-  ModalFooter,
-  ModalHeader,
-  ModalTitle,
-  FormControl,
-  FormGroup, ControlLabel, Form
-} from 'react-bootstrap'
 import InstructorObj from '../../javascript/InstructorObj'
 import StudentObj from '../../javascript/StudentObj'
+import ModalHeader from 'react-bootstrap/ModalHeader'
+import ModalDialog from 'react-bootstrap/ModalDialog'
+import ModalTitle from 'react-bootstrap/ModalTitle'
+import Button from 'react-bootstrap/Button'
+import Form from 'react-bootstrap/Form'
+import ModalBody from 'react-bootstrap/ModalBody'
+import FormGroup from 'react-bootstrap/FormGroup'
+import ModalFooter from 'react-bootstrap/ModalFooter'
+import FormLabel from 'react-bootstrap/es/FormLabel'
+import FormControl from 'react-bootstrap/es/FormControl'
 
 const messageStyles = {
   messageFading: {
@@ -93,25 +93,25 @@ class LoginScreen extends Component {
     let errorMessageStyle = this.state.showMessage ? messageStyles.messageShow : messageStyles.messageFading
     let type = this.state.user.TYPE.charAt(0).toLocaleUpperCase() + this.state.user.TYPE.slice(1)
     return (
-      <div className='modal-dialog-centered'>
+      <React.Fragment>
         <ModalDialog>
           <ModalHeader>
             <ModalTitle>{type} Login</ModalTitle>
-            <Button bsStyle='warning' onClick={this.handleSkipAuth}>Dev Skip</Button>
+            <Button className='btn-warning' onClick={this.handleSkipAuth}>Dev Skip</Button>
             <Button bsStyle='info' onClick={this.handleSignup}>Signup</Button>
           </ModalHeader>
 
           <ModalBody>
             <Form>
               <FormGroup>
-                <ControlLabel>User Id</ControlLabel>
+                <FormLabel>User Id</FormLabel>
                 <FormControl type='text'
                   placeholder='Id'
                   inputRef={(ref) => { this._idInput = ref }} />
               </FormGroup>
 
               <FormGroup>
-                <ControlLabel>Password</ControlLabel>
+                <FormLabel>Password</FormLabel>
                 <FormControl type='password'
                   placeholder='Password'
                   inputRef={(ref) => { this._passwordInput = ref }} />
@@ -127,7 +127,7 @@ class LoginScreen extends Component {
             <Button bsStyle='primary' type={'submit'} onClick={this.handleVerifyAuth}>Log in</Button>
           </ModalFooter>
         </ModalDialog>
-      </div>
+      </React.Fragment>
     )
   }
 }
