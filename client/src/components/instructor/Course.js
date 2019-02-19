@@ -19,7 +19,7 @@ class Course extends Component {
   }
 
   onStudentSelected (index) {
-    console.log('student selected:  ' + index)
+    console.log('student selected: ' + index)
   }
 
   onAssignmentSelected (index) {
@@ -37,6 +37,7 @@ class Course extends Component {
       outerCss = 'course '
       innerCss = 'course-content '
     }
+    console.log(`course${this.state.code}\npath: ${this.props.match.url}`)
     return (
       <div className={outerCss + `container badge-light rounded my-4 py-1`}>
         <div className={innerCss}>

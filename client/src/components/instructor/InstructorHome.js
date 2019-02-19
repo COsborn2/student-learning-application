@@ -13,21 +13,11 @@ class InstructorHome extends Component {
       selectedCourse: -1
     }
     this.onCourseClick = this.onCourseClick.bind(this)
-    console.log('path: ' + this.props.match.path)
   }
-
-  //what if it want using Router at all an instead just used state to manage the rendered class
 
   onCourseClick (index) {
     let { selectedCourse } = this.state
-    console.log('courseClicked: ' + index)
-    console.log('prevSelected: ' + selectedCourse)
-    if( index === selectedCourse) {
-      selectedCourse = -1
-    }
-    else {
-      selectedCourse = index
-    }
+    selectedCourse = index === selectedCourse ? -1 : index
     this.setState({ selectedCourse })
   }
 
