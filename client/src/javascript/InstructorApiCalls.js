@@ -1,5 +1,4 @@
-class InstructorApiCalls{
-
+class InstructorApiCalls {
   // This is where backend api call is made
   verifyAuth (id, pass) {
     if (id === 'instructorDev' && pass === 'password') { // this is just for the devSkip button

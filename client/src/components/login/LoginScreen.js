@@ -1,7 +1,5 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
-import InstructorObj from '../../javascript/InstructorObj'
-import StudentObj from '../../javascript/StudentObj'
 import ModalHeader from 'react-bootstrap/ModalHeader'
 import ModalDialog from 'react-bootstrap/ModalDialog'
 import ModalTitle from 'react-bootstrap/ModalTitle'
@@ -11,6 +9,8 @@ import FormGroup from 'react-bootstrap/FormGroup'
 import ModalFooter from 'react-bootstrap/ModalFooter'
 import Button from 'react-bootstrap/Button'
 import { FormControl, FormLabel } from 'react-bootstrap'
+import StudentApiCalls from '../../javascript/StudentApiCalls.js'
+import InstructorApiCalls from '../../javascript/InstructorApiCalls.js'
 
 const messageStyles = {
   messageFading: {
@@ -34,11 +34,12 @@ class LoginScreen extends Component {
   constructor (props) {
     super(props)
     let type = this.props.match.params.type
-    let user = type === 'instructor' ? new InstructorObj() : new StudentObj()
+    let api = type === 'instructor' ? InstructorApiCalls : StudentApiCalls
     this.state = {
       failedMessage: '',
       showMessage: false,
-      user: user
+      type: type,
+      api: api
     }
     this.handleVerifyAuth = this.handleVerifyAuth.bind(this)
     this.handleSkipAuth = this.handleSkipAuth.bind(this)
@@ -47,9 +48,9 @@ class LoginScreen extends Component {
 
   // Hit backend for verification
   handleVerifyAuth () {
+    let { api, type } = this.state
     const password = this._passwordInput.value
     const id = this._idInput.value
-    let user = this.state.user
 
     if (id === '') {
       this.animateMessage('* A username is required')
@@ -57,13 +58,16 @@ class LoginScreen extends Component {
       this.animateMessage('* A password is required')
     }
 
-    let isAuth = user.verifyAuth(id, password)
-    this.setState({ user })
-    if (isAuth) {
-      this.props.history.replace('/' + user.TYPE + '/' + user.id, user) // navigates to the proper user screen, passing the authenticated user as a prop
-    } else {
-      this.animateMessage('* Incorrect username or password')
-    }
+    let jwt = api.verifyAuth(id, password)
+    if (!jwt) this.animateMessage('* Incorrect username or password')
+    else this.props.history.replace(`/${type}/${id}`, { id, jwt }) // navigates to the proper user screen, passing the jwt
+  }
+
+  handleSkipAuth () {
+    let { api, type } = this.state
+    let id = `${type}Dev`
+    let jwt = api.verifyAuth(`${type}Dev`, 'password')
+    this.props.history.replace(`/${type}/${id}`, { id, jwt }) // todo remove dev skip for easy access
   }
 
   animateMessage (msg) {
@@ -74,23 +78,14 @@ class LoginScreen extends Component {
     }, 1000)
   }
 
-  handleSkipAuth () {
-    let user = this.state.user
-    let isAuth = user.verifyAuth(user.TYPE + 'Dev', 'password')
-    this.setState({ user })
-    if (isAuth) {
-      this.props.history.replace('/' + user.TYPE + '/' + user.id, user) // todo remove dev skip for easy access
-    }
-  }
-
   handleSignup () {
-    let user = this.state.user
-    this.props.history.replace('/signup/' + user.TYPE, user) // todo remove dev skip for easy access
+    let type = this.state.type
+    this.props.history.replace(`/signup/${type}`) // todo remove dev skip for easy access
   }
 
   render () {
     let errorMessageStyle = this.state.showMessage ? messageStyles.messageShow : messageStyles.messageFading
-    let type = this.state.user.TYPE.charAt(0).toLocaleUpperCase() + this.state.user.TYPE.slice(1)
+    let type = this.state.type.charAt(0).toLocaleUpperCase() + this.state.type.slice(1)
     return (
       <React.Fragment>
         <ModalDialog>
