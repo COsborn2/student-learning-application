@@ -34,19 +34,23 @@ let createInstructor = (req, res) => {
 let loginInstructor = async (req, res) => { // need to find instructor from email
   let body = _.pick(req.body, ['email', 'password'])
 
-  let instructor = await Instructor.findOne({ email: body.email })
+  try {
+    let instructor = await Instructor.findOne({ email: body.email })
 
-  let hashResult = await bcrypt.compare(body.password, instructor.hashedPassword)
+    let hashResult = await bcrypt.compare(body.password, instructor.hashedPassword)
 
-  if (!hashResult) {
-    return res.status(401).send({ error: 'invalid password' })
+    if (!hashResult) {
+      return res.status(401).send({ error: 'invalid password' })
+    }
+
+    let newToken = await Token.generateAuthToken(['Instructor', 'Student'], 'Instructor')
+
+    let updatedInstructor = await Instructor.findOneAndUpdate({ email: body.email }, { token: newToken })
+
+    return res.header('x-auth', newToken.token).send(updatedInstructor)
+  } catch (err) {
+    return res.status(401).send({ err: err.message })
   }
-
-  let newToken = await Token.generateAuthToken(['Instructor', 'Student'], 'Instructor')
-
-  let updatedInstructor = await Instructor.findOneAndUpdate({ email: body.email }, { token: newToken })
-
-  return res.header('x-auth', newToken.token).send(updatedInstructor)
 }
 
 let validateInstructor = (req, res) => {
