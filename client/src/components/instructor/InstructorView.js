@@ -28,6 +28,7 @@ class InstructorView extends Component {
     let { selectedCourse } = this.state
     selectedCourse = index === selectedCourse ? -1 : index
     this.setState({ selectedCourse })
+    console.log('instructorView courseClicked: ' + selectedCourse)
   }
 
   createCourseComponents () {

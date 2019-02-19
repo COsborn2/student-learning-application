@@ -1,12 +1,12 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 import DropDownWithFilter from '../helpers/DropDownWithFilter.js'
+import './instructorStyles.css'
 
 class Course extends Component {
   constructor (props) {
     super(props)
-    let course = this.props.course // this.props.history.location.state.course//this.props.history.location.state
-    // let expanded = this.props.history.location.state.expanded
+    let course = this.props.course
     this.state = {
       course: course,
       code: course.classCode,
@@ -29,15 +29,8 @@ class Course extends Component {
   render () {
     const students = this.state.students.map((student) => student.userName)
     const assignments = this.state.assignments.map(assignment => 'Assignment' + assignment.id)
-    let outerCss = ''; let innerCss = ''
-    if (this.props.show) {
-      outerCss = 'course expand '
-      innerCss = 'course-content expand '
-    } else {
-      outerCss = 'course '
-      innerCss = 'course-content '
-    }
-    console.log(`course${this.state.code}\npath: ${this.props.match.url}`)
+    let outerCss = this.props.show ? 'course expand ' : 'course '
+    let innerCss = this.props.show ? 'course-content expand ' : 'course-content '
     return (
       <div className={outerCss + `container badge-light rounded my-4 py-1`}>
         <div className={innerCss}>
