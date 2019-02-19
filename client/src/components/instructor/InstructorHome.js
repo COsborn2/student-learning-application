@@ -1,8 +1,8 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 import Course from './Course'
-import Button from 'react-bootstrap/es/Button'
 import './instructorStyles.css'
+import Button from 'react-bootstrap/Button'
 
 class InstructorHome extends Component {
   constructor (props) {

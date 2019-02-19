@@ -9,9 +9,8 @@ import Form from 'react-bootstrap/Form'
 import ModalBody from 'react-bootstrap/ModalBody'
 import FormGroup from 'react-bootstrap/FormGroup'
 import ModalFooter from 'react-bootstrap/ModalFooter'
-import FormLabel from 'react-bootstrap/es/FormLabel'
-import FormControl from 'react-bootstrap/es/FormControl'
-import Button from 'react-bootstrap/es/Button'
+import Button from 'react-bootstrap/Button'
+import { FormControl, FormLabel } from 'react-bootstrap'
 
 const messageStyles = {
   messageFading: {

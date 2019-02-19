@@ -9,7 +9,7 @@ class InstructorObj {
       this.id = user.id
       this.JWT = user.JWT
       this.isAuth = user.isAuth
-      this.classrooms = user.classrooms
+      this.courses = user.courses
     } else {
       this.id = -1
       this.JWT = null
