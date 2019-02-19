@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 import { Redirect, Route } from 'react-router-dom'
 import InstructorHome from './InstructorHome'
-import InstructorObj from '../../javascript/InstructorObj'
+import InstructorApiCalls from '../../javascript/InstructorApiCalls'
 
 /* The instructor view manages all screens and routes for a specific instructor user
  the login screen creates and authenticates an instructor object, and passes it
@@ -12,29 +12,30 @@ import InstructorObj from '../../javascript/InstructorObj'
 class InstructorView extends Component {
   constructor (props) {
     super(props)
+    const user = this.props.history.location.state
     this.state = {
-      user: new InstructorObj(this.props.history.location.state)
-    }
-    if (!this.state.user) {
-      console.error('InstructorView ctor error: user is null')
+      id: user.id,
+      jwt: user.jwt,
+      api: InstructorApiCalls,
+      courses: null
     }
   }
 
   componentDidMount () {
-    let user = this.state.user
-    if (user && user.isAuth) {
-      let succeeded = user.getCourses()
-      if (succeeded) { this.setState({ user }) }
+    let { api, jwt } = this.state
+    if (jwt) { // makes sure api isn't called if user is not valid
+      let courses = api.getCourses(jwt)
+      if (courses) {
+        this.setState({ courses })
+      }
     }
   }
 
   render () {
-    let user = this.state.user
-    if (!user || !user.isAuth) {
-      return <Redirect to='/login/instructor' />
-    }
-    if (!user.courses) return <div />
-    return <Route path='/instructor/:userId' render={(props) => <InstructorHome {...props} courses={user.courses} />} />
+    let { jwt, courses } = this.state
+    if (!jwt) return <Redirect to='/login/instructor' />
+    if (!courses) return <div />
+    return <Route path='/instructor/:userId' render={(props) => <InstructorHome {...props} courses={courses} />} />
   }
 }
 
