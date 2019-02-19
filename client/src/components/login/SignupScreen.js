@@ -83,14 +83,14 @@ class SignupScreen extends Component {
                 <FormLabel>User Id</FormLabel>
                 <FormControl type='text'
                   placeholder='Id'
-                  inputRef={(ref) => { this._idInput = ref }} />
+                  ref={(ref) => { this._idInput = ref }} />
               </FormGroup>
 
               <FormGroup>
                 <FormLabel>Password</FormLabel>
                 <FormControl type='password'
                   placeholder='Password'
-                  inputRef={(ref) => { this._passwordInput = ref }} />
+                  ref={(ref) => { this._passwordInput = ref }} />
               </FormGroup>
             </Form>
 
@@ -99,7 +99,7 @@ class SignupScreen extends Component {
           <ModalFooter>
             <p style={errorMessageStyle}>{this.state.failedMessage}</p>
             <div style={{ flex: 1 }} />
-            <Button bsStyle='primary' onClick={() => this.props.history.push('/')}>Close</Button>
+            <Button onClick={() => this.props.history.push('/')}>Close</Button>
             <Button bsStyle='primary' type={'submit'} onClick={this.handleSignup}>Sign Up</Button>
           </ModalFooter>
         </ModalDialog>
