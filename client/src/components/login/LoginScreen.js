@@ -24,12 +24,6 @@ const messageStyles = {
   }
 }
 
-/* The loginModal creates a new user object based on the type parameter in the url
- ie '/login/student' will create a new studentObj and use it to authenticate using
- the credentials entered. When auth is validated, the client is redirected to the
- correct screen with the userObj passed as a property
- */
-
 class LoginScreen extends Component {
   constructor (props) {
     super(props)

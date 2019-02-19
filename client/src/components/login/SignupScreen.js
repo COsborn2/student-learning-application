@@ -9,6 +9,8 @@ import ModalBody from 'react-bootstrap/ModalBody'
 import FormGroup from 'react-bootstrap/FormGroup'
 import ModalFooter from 'react-bootstrap/ModalFooter'
 import { FormControl, FormLabel } from 'react-bootstrap'
+import InstructorApiCalls from '../../javascript/InstructorApiCalls'
+import StudentApiCalls from '../../javascript/StudentApiCalls'
 
 const messageStyles = {
   messageFading: {
@@ -22,26 +24,24 @@ const messageStyles = {
   }
 }
 
-/* The signupModal creates a new user object based on the type parameter in the url
-it uses this to create a new user. When a new user is succesfully created, the client is redirected
-to the proper user screen and is signed in
- */
-
 class SignupScreen extends Component {
   constructor (props) {
     super(props)
+    let type = this.props.match.params.type
+    let api = type === 'instructor' ? InstructorApiCalls : StudentApiCalls
     this.state = {
       failedMessage: '',
       showMessage: false,
-      user: this.props.history.location.state
+      type: type,
+      api: api
     }
     this.handleSignup = this.handleSignup.bind(this)
   }
 
   handleSignup () {
+    let { api, type } = this.state
     const password = this._passwordInput.value
     const id = this._idInput.value
-    let user = this.state.user
 
     if (id === '') {
       this.animateMessage('* A username is required')
@@ -49,13 +49,9 @@ class SignupScreen extends Component {
       this.animateMessage('* A password is required')
     }
 
-    let isAuth = user.verifySignup(id, password)
-    this.setState({ user })
-    if (isAuth) {
-      this.props.history.replace('/' + user.TYPE + '/' + user.id, user) // navigates to the proper user screen, passing the authenticated user as a prop
-    } else {
-      this.animateMessage('* Invalid username or password')
-    }
+    let jwt = api.verifySignup(id, password)
+    if (!jwt) this.animateMessage('* Invalid username or password')
+    else this.props.history.replace(`/${type}/${id}`, { id, jwt }) // navigates to the proper user screen, passing the jwt
   }
 
   animateMessage (msg) {
@@ -99,7 +95,7 @@ class SignupScreen extends Component {
             <p style={errorMessageStyle}>{this.state.failedMessage}</p>
             <div style={{ flex: 1 }} />
             <Button onClick={() => this.props.history.push('/')}>Close</Button>
-            <Button bsStyle='primary' type={'submit'} onClick={this.handleSignup}>Sign Up</Button>
+            <Button type={'submit'} onClick={this.handleSignup}>Sign Up</Button>
           </ModalFooter>
         </ModalDialog>
       </React.Fragment>
