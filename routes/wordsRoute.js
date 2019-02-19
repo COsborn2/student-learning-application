@@ -16,12 +16,12 @@ let createWord = async (req, res) => {
 let updateWord = async (req, res) => {
   let body = _.pick(req.body, ['text'], ['newText'])
 
-  let newWord = await Word.findOneAndUpdate({ 
-    text: body.text 
+  let newWord = await Word.findOneAndUpdate({
+    text: body.text
   }, {
     text: body.newText
-  }, { 
-    new: true 
+  }, {
+    new: true
   })
 
   return res.send(newWord)
