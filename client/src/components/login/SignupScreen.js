@@ -38,7 +38,7 @@ class SignupScreen extends Component {
     this.handleSignup = this.handleSignup.bind(this)
   }
 
-  handleSignup () {
+  async handleSignup () {
     let { api, type } = this.state
     const password = this._passwordInput.value
     const id = this._idInput.value
@@ -49,9 +49,11 @@ class SignupScreen extends Component {
       this.animateMessage('* A password is required')
     }
 
-    let jwt = api.verifySignup(id, password)
-    if (!jwt) this.animateMessage('* Invalid username or password')
-    else this.props.history.replace(`/${type}/${id}`, { id, jwt }) // navigates to the proper user screen, passing the jwt
+    let res = await api.verifySignup(id, password)
+
+    if (res.error) this.animateMessage(res.error)
+    else if (!res.jwt) this.animateMessage('* Invalid username or password')
+    else this.props.history.replace(`/${type}/${id}`, { id, jwt: res.jwt }) // navigates to the proper user screen, passing the jwt
   }
 
   animateMessage (msg) {
