@@ -5,11 +5,17 @@ const bcrypt = require('bcrypt')
 
 let createInstructor = (req, res) => {
   let body = _.pick(req.body, ['email', 'password'])
+  console.log('body: ' + body)
+  console.log('bodyEmail: ' + body.email)
 
   let instructor = new Instructor({
     email: body.email,
     hashedPassword: body.password
   })
+
+  console.log('instructor: ' + instructor)
+  console.log('email: ' + instructor.email)
+  console.log('pass: ' + instructor.hashedPassword)
 
   Token.generateAuthToken(['Instructor', 'Student'], 'Instructor').then(async (token) => {
     instructor.token = token
@@ -28,14 +34,23 @@ let createInstructor = (req, res) => {
     })
   }).catch((err) => {
     console.log(err)
-    return res.status(400).send('here')
+    return res.status(400).send(err)
   })
 }
 
 let loginInstructor = async (req, res) => { // need to find instructor from email
   let body = _.pick(req.body, ['email', 'password'])
 
+  console.log('body: ' + body)
+  console.log('bodyEmail: ' + body.email)
+
   let instructor = await Instructor.findOne({ email: body.email })
+
+  console.log('instructor: ' + instructor)
+  console.log('instructorEmail: ' + instructor.email)
+
+  console.log('email: ' + instructor.email)
+  console.log('pass: ' + instructor.hashedPassword)
 
   let hashResult = await bcrypt.compare(body.password, instructor.hashedPassword)
 

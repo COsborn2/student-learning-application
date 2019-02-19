@@ -53,7 +53,6 @@ class LoginScreen extends Component {
     }
 
     let res = await api.verifyAuth(id, password)
-
     if (res.error) this.animateMessage(res.error)
     else if (!res.jwt) this.animateMessage('* Incorrect username or password')
     else this.props.history.replace(`/${type}/${id}`, { id, jwt: res.jwt }) // navigates to the proper user screen, passing the jwt
@@ -87,7 +86,7 @@ class LoginScreen extends Component {
         <ModalDialog>
           <ModalHeader>
             <ModalTitle>{type} Login</ModalTitle>
-            <div className='flex-fill'/>
+            <div className='flex-fill' />
             <Button className='btn-warning mx-2' onClick={this.handleSkipAuth}>Dev Skip</Button>
             <Button onClick={this.handleSignup}>Signup</Button>
           </ModalHeader>
@@ -97,15 +96,15 @@ class LoginScreen extends Component {
               <FormGroup>
                 <FormLabel>User Id</FormLabel>
                 <FormControl type='text'
-                             placeholder='Id'
-                             ref={(ref) => { this._idInput = ref }}/>
+                  placeholder='Id'
+                  ref={(ref) => { this._idInput = ref }} />
               </FormGroup>
 
               <FormGroup>
                 <FormLabel>Password</FormLabel>
                 <FormControl type='password'
-                             placeholder='Password'
-                             ref={(ref) => { this._passwordInput = ref }}/>
+                  placeholder='Password'
+                  ref={(ref) => { this._passwordInput = ref }} />
               </FormGroup>
             </Form>
 
@@ -113,7 +112,7 @@ class LoginScreen extends Component {
 
           <ModalFooter>
             <p style={errorMessageStyle}>{this.state.failedMessage}</p>
-            <div className='flex-fill'/>
+            <div className='flex-fill' />
             <Button onClick={() => this.props.history.push('/')}>Close</Button>
             <Button type={'submit'} onClick={this.handleVerifyAuth}>Log in</Button>
           </ModalFooter>

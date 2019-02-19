@@ -1,20 +1,63 @@
+import fetch from 'isomorphic-fetch'
+
 class StudentApiCalls {
   // this is where a login is attempted
-  static verifyAuth (id, pass) {
+  static async verifyAuth (id, pass) {
     if (id === 'studentDev' && pass === 'password') { // todo this is just for the devSkip button
       return 'ValidJWT'
     }
-    console.log('Expected api login call.')// todo
-    return null
+    let httpMessage = {
+      method: 'POST',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        email: id,
+        password: pass
+      })
+    }
+
+    const response = await fetch(`/student/login`, httpMessage)
+    console.log(response)
+    if (response.status !== 200) {
+      return {
+        jwt: null,
+        error: (await response.json()).error
+      }
+    }
+    let jwt = response.headers.get('x-auth')
+    return { jwt, error: null }
   }
 
   // this is where a sign up is attempted
-  static verifySignup (id, pass) {
+  static async verifySignup (id, pass) {
     if (id === 'studentDev' && pass === 'password') { // todo this is just for the devSkip button
       return 'ValidJWT'
     }
-    console.log('Expected api login call.')// todo
-    return null
+    let httpMessage = {
+      method: 'POST',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        email: id,
+        password: pass
+      })
+    }
+
+    const response = await fetch(`/student`, httpMessage)
+    console.log(response)
+    if (response.status !== 200) {
+      return {
+        jwt: null,
+        error: (await response.json()).error
+      }
+    }
+
+    let jwt = response.headers.get('x-auth')
+    return { jwt, error: null }
   }
 
   // this is where the api call to retrieve the progress is
