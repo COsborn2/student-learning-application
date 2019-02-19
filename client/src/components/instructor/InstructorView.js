@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
-import { Redirect, Route, Switch } from 'react-router-dom'
+import { Redirect, Route } from 'react-router-dom'
 import InstructorHome from './InstructorHome'
 import InstructorObj from '../../javascript/InstructorObj'
 
@@ -22,8 +22,8 @@ class InstructorView extends Component {
 
   componentDidMount () {
     let user = this.state.user
-    if (user && user.isAuth) { // makes sure api isn't called if user is not valid
-      let succeeded = user.updateClasses()
+    if (user && user.isAuth) {
+      let succeeded = user.getCourses()
       if (succeeded) { this.setState({ user }) }
     }
   }
@@ -33,18 +33,14 @@ class InstructorView extends Component {
     if (!user || !user.isAuth) {
       return <Redirect to='/login/instructor' />
     }
-    return (
-      <div style={{ background: '#a9a9a9' }}>
-        <Switch>
-          <Route exact path='/instructor/:id' component={InstructorHome} />
-        </Switch>
-      </div>
-    )
+    if (!user.courses) return <div />
+    return <Route path='/instructor/:userId' render={(props) => <InstructorHome {...props} courses={user.courses} />} />
   }
 }
 
 InstructorView.propTypes = {
-  match: PropTypes.object.isRequired
+  match: PropTypes.object.isRequired,
+  history: PropTypes.object.isRequired
 }
 
 export default InstructorView
