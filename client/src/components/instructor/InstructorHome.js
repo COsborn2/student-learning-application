@@ -1,19 +1,8 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
-import { Link, Route } from 'react-router-dom'
 import Course from './Course'
-
-const courseStyles = {
-  collapse: {
-    color: 'red',
-    transition: 'opacity 1.0s',
-    opacity: 0
-  },
-  expand: {
-    transition: 'opacity 1.0s',
-    opacity: 1
-  }
-}
+import Button from 'react-bootstrap/es/Button'
+import './instructorStyles.css'
 
 class InstructorHome extends Component {
   constructor (props) {
@@ -21,40 +10,38 @@ class InstructorHome extends Component {
     this.state = {
       userId: this.props.match.params.userId,
       courses: this.props.courses,
-      selectedCourse: -1,
-      courseStyle: courseStyles.expand
+      selectedCourse: -1
     }
     this.onCourseClick = this.onCourseClick.bind(this)
     console.log('path: ' + this.props.match.path)
   }
 
+  //what if it want using Router at all an instead just used state to manage the rendered class
+
   onCourseClick (index) {
-    let { selectedCourse, courseStyle } = this.state
+    let { selectedCourse } = this.state
     console.log('courseClicked: ' + index)
-    if (selectedCourse === -1) {
-      selectedCourse = index
-      courseStyle = courseStyles.collapse
-    } else {
+    console.log('prevSelected: ' + selectedCourse)
+    if( index === selectedCourse) {
       selectedCourse = -1
-      courseStyle = courseStyles.expand
     }
-    this.setState({ selectedCourse, courseStyle })
+    else {
+      selectedCourse = index
+    }
+    this.setState({ selectedCourse })
   }
 
   createCourseComponents () {
-    const { match, courses } = this.props
     return (
-      <React.Fragment>
-        {courses.map((course, index) =>
-          <React.Fragment key={index}>
-            <Link to={{ pathname: `${match.url}/course/${course.classCode}`, state: { course: course } }}
-              style={{ textDecoration: 'none' }} onClick={() => this.onCourseClick(index)}
-              className='btn-lg btn-primary rounded-pill'>{course.className}</Link>
-            <Route styles={this.state.courseStyle} path={`${match.url}/course/${course.classCode}`} component={Course} />
+      <div>
+        {this.props.courses.map((course, index) =>
+          <div key={index}>
+            <Button onClick={() => this.onCourseClick(index)} className='test btn-lg btn-primary rounded-pill'>{course.className}</Button>
+            <Course {...this.props} show={index === this.state.selectedCourse} course={course} />
             <hr />
-          </React.Fragment>
+          </div>
         )}
-      </React.Fragment>
+      </div>
     )
   }
 

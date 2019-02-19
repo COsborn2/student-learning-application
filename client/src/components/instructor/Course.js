@@ -5,7 +5,8 @@ import DropDownWithFilter from './DropDownWithFilter.js'
 class Course extends Component {
   constructor (props) {
     super(props)
-    let { course } = this.props.location.state
+    let course = this.props.course // this.props.history.location.state.course//this.props.history.location.state
+    // let expanded = this.props.history.location.state.expanded
     this.state = {
       course: course,
       code: course.classCode,
@@ -18,7 +19,7 @@ class Course extends Component {
   }
 
   onStudentSelected (index) {
-    console.log('student selected: ' + index)
+    console.log('student selected:  ' + index)
   }
 
   onAssignmentSelected (index) {
@@ -28,22 +29,33 @@ class Course extends Component {
   render () {
     const students = this.state.students.map((student) => student.userName)
     const assignments = this.state.assignments.map(assignment => 'Assignment' + assignment.id)
+    let outerCss = ''; let innerCss = ''
+    if (this.props.show) {
+      outerCss = 'course expand '
+      innerCss = 'course-content expand '
+    } else {
+      outerCss = 'course '
+      innerCss = 'course-content '
+    }
     return (
-      <div className='container badge-light rounded my-4 py-1'>
-        <div className='card-header rounded'>
-          <h1>{this.state.name} </h1>
+      <div className={outerCss + `container badge-light rounded my-4 py-1`}>
+        <div className={innerCss}>
+          <h1 className='card-header rounded'>
+            {this.state.name}
+          </h1>
+          <h2> Students </h2>
+          <DropDownWithFilter category='Students' values={students} onSelected={this.onStudentSelected} />
+          <h2>Assignments </h2>
+          <DropDownWithFilter category='Assignments' values={assignments} onSelected={this.onAssignmentSelected} />
         </div>
-        <h2> Students </h2>
-        <DropDownWithFilter category='Students' values={students} onSelected={this.onStudentSelected} />
-        <h2>Assignments </h2>
-        <DropDownWithFilter category='Assignments' values={assignments} onSelected={this.onAssignmentSelected} />
       </div>
     )
   }
 }
 
 Course.propTypes = {
-  match: PropTypes.object.isRequired
+  match: PropTypes.object.isRequired,
+  course: PropTypes.object.isRequired
 }
 
 export default Course
