@@ -1,7 +1,6 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
-import { Redirect, Route } from 'react-router-dom'
-import InstructorHome from './InstructorHome'
+import { Redirect } from 'react-router-dom'
 import InstructorApiCalls from '../../javascript/InstructorApiCalls'
 import Course from './Course'
 import Button from 'react-bootstrap/Button'
