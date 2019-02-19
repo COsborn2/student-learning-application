@@ -27,7 +27,7 @@ let createInstructor = (req, res) => {
     })
   }).catch((err) => {
     console.log(err)
-    return res.status(400).send('here')
+    return res.status(400).send('error')
   })
 }
 

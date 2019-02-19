@@ -33,6 +33,7 @@ app.post('/api/student/login', studentsRoute.loginStudent)
 app.post('/api/student/testToken', authenticateStudent, studentsRoute.validateStudent)
 
 app.post('/api/word', authenticateInstructor, wordsRoute.createWord)
+app.put('/api/updateWord', authenticateInstructor, wordsRoute.updateWord)
 
 if (isProduction) {
   console.log('production')
