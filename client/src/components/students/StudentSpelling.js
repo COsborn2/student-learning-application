@@ -4,7 +4,7 @@ import './StudentSpelling.css'
 import SpellingCard from './spelling/SpellingCard.js'
 import DropZone from './spelling/DropZone.js'
 import PropTypes from 'prop-types'
-import { default as ItemPreview } from './spelling/ItemPreview.js';
+import ItemPreview from './spelling/ItemPreview.js'
 
 function isWordSpelled (curWordArray, wordToSpell) {
   return curWordArray.join('') === wordToSpell
@@ -123,7 +123,7 @@ class StudentSpelling extends React.Component {
           {letterCards}
         </div>
         {button}
-        <ItemPreview key="__preview" name="Item"/>
+        <ItemPreview key='__preview' name='Item' />
       </div>)
   }
 }

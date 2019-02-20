@@ -6,7 +6,7 @@ import StudentSpelling from './StudentSpelling'
 import StudentWriting from './StudentWriting'
 import StudentObj from '../../javascript/StudentObj'
 import { DragDropContextProvider } from 'react-dnd'
-//import HTML5Backend from 'react-dnd-html5-backend'
+// import HTML5Backend from 'react-dnd-html5-backend'
 import TouchBackend from 'react-dnd-touch-backend'
 
 /* The student view manages all screens and routes for a specific student user

@@ -30,7 +30,7 @@ function collect (connect, monitor) {
 function SpellingCard (props) {
   const { id, letter, isDragging, connectDragSource } = props
 
-  let content;
+  let content
 
   if (!isDragging) {
     content = connectDragSource(
