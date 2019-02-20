@@ -13,7 +13,7 @@ const StudentHome = ({ history, match }) => (
 
     <div className='row'>
       <div className='col-md-6'>
-        <Button bsStyle='info' className='mx-auto mb-4 auto card badge-success' onClick={() => history.push(match.url + '/spelling')}>
+        <Button className='btn-info mx-auto mb-4 auto card badge-success' onClick={() => history.push(match.url + '/spelling')}>
           <Image className='card-img-top' src={spellingImgSrc} alt='Spelling' />
           <div className='card-body'>
             <h5 className='card-title'>Spelling</h5>
@@ -24,7 +24,7 @@ const StudentHome = ({ history, match }) => (
       </div>
 
       <div className='col-md-6'>
-        <Button bsStyle='info' className='mx-auto mb-4 card badge-success' onClick={() => history.push(match.url + '/writing')}>
+        <Button className='btn-info mx-auto mb-4 card badge-success' onClick={() => history.push(match.url + '/writing')}>
           <Image className='card-img-top' src={writingImgSrc} alt='Hand Writing' />
           <div className='card-body'>
             <h5 className='card-title'>Hand Writing</h5>

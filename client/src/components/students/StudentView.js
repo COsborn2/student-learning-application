@@ -4,10 +4,10 @@ import StudentHome from './StudentHome'
 import { Redirect, Route, Switch } from 'react-router-dom'
 import StudentSpelling from './StudentSpelling'
 import StudentWriting from './StudentWriting'
-import StudentObj from '../../javascript/StudentObj'
 import { DragDropContextProvider } from 'react-dnd'
 // import HTML5Backend from 'react-dnd-html5-backend'
 import TouchBackend from 'react-dnd-touch-backend'
+import StudentApiCalls from '../../javascript/StudentApiCalls'
 
 /* The student view manages all screens and routes for a specific student user
  the login screen creates and authenticates a student object, and passes it
@@ -17,36 +17,38 @@ import TouchBackend from 'react-dnd-touch-backend'
 class StudentView extends Component {
   constructor (props) {
     super(props)
+    const user = this.props.history.location.state
     this.state = {
-      user: new StudentObj(this.props.history.location.state),
-      curAssignmentIndex: 0
+      id: user.id,
+      jwt: user.jwt,
+      api: StudentApiCalls,
+      assignments: null,
+      progress: null
     }
-    if (!this.state.user) console.error('StudentView ctor error: user is null')
     this.onWordCompletion = this.onWordCompletion.bind(this)
   }
 
   componentDidMount () {
-    let user = this.state.user
-    if (user && user.isAuth) { // makes sure api isn't called if user is not valid
-      let succeeded = user.getAssignments()
-      if (succeeded) {
-        this.setState({ user, curAssignmentIndex: user.progress.curAssignmentIndex })
+    let { api, jwt } = this.state
+    if (jwt) { // makes sure api isn't called if user is not valid
+      let assignments = api.getAssignments(jwt)
+      let progress = api.getProgress(jwt)
+      if (assignments && progress) {
+        this.setState({ assignments, progress })
       }
     }
   }
 
   onWordCompletion (wordIndex, allWordsSpelled) {
-    let { user } = this.state
-    // the line below is a workaround of calling setState. That would cause the StudentView component to re-render and create multiple HTML5Backend's.
-    // instead we store the value in the user object and setState after all the words are spelled so the SpellingComponent doesn't re-render creating more
-    // than one HTMLBackEnd's at a single time. This also allows us to update the progress in the DB after every word completion
-    user.progress.curWordIndex = wordIndex
+    let { id, jwt, api, progress } = this.state
+    progress.curWordIndex = wordIndex
     if (allWordsSpelled) {
-      console.log('all words have been spelled')
-      this.setState({ user })
-      this.props.history.push('/student/' + user.id)
+      progress.curWordIndex = 0 // todo this is temporary
+      console.log('All words have been spelled. For now the words will repeat')
+      this.setState({ progress })
+      this.props.history.push(`/student/${id}`)
     }
-    user.putAssignments()
+    api.putAssignments(jwt, progress)
   }
 
   onLetterCompletion () {
@@ -55,13 +57,10 @@ class StudentView extends Component {
   }
 
   render () {
-    const { user, curAssignmentIndex } = this.state
-    if (!user || !user.isAuth) {
-      return <Redirect to='/login/student' />
-    }
-    if (!user.assignments) return <div /> // this is because the component is rendered one time before componentDidMount is called. ie the users assignments will be null
-
-    const wordsToSpell = user.assignments[curAssignmentIndex].words
+    const { jwt, assignments, progress } = this.state
+    if (!jwt) return <Redirect to='/login/student' />
+    if (!assignments || !progress) return <div /> // this is because the component is rendered one time before componentDidMount is called. ie the users assignments will be null
+    let wordsToSpell = assignments[progress.curAssignmentIndex].words
 
     return (
       <div style={{ background: '#a9a9a9' }}>

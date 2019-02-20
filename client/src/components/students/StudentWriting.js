@@ -35,7 +35,7 @@ class StudentWriting extends Component {
             lineColor='black'
             lineWidth={10} />
 
-          <Button bsStyle='primary' className='p-2 m-1' onClick={this.clearCanvas}>Clear</Button>
+          <Button className='btn-primary p-2 m-1' onClick={this.clearCanvas}>Clear</Button>
         </div>
 
         <div className='card col-md-4 m-4 shadow-lg text-center'>

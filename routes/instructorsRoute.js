@@ -1,6 +1,6 @@
 const _ = require('lodash')
 const { Token } = require('../models/token')
-var { Instructor } = require('../models/instructor')
+const { Instructor } = require('../models/instructor')
 const bcrypt = require('bcrypt')
 
 let createInstructor = (req, res) => {
@@ -15,7 +15,6 @@ let createInstructor = (req, res) => {
     instructor.token = token
 
     await instructor.hashPassword()
-    console.log(instructor.hashedPassword)
 
     instructor.save((err) => {
       if (err) {
@@ -28,26 +27,30 @@ let createInstructor = (req, res) => {
     })
   }).catch((err) => {
     console.log(err)
-    return res.status(400).send('here')
+    return res.status(400).send('error')
   })
 }
 
 let loginInstructor = async (req, res) => { // need to find instructor from email
   let body = _.pick(req.body, ['email', 'password'])
 
-  let instructor = await Instructor.findOne({ email: body.email })
+  try {
+    let instructor = await Instructor.findOne({ email: body.email })
 
-  let hashResult = await bcrypt.compare(body.password, instructor.hashedPassword)
+    let hashResult = await bcrypt.compare(body.password, instructor.hashedPassword)
 
-  if (!hashResult) {
-    return res.status(401).send({ error: 'invalid password' })
+    if (!hashResult) {
+      return res.status(401).send({ error: 'invalid password' })
+    }
+
+    let newToken = await Token.generateAuthToken(['Instructor', 'Student'], 'Instructor')
+
+    let updatedInstructor = await Instructor.findOneAndUpdate({ email: body.email }, { token: newToken })
+
+    return res.header('x-auth', newToken.token).send(updatedInstructor)
+  } catch (err) {
+    return res.status(401).send({ err: err.message })
   }
-
-  let newToken = await Token.generateAuthToken(['Instructor', 'Student'], 'Instructor')
-
-  let updatedInstructor = await Instructor.findOneAndUpdate({ email: body.email }, { token: newToken })
-
-  res.header('x-auth', newToken.token).send(updatedInstructor)
 }
 
 let validateInstructor = (req, res) => {
