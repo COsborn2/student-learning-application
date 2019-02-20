@@ -1,6 +1,6 @@
 const _ = require('lodash')
 const { Token } = require('../models/token')
-var { Instructor } = require('../models/instructor')
+const { Instructor } = require('../models/instructor')
 const bcrypt = require('bcrypt')
 
 let createInstructor = (req, res) => {
@@ -21,7 +21,6 @@ let createInstructor = (req, res) => {
     instructor.token = token
 
     await instructor.hashPassword()
-    console.log(instructor.hashedPassword)
 
     instructor.save((err) => {
       if (err) {
@@ -62,7 +61,7 @@ let loginInstructor = async (req, res) => { // need to find instructor from emai
 
   let updatedInstructor = await Instructor.findOneAndUpdate({ email: body.email }, { token: newToken })
 
-  res.header('x-auth', newToken.token).send(updatedInstructor)
+  return res.header('x-auth', newToken.token).send(updatedInstructor)
 }
 
 let validateInstructor = (req, res) => {
