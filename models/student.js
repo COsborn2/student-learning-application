@@ -44,12 +44,12 @@ StudentSchema.methods.toJSON = function () {
 }
 
 // NOTE: This does NOT check if the token is authenticated
-StudentSchema.statics.findByToken = async function (token) {
+StudentSchema.statics.findByToken = function (token) {
   let decoded = jwt.decode(token)
 
   let studentId = decoded._mid
 
-  return await Student.findById(studentId)
+  return Student.findById(studentId)
 }
 
 let Student = mongoose.model('Student', StudentSchema)

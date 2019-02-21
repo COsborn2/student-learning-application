@@ -7,7 +7,7 @@ let TokenSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     required: true
   },
-  _mid: {  // id of associated model
+  _mid: { // id of associated model
     type: mongoose.Schema.Types.ObjectId,
     required: true
   },

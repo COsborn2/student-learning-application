@@ -56,12 +56,12 @@ InstructorSchema.methods.hashPassword = function () {
 }
 
 // NOTE: This does NOT check if the token is authenticated
-InstructorSchema.statics.findByToken = async function (token) {
+InstructorSchema.statics.findByToken = function (token) {
   let decoded = jwt.decode(token)
 
   let instructorId = decoded._mid
 
-  return await Instructor.findById(instructorId)
+  return Instructor.findById(instructorId)
 }
 
 let Instructor = mongoose.model('Instructor', InstructorSchema)
