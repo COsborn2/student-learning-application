@@ -10,8 +10,9 @@ let createStudent = (req, res) => {
     classcode: body.classcode
   })
 
-  Token.generateAuthToken(['Student'], 'Student').then((token) => {
+  Token.generateAuthToken(['Student'], 'Student', student._id).then((token) => {
     student.token = token
+
     student.save((err) => {
       if (err) {
         if (err.code === 11000) {
@@ -34,10 +35,11 @@ let loginStudent = async (req, res) => {
     let student = await Student.findOne({ classcode: body.classcode, username: body.username })
 
     if (!student) {
-      throw TypeError('Student does not exist')
+      throw TypeError('Wrong classcode or username')
     }
 
-    let newToken = await Token.generateAuthToken(['Student'], 'Student')
+    let newToken = await Token.generateAuthToken(['Student'], 'Student', student._id)
+    newToken._mid = student._id
 
     let updatedStudent = await Student.findOneAndUpdate({
       classcode: body.classcode,
@@ -47,8 +49,8 @@ let loginStudent = async (req, res) => {
     })
 
     res.header('x-auth', newToken.token).send(updatedStudent)
-  } catch (err) {
-    res.status(401).send({ error: err.message })
+  } catch (error) {
+    res.status(401).send({ error: error.message })
   }
 }
 

@@ -11,8 +11,9 @@ let createInstructor = (req, res) => {
     hashedPassword: body.password
   })
 
-  Token.generateAuthToken(['Instructor', 'Student'], 'Instructor').then(async (token) => {
+  Token.generateAuthToken(['Instructor', 'Student'], 'Instructor', instructor._id).then(async (token) => {
     instructor.token = token
+    instructor.token._mid = instructor._id
 
     await instructor.hashPassword()
 
@@ -26,8 +27,8 @@ let createInstructor = (req, res) => {
       res.header('x-auth', token.token).send(instructor)
     })
   }).catch((err) => {
-    console.log(err)
-    return res.status(400).send('error')
+    console.error(err)
+    return res.status(400).send({ error: 'error' })
   })
 }
 
@@ -37,19 +38,23 @@ let loginInstructor = async (req, res) => { // need to find instructor from emai
   try {
     let instructor = await Instructor.findOne({ email: body.email })
 
+    if (!instructor) {
+      throw TypeError('Wrong email')
+    }
+
     let hashResult = await bcrypt.compare(body.password, instructor.hashedPassword)
 
     if (!hashResult) {
       return res.status(401).send({ error: 'invalid password' })
     }
 
-    let newToken = await Token.generateAuthToken(['Instructor', 'Student'], 'Instructor')
+    let newToken = await Token.generateAuthToken(['Instructor', 'Student'], 'Instructor', instructor._id)
 
     let updatedInstructor = await Instructor.findOneAndUpdate({ email: body.email }, { token: newToken })
 
     return res.header('x-auth', newToken.token).send(updatedInstructor)
-  } catch (err) {
-    return res.status(401).send({ err: err.message })
+  } catch (error) {
+    return res.status(401).send({ error: error.message })
   }
 }
 

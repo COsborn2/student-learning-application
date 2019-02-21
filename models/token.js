@@ -7,6 +7,10 @@ let TokenSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     required: true
   },
+  _mid: {  // id of associated model
+    type: mongoose.Schema.Types.ObjectId,
+    required: true
+  },
   token: {
     type: String,
     required: true
@@ -27,7 +31,7 @@ let TokenSchema = new mongoose.Schema({
   }
 })
 
-TokenSchema.statics.generateAuthToken = function (access, userType) {
+TokenSchema.statics.generateAuthToken = function (access, userType, _mid) {
   let Token = this
 
   return new Promise((resolve, reject) => {
@@ -38,10 +42,11 @@ TokenSchema.statics.generateAuthToken = function (access, userType) {
 
       let tokenId = mongoose.Types.ObjectId()
 
-      let tokenVal = jwt.sign({ _id: tokenId, userType, access }, salt, { expiresIn: '4h' }).toString()
+      let tokenVal = jwt.sign({ _id: tokenId, userType, access, _mid }, salt, { expiresIn: '4h' }).toString()
 
       let token = new Token({
         _id: tokenId,
+        _mid,
         token: tokenVal,
         access,
         userType,

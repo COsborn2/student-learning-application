@@ -1,6 +1,7 @@
 const mongoose = require('mongoose')
 const { TokenSchema } = require('./token')
 const _ = require('lodash')
+const jwt = require('jsonwebtoken')
 
 let StudentSchema = new mongoose.Schema({
   username: {
@@ -40,6 +41,15 @@ StudentSchema.methods.toJSON = function () {
   let studentObject = student.toObject()
 
   return _.pick(studentObject, ['username', 'classcode'])
+}
+
+// NOTE: This does NOT check if the token is authenticated
+StudentSchema.statics.findByToken = async function (token) {
+  let decoded = jwt.decode(token)
+
+  let studentId = decoded._mid
+
+  return await Student.findById(studentId)
 }
 
 let Student = mongoose.model('Student', StudentSchema)

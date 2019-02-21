@@ -3,6 +3,7 @@ const validator = require('validator')
 const { TokenSchema } = require('./token')
 const bcrypt = require('bcrypt')
 const _ = require('lodash')
+const jwt = require('jsonwebtoken')
 
 let InstructorSchema = new mongoose.Schema({
   email: {
@@ -52,6 +53,15 @@ InstructorSchema.methods.hashPassword = function () {
       resolve()
     })
   })
+}
+
+// NOTE: This does NOT check if the token is authenticated
+InstructorSchema.statics.findByToken = async function (token) {
+  let decoded = jwt.decode(token)
+
+  let instructorId = decoded._mid
+
+  return await Instructor.findById(instructorId)
 }
 
 let Instructor = mongoose.model('Instructor', InstructorSchema)
