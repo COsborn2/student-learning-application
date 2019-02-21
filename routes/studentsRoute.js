@@ -59,4 +59,13 @@ let validateStudent = (req, res) => {
   res.send(req.user)
 }
 
+// TODO: Given Token return Assignment and Progress
+// let getAssignmentAndProgress = (req, res) => {
+// }
+
+// TODO: Set students first assignment upon student creation within classroom
+// TODO: Fetch and update student to next assignment when previous assignment is completed
+// let updateStudentProgress = (req, res) => {
+// }
+
 module.exports = { createStudent, loginStudent, validateStudent }

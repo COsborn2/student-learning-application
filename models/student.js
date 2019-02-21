@@ -40,7 +40,7 @@ StudentSchema.methods.toJSON = function () {
   let student = this
   let studentObject = student.toObject()
 
-  return _.pick(studentObject, ['username', 'classcode'])
+  return _.pick(studentObject, ['username', 'classcode', 'currentAssignment', 'currentLetter', 'currentWord'])
 }
 
 // NOTE: This does NOT check if the token is authenticated
