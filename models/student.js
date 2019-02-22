@@ -19,7 +19,8 @@ let StudentSchema = new mongoose.Schema({
   },
   class: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'Class'
+    ref: 'Class',
+    required: true
   },
   currentAssignment: {
     type: Number,

@@ -4,7 +4,7 @@ const { Instructor } = require('../models/instructor')
 const { WarningMessage, SuccessMessage, ErrorMessage } = require('../middleware/message')
 const bcrypt = require('bcrypt')
 
-let createInstructor = (req, res) => {
+let createInstructor = async (req, res) => {
   let body = _.pick(req.body, ['email', 'password'])
 
   let instructor = new Instructor({
@@ -12,26 +12,30 @@ let createInstructor = (req, res) => {
     hashedPassword: body.password
   })
 
-  Token.generateAuthToken(['Instructor', 'Student'], 'Instructor', instructor._id).then(async (token) => {
+  let token
+
+  try {
+    token = await Token.generateAuthToken(['Instructor', 'Student'], 'Instructor', instructor._id)
+
     instructor.token = token
-    instructor.token._mid = instructor._id
 
     await instructor.hashPassword()
-
-    instructor.save((err) => {
-      if (err) {
-        if (err.code === 11000) {
-          WarningMessage('User already exists with that email')
-          return res.status(400).send({ error: 'User already exists with that email' })
-        }
-        ErrorMessage(err.message)
-        return res.status(400).send({ error: 'error' })
-      }
-      res.header('x-auth', token.token).send(instructor)
-    })
-  }).catch((err) => {
-    WarningMessage(err)
+  } catch (error) {
+    ErrorMessage(error.message)
     return res.status(400).send({ error: 'error' })
+  }
+
+  instructor.save((err) => {
+    if (err) {
+      if (err.code === 11000) {
+        WarningMessage('User already exists with that email')
+        return res.status(400).send({ error: 'User already exists with that email' })
+      }
+      ErrorMessage(err.message)
+      return res.status(400).send({ error: 'error' })
+    }
+    SuccessMessage('Instructor created')
+    res.header('x-auth', token.token).send(instructor)
   })
 }
 
@@ -55,6 +59,7 @@ let loginInstructor = async (req, res) => { // need to find instructor from emai
 
     let updatedInstructor = await Instructor.findOneAndUpdate({ email: body.email }, { token: newToken })
 
+    SuccessMessage('Instructor logged in')
     return res.header('x-auth', newToken.token).send(updatedInstructor)
   } catch (error) {
     ErrorMessage(error.message)

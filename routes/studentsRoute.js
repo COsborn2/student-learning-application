@@ -1,6 +1,7 @@
 const _ = require('lodash')
 const { Token } = require('../models/token')
 const { Student } = require('../models/student')
+const { Classroom } = require('../models/classroom')
 const { ErrorMessage, SuccessMessage, WarningMessage } = require('../middleware/message')
 
 // TODO: Set students first assignment upon student creation within classroom
@@ -21,7 +22,22 @@ let createStudent = async (req, res) => {
     return res.status(400).send({ error: 'error' })
   }
 
-  student.save((err) => {
+  // attach student to classroom
+  let classroom
+  try {
+    classroom = await Classroom.findOne({ classcode: student.classcode })
+
+    if (!classroom) {
+      throw TypeError('No classroom found with specified classcode')
+    }
+
+    student.class = classroom._id
+  } catch (error) {
+    ErrorMessage(error.message)
+    return res.status(400).send({ error: error.message })
+  }
+
+  student.save((err) => { // save student into database
     if (err) {
       if (err.code === 11000) {
         WarningMessage('User already exists with that username')
@@ -30,7 +46,8 @@ let createStudent = async (req, res) => {
       ErrorMessage(err.message)
       return res.status(400).send({ error: 'error' })
     }
-    res.header('x-auth', token.token).send(student)
+    SuccessMessage('Student created')
+    return res.header('x-auth', token.token).send(student)
   })
 }
 
@@ -56,6 +73,7 @@ let loginStudent = async (req, res) => {
 
     res.header('x-auth', newToken.token).send(updatedStudent)
   } catch (error) {
+    ErrorMessage(error.message)
     res.status(401).send({ error: error.message })
   }
 }
