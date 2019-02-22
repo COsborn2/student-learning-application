@@ -3,7 +3,8 @@ const { Token } = require('../models/token')
 const { Student } = require('../models/student')
 const { ErrorMessage, SuccessMessage, WarningMessage } = require('../middleware/message')
 
-let createStudent = (req, res) => {
+// TODO: Set students first assignment upon student creation within classroom
+let createStudent = async (req, res) => {
   let body = _.pick(req.body, ['classcode', 'username'])
 
   let student = new Student({
@@ -11,23 +12,25 @@ let createStudent = (req, res) => {
     classcode: body.classcode
   })
 
-  Token.generateAuthToken(['Student'], 'Student', student._id).then((token) => {
-    student.token = token
+  let token
 
-    student.save((err) => {
-      if (err) {
-        if (err.code === 11000) {
-          WarningMessage('User already exists with that username')
-          return res.status(400).send({ error: 'User already exists with that username' })
-        }
-        ErrorMessage(err.message)
-        return res.status(400).send({ error: 'error' })
+  try {
+    token = await Token.generateAuthToken(['Student'], 'Student', student._id)
+    student.token = token
+  } catch (error) {
+    return res.status(400).send({ error: 'error' })
+  }
+
+  student.save((err) => {
+    if (err) {
+      if (err.code === 11000) {
+        WarningMessage('User already exists with that username')
+        return res.status(400).send({ error: 'User already exists with that username' })
       }
-      res.header('x-auth', token.token).send(student)
-    })
-  }).catch((err) => {
-    ErrorMessage(err)
-    res.status(400).send({ error: 'error' })
+      ErrorMessage(err.message)
+      return res.status(400).send({ error: 'error' })
+    }
+    res.header('x-auth', token.token).send(student)
   })
 }
 
@@ -66,7 +69,6 @@ let validateStudent = (req, res) => {
 // let getAssignmentAndProgress = (req, res) => {
 // }
 
-// TODO: Set students first assignment upon student creation within classroom
 // TODO: Fetch and update student to next assignment when previous assignment is completed
 // let updateStudentProgress = (req, res) => {
 // }
