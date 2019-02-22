@@ -54,5 +54,3 @@ SpellingCard.proptypes = {
 }
 
 export default DragSource(Types.SPELLINGCARD, spellingCardSource, collect)(SpellingCard)
-
-// export default SpellingCard

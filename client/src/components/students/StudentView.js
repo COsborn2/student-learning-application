@@ -5,7 +5,6 @@ import { Redirect, Route, Switch } from 'react-router-dom'
 import StudentSpelling from './StudentSpelling'
 import StudentWriting from './StudentWriting'
 import { DragDropContextProvider } from 'react-dnd'
-// import HTML5Backend from 'react-dnd-html5-backend'
 import TouchBackend from 'react-dnd-touch-backend'
 import StudentApiCalls from '../../javascript/StudentApiCalls'
 
@@ -61,6 +60,7 @@ class StudentView extends Component {
     if (!jwt) return <Redirect to='/login/student' />
     if (!assignments || !progress) return <div /> // this is because the component is rendered one time before componentDidMount is called. ie the users assignments will be null
     let wordsToSpell = assignments[progress.curAssignmentIndex].words
+    let backend = TouchBackend
 
     return (
       <div style={{ background: '#a9a9a9' }}>
@@ -68,7 +68,7 @@ class StudentView extends Component {
           <Route exact path='/student/:id' component={StudentHome} />
           <Route path='/student/:id/writing' component={StudentWriting} />
           <Route path='/student/:id/spelling' render={() =>
-            <DragDropContextProvider backend={TouchBackend}>  { /* this needed to be moved up from StudentSpelling because advancing to the next word would cause multiple HTML5Backend's to be instantiated */ }
+            <DragDropContextProvider backend={backend}>  { /* this needed to be moved up from StudentSpelling because advancing to the next word would cause multiple HTML5Backend's to be instantiated */ }
               <StudentSpelling wordsToSpell={wordsToSpell} onWordCompletion={(wordIndex, allWordsSpelled) => this.onWordCompletion(wordIndex, allWordsSpelled)} />
             </DragDropContextProvider>} />
         </Switch>

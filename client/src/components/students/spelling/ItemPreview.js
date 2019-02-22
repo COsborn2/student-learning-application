@@ -12,12 +12,12 @@ function collect (monitor) {
   return {
     id: item && item.id,
     name: item && item.name,
-    value: item && item.value,
+    value: item && item.letter,
     currentOffset: monitor.getSourceClientOffset(),
     isDragging: monitor.isDragging()
   }
 }
-/*
+
 function getItemStyles (currentOffset) {
   if (!currentOffset) {
     return {
@@ -36,10 +36,19 @@ function getItemStyles (currentOffset) {
     WebkitTransform: transform
   }
 }
-*/
+
+const layerStyles = {
+  position: 'fixed',
+  pointerEvents: 'none',
+  zIndex: 100,
+  left: 0,
+  top: 0,
+  width: '100%',
+  height: '100%'
+}
+
 function ItemPreview ({
   id,
-  name,
   isDragging,
   currentOffset,
   value
@@ -49,11 +58,14 @@ function ItemPreview ({
   }
 
   return (
-    <div key={id}
-      className='mx-1 col-md-1 card badge-success'>
-      <h5 className='card-title card badge-light'>
-        {value}
-      </h5>
+    <div style={layerStyles}>
+      <div key={id}
+        style={getItemStyles(currentOffset)}
+        className='mx-1 col-md-1 card badge-success'>
+        <h5 className='card-title card badge-light'>
+          {value}
+        </h5>
+      </div>
     </div>
   )
 }
@@ -61,6 +73,7 @@ function ItemPreview ({
 ItemPreview.propTypes = {
   id: PropTypes.string,
   name: PropTypes.string,
+  value: PropTypes.string,
   currentOffset: PropTypes.shape({
     x: PropTypes.number,
     y: PropTypes.number
