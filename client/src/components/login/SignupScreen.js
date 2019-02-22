@@ -35,7 +35,7 @@ class SignupScreen extends Component {
     }
   }
 
-  handleSignup (event) {
+  async handleSignup (event) {
     const form = event.currentTarget
     if (form.checkValidity()) {
       event.preventDefault()
@@ -44,11 +44,13 @@ class SignupScreen extends Component {
 
     let { api, type } = this.state
     const password = form.elements.passField.value
-    const email = form.elements.idField.value
+    const id = form.elements.idField.value
 
-    let jwt = api.verifySignup(email, password)
-    if (!jwt) this.animateMessage('* Invalid username or password')
-    else this.props.history.replace(`/${type}/${email}`, { id: email, jwt }) // navigates to the proper user screen, passing the jwt
+    let res = await api.verifySignup(id, password)
+
+    if (res.error) this.animateMessage(res.error)
+    else if (!res.jwt) this.animateMessage('* Invalid username or password')
+    else this.props.history.replace(`/${type}/${id}`, { id, jwt: res.jwt }) // navigates to the proper user screen, passing the jwt
   }
 
   animateMessage (msg) {

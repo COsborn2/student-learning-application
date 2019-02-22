@@ -70,7 +70,7 @@ class LoginScreen extends Component {
   }
 
   // Hit backend for verification
-  handleVerifyAuth (event) {
+  async handleVerifyAuth (event) {
     const form = event.currentTarget
     if (form.checkValidity()) {
       event.preventDefault()
@@ -81,16 +81,18 @@ class LoginScreen extends Component {
     const password = form.elements.passField.value
     const id = form.elements.idField.value
 
-    let jwt = api.verifyAuth(id, password)
-    if (!jwt) this.animateMessage('* Incorrect username or password')
-    else this.props.history.replace(`/${type}/${id}`, { id, jwt }) // navigates to the proper user screen, passing the jwt
+    let res = await api.verifyAuth(id, password)
+    if (res.error) {
+      console.log(res.error)
+      this.animateMessage(res.error)
+    } else if (!res.jwt) this.animateMessage('* Incorrect username or password')
+    else this.props.history.replace(`/${type}/${id}`, { id, jwt: res.jwt }) // navigates to the proper user screen, passing the jwt
   }
 
   handleSkipAuth () {
-    let { api, type, typeInfo } = this.state
-    let id = `${type}Dev`
-    let jwt = api.verifyAuth(typeInfo.idSkip, 'password')
-    this.props.history.replace(`/${type}/${typeInfo.idSkip}`, { id, jwt }) // todo remove dev skip for easy access
+    let { type, typeInfo } = this.state
+    let id = typeInfo.idSkip
+    this.props.history.replace(`/${type}/${id}`, { id, jwt: 'ValidJWT' }) // todo remove dev skip for easy access
   }
 
   animateMessage (msg) {
