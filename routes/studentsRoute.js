@@ -1,10 +1,9 @@
 const _ = require('lodash')
 const { Token } = require('../models/token')
 const { Student } = require('../models/student')
-const { Classroom } = require('../models/classroom')
+const { Assignment } = require('../models/assignment')
 const { ErrorMessage, SuccessMessage, WarningMessage } = require('../middleware/message')
 
-// TODO: Set students first assignment upon student creation within classroom
 let createStudent = async (req, res) => {
   let body = _.pick(req.body, ['classcode', 'username'])
 
@@ -25,7 +24,7 @@ let createStudent = async (req, res) => {
   // attach student to classroom
   let classroom
   try {
-    classroom = await Classroom.findOne({ classcode: student.classcode })
+    classroom = await student.getClass()
 
     if (!classroom) {
       throw TypeError('No classroom found with specified classcode')
@@ -71,6 +70,7 @@ let loginStudent = async (req, res) => {
       token: newToken
     })
 
+    SuccessMessage('Student logged in')
     res.header('x-auth', newToken.token).send(updatedStudent)
   } catch (error) {
     ErrorMessage(error.message)
@@ -83,12 +83,37 @@ let validateStudent = (req, res) => {
   res.send(req.user)
 }
 
-// TODO: Given Token return Assignment and Progress
-// let getAssignmentAndProgress = (req, res) => {
-// }
+let getAssignmentAndProgress = async (req, res) => {
+  let token = req.header('x-auth')
+
+  let student = await Student.findByToken(token)
+
+  if (!student) {
+    ErrorMessage('Student not found with specified _id')
+    return res.status(400).send({ error: 'Student not found with specified _id' })
+  }
+
+  let classroom = await student.getClass()
+
+  if (!classroom) {
+    ErrorMessage('Classroom not found')
+    return res.status(400).send({ error: 'Classroom not found' })
+  }
+
+  let assignmentId = classroom.assignments[student.currentAssignment]
+
+  let currentAssignment = await Assignment.findById(assignmentId).populate('words')
+
+  if (!currentAssignment) {
+    ErrorMessage('Assignment not found')
+    return res.status(400).send({ error: 'Assignment not found' })
+  }
+
+  res.send({ student, classroom, currentAssignment })
+}
 
 // TODO: Fetch and update student to next assignment when previous assignment is completed
 // let updateStudentProgress = (req, res) => {
 // }
 
-module.exports = { createStudent, loginStudent, validateStudent }
+module.exports = { createStudent, loginStudent, validateStudent, getAssignmentAndProgress }

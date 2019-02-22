@@ -1,6 +1,6 @@
 const jwt = require('jsonwebtoken')
 const { Token } = require('../models/token')
-const { WarningMessage, InfoMessage } = require('./message')
+const { WarningMessage, InfoMessage, SuccessMessage } = require('./message')
 const _ = require('lodash')
 
 let authenticate = (req, res, next) => {
@@ -25,6 +25,7 @@ let authenticate = (req, res, next) => {
   Token.validateToken(rawToken, unvalidatedUserType, unvalidatedTokenId).then((doc) => {
     req.user = doc
 
+    SuccessMessage('Authenticated')
     next()
   }).catch(() => {
     return res.status(401).send()

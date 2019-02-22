@@ -1,9 +1,12 @@
 const mongoose = require('mongoose')
 
 let AssignmentSchema = new mongoose.Schema({
-  order: { // what place the assignment falls in the course
-    type: Number,
-    required: true
+  name: {
+    type: String,
+    required: true,
+    minlength: 1,
+    trim: true,
+    unique: true
   },
   letters: {
     type: [String],
@@ -13,7 +16,8 @@ let AssignmentSchema = new mongoose.Schema({
   },
   words: [{
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'Word'
+    ref: 'Word',
+    required: true
   }]
 })
 

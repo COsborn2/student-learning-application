@@ -31,7 +31,7 @@ app.post('/api/instructor/testToken', authenticateInstructor, instructorsRoute.v
 
 app.post('/api/student', studentsRoute.createStudent)
 app.post('/api/student/login', studentsRoute.loginStudent)
-app.post('/api/student/testToken', authenticateStudent, studentsRoute.validateStudent)
+app.get('/api/student', authenticateStudent, studentsRoute.getAssignmentAndProgress)
 
 app.post('/api/word', authenticateInstructor, wordsRoute.createWord)
 app.put('/api/updateWord', authenticateInstructor, wordsRoute.updateWord)

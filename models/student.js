@@ -1,5 +1,6 @@
 const mongoose = require('mongoose')
 const { TokenSchema } = require('./token')
+const { Classroom } = require('./classroom')
 const _ = require('lodash')
 const jwt = require('jsonwebtoken')
 
@@ -44,7 +45,16 @@ StudentSchema.methods.toJSON = function () {
   return _.pick(studentObject, ['username', 'classcode', 'currentAssignment', 'currentLetter', 'currentWord'])
 }
 
-// NOTE: This does NOT check if the token is authenticated
+StudentSchema.methods.getClass = async function () {
+  let student = this
+  let studentObject = student.toObject()
+
+  let classroom = await Classroom.findOne({ classcode: studentObject.classcode })
+
+  return classroom
+}
+
+// NOTE: This does NOT check if the token is authenticated. Only use this AFTER token is validated
 StudentSchema.statics.findByToken = function (token) {
   let decoded = jwt.decode(token)
 
