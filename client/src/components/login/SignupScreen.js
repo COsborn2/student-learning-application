@@ -6,9 +6,7 @@ import ModalTitle from 'react-bootstrap/ModalTitle'
 import Button from 'react-bootstrap/Button'
 import Form from 'react-bootstrap/Form'
 import ModalBody from 'react-bootstrap/ModalBody'
-import FormGroup from 'react-bootstrap/FormGroup'
 import ModalFooter from 'react-bootstrap/ModalFooter'
-import { FormControl, FormLabel } from 'react-bootstrap'
 import InstructorApiCalls from '../../javascript/InstructorApiCalls'
 import StudentApiCalls from '../../javascript/StudentApiCalls'
 
@@ -35,23 +33,22 @@ class SignupScreen extends Component {
       type: type,
       api: api
     }
-    this.handleSignup = this.handleSignup.bind(this)
   }
 
-  handleSignup () {
-    let { api, type } = this.state
-    const password = this._passwordInput.value
-    const id = this._idInput.value
-
-    if (id === '') {
-      this.animateMessage('* A username is required')
-    } else if (password === '') {
-      this.animateMessage('* A password is required')
+  handleSignup (event) {
+    const form = event.currentTarget
+    if (form.checkValidity()) {
+      event.preventDefault()
+      event.stopPropagation()
     }
 
-    let jwt = api.verifySignup(id, password)
+    let { api, type } = this.state
+    const password = form.elements.passField.value
+    const email = form.elements.idField.value
+
+    let jwt = api.verifySignup(email, password)
     if (!jwt) this.animateMessage('* Invalid username or password')
-    else this.props.history.replace(`/${type}/${id}`, { id, jwt }) // navigates to the proper user screen, passing the jwt
+    else this.props.history.replace(`/${type}/${email}`, { id: email, jwt }) // navigates to the proper user screen, passing the jwt
   }
 
   animateMessage (msg) {
@@ -64,40 +61,42 @@ class SignupScreen extends Component {
 
   render () {
     let errorMessageStyle = this.state.showMessage ? messageStyles.messageShow : messageStyles.messageFading
-    let type = this.props.match.arguments
     return (
       <React.Fragment>
-        <ModalDialog>
-          <ModalHeader>
-            <ModalTitle>{type} Sign Up</ModalTitle>
-          </ModalHeader>
+        <Form onSubmit={e => this.handleSignup(e)} >
+          <ModalDialog>
+            <ModalHeader>
+              <ModalTitle>Instructor Sign Up</ModalTitle>
+            </ModalHeader>
 
-          <ModalBody>
-            <Form>
-              <FormGroup>
-                <FormLabel>User Id</FormLabel>
-                <FormControl type='text'
-                  placeholder='Id'
-                  ref={(ref) => { this._idInput = ref }} />
-              </FormGroup>
+            <ModalBody>
+              <Form.Group>
+                <Form.Label>Email</Form.Label>
+                <Form.Control
+                  name='idField'
+                  required
+                  type='text'
+                  placeholder='Id' />
+              </Form.Group>
 
-              <FormGroup>
-                <FormLabel>Password</FormLabel>
-                <FormControl type='password'
-                  placeholder='Password'
-                  ref={(ref) => { this._passwordInput = ref }} />
-              </FormGroup>
-            </Form>
+              <Form.Group>
+                <Form.Label>Password</Form.Label>
+                <Form.Control
+                  name='passField'
+                  required
+                  type='password'
+                  placeholder='Password' />
+              </Form.Group>
+            </ModalBody>
 
-          </ModalBody>
-
-          <ModalFooter>
-            <p style={errorMessageStyle}>{this.state.failedMessage}</p>
-            <div style={{ flex: 1 }} />
-            <Button onClick={() => this.props.history.push('/')}>Close</Button>
-            <Button type={'submit'} onClick={this.handleSignup}>Sign Up</Button>
-          </ModalFooter>
-        </ModalDialog>
+            <ModalFooter>
+              <p style={errorMessageStyle}>{this.state.failedMessage}</p>
+              <div style={{ flex: 1 }} />
+              <Button onClick={() => this.props.history.push('/')}>Close</Button>
+              <Button type='submit'>Sign Up</Button>
+            </ModalFooter>
+          </ModalDialog>
+        </Form>
       </React.Fragment>
     )
   }
