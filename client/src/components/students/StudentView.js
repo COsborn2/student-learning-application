@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 import StudentHome from './StudentHome'
-import { Redirect, Route, Switch } from 'react-router-dom'
+import { Route, Switch } from 'react-router-dom'
 import StudentSpelling from './StudentSpelling'
 import StudentWriting from './StudentWriting'
 import { DragDropContextProvider } from 'react-dnd'
@@ -16,10 +16,10 @@ import StudentApiCalls from '../../javascript/StudentApiCalls'
 class StudentView extends Component {
   constructor (props) {
     super(props)
-    const user = this.props.history.location.state
+    const id = this.props.match.params.id
     this.state = {
-      id: user.id,
-      jwt: user.jwt,
+      id: id,
+      jwt: this.props.jwt,
       api: StudentApiCalls,
       assignments: null,
       progress: null
@@ -29,12 +29,10 @@ class StudentView extends Component {
 
   componentDidMount () {
     let { api, jwt } = this.state
-    if (jwt) { // makes sure api isn't called if user is not valid
-      let assignments = api.getAssignments(jwt)
-      let progress = api.getProgress(jwt)
-      if (assignments && progress) {
-        this.setState({ assignments, progress })
-      }
+    let assignments = api.getAssignments(jwt)
+    let progress = api.getProgress(jwt)
+    if (assignments && progress) {
+      this.setState({ assignments, progress })
     }
   }
 
@@ -56,11 +54,9 @@ class StudentView extends Component {
   }
 
   render () {
-    const { jwt, assignments, progress } = this.state
-    if (!jwt) return <Redirect to='/login/student' />
+    const { assignments, progress } = this.state
     if (!assignments || !progress) return <div /> // this is because the component is rendered one time before componentDidMount is called. ie the users assignments will be null
     let wordsToSpell = assignments[progress.curAssignmentIndex].words
-    let backend = TouchBackend
 
     return (
       <div style={{ background: '#a9a9a9' }}>
@@ -68,8 +64,10 @@ class StudentView extends Component {
           <Route exact path='/student/:id' component={StudentHome} />
           <Route path='/student/:id/writing' component={StudentWriting} />
           <Route path='/student/:id/spelling' render={() =>
-            <DragDropContextProvider backend={backend}>  { /* this needed to be moved up from StudentSpelling because advancing to the next word would cause multiple HTML5Backend's to be instantiated */ }
-              <StudentSpelling wordsToSpell={wordsToSpell} onWordCompletion={(wordIndex, allWordsSpelled) => this.onWordCompletion(wordIndex, allWordsSpelled)} />
+            <DragDropContextProvider
+              backend={TouchBackend}>  { /* this needed to be moved up from StudentSpelling because advancing to the next word would cause multiple HTML5Backend's to be instantiated */}
+              <StudentSpelling wordsToSpell={wordsToSpell}
+                onWordCompletion={(wordIndex, allWordsSpelled) => this.onWordCompletion(wordIndex, allWordsSpelled)} />
             </DragDropContextProvider>} />
         </Switch>
       </div>
@@ -78,6 +76,8 @@ class StudentView extends Component {
 }
 
 StudentView.propTypes = {
+  jwt: PropTypes.string.isRequired,
+  match: PropTypes.object.isRequired,
   history: PropTypes.object.isRequired
 }
 

@@ -1,20 +1,64 @@
+import fetch from 'isomorphic-fetch'
+
 class StudentApiCalls {
   // this is where a login is attempted
-  static verifyAuth (id, pass) {
+  static async verifyAuth (id, pass) {
     if (id === 'studentDev' && pass === 'password') { // todo this is just for the devSkip button
-      return 'ValidJWT'
+      return { jwt: 'ValidJwt' }
     }
-    console.log('Expected api login call.')// todo
-    return null
+    console.log('wpw')
+    let httpMessage = {
+      method: 'POST',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        email: id,
+        password: pass
+      })
+    }
+
+    const response = await fetch(`api/student/login`, httpMessage)
+    console.log(response)
+    if (response.status !== 200) {
+      return {
+        jwt: null,
+        error: (await response.json()).error
+      }
+    }
+    let jwt = response.headers.get('x-auth')
+    return { jwt, error: null }
   }
 
   // this is where a sign up is attempted
-  static verifySignup (id, pass) {
+  static async verifySignup (id, pass) {
     if (id === 'studentDev' && pass === 'password') { // todo this is just for the devSkip button
-      return 'ValidJWT'
+      return { jwt: 'ValidJwt' }
     }
-    console.log('Expected api login call.')// todo
-    return null
+    let httpMessage = {
+      method: 'POST',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        email: id,
+        password: pass
+      })
+    }
+
+    const response = await fetch(`api/student`, httpMessage)
+    console.log(response)
+    if (response.status !== 200) {
+      return {
+        jwt: null,
+        error: (await response.json()).error
+      }
+    }
+
+    let jwt = response.headers.get('x-auth')
+    return { jwt, error: null }
   }
 
   // this is where the api call to retrieve the progress is
@@ -33,7 +77,10 @@ class StudentApiCalls {
       letters: [],
       words: [
         { word: 'kite', imageURL: 'https://www.shareicon.net/download/2016/07/09/118997_activity.ico' },
-        { word: 'car', imageURL: 'https://images.vexels.com/media/users/3/154391/isolated/lists/430c48555fb4c80d9e77fc83d74fdb85-convertible-car-side-view-silhouette.png' }
+        {
+          word: 'car',
+          imageURL: 'https://images.vexels.com/media/users/3/154391/isolated/lists/430c48555fb4c80d9e77fc83d74fdb85-convertible-car-side-view-silhouette.png'
+        }
       ]
     }]
 

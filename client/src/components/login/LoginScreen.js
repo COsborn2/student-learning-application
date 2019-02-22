@@ -5,12 +5,11 @@ import ModalDialog from 'react-bootstrap/ModalDialog'
 import ModalTitle from 'react-bootstrap/ModalTitle'
 import Form from 'react-bootstrap/Form'
 import ModalBody from 'react-bootstrap/ModalBody'
-import FormGroup from 'react-bootstrap/FormGroup'
 import ModalFooter from 'react-bootstrap/ModalFooter'
 import Button from 'react-bootstrap/Button'
-import { FormControl, FormLabel } from 'react-bootstrap'
 import StudentApiCalls from '../../javascript/StudentApiCalls.js'
 import InstructorApiCalls from '../../javascript/InstructorApiCalls.js'
+import Col from 'react-bootstrap/Col'
 
 const messageStyles = {
   messageFading: {
@@ -24,44 +23,73 @@ const messageStyles = {
   }
 }
 
+const userSpecificInfo = {
+  instructor: {
+    api: InstructorApiCalls,
+    userType: 'Instructor',
+    idType: 'email',
+    passType: 'password',
+    idTypeName: 'Email',
+    passTypeName: 'Password',
+    idSkip: 'instructorDev@test.com',
+    hasSignUp: true
+  },
+  student: {
+    api: StudentApiCalls,
+    userType: 'Student',
+    idType: 'text',
+    passType: 'text',
+    idTypeName: 'Course Id',
+    passTypeName: 'Username',
+    idSkip: 'studentDev',
+    hasSignUp: false
+  }
+}
+
 class LoginScreen extends Component {
   constructor (props) {
     super(props)
     let type = this.props.match.params.type
-    let api = type === 'instructor' ? InstructorApiCalls : StudentApiCalls
+    let typeInfo = (type === 'instructor') ? userSpecificInfo.instructor : userSpecificInfo.student
+
     this.state = {
       failedMessage: '',
       showMessage: false,
+      typeInfo: typeInfo,
       type: type,
-      api: api
+      api: typeInfo.api
     }
-    this.handleVerifyAuth = this.handleVerifyAuth.bind(this)
+    // this.handleVerifyAuth = this.handleVerifyAuth.bind(this)
     this.handleSkipAuth = this.handleSkipAuth.bind(this)
     this.handleSignup = this.handleSignup.bind(this)
   }
 
   // Hit backend for verification
-  handleVerifyAuth () {
-    let { api, type } = this.state
-    const password = this._passwordInput.value
-    const id = this._idInput.value
-
-    if (id === '') {
-      this.animateMessage('* A username is required')
-    } else if (password === '') {
-      this.animateMessage('* A password is required')
+  async handleVerifyAuth (event) {
+    const form = event.currentTarget
+    if (form.checkValidity()) {
+      event.preventDefault()
+      event.stopPropagation()
     }
 
-    let jwt = api.verifyAuth(id, password)
-    if (!jwt) this.animateMessage('* Incorrect username or password')
-    else this.props.history.replace(`/${type}/${id}`, { id, jwt }) // navigates to the proper user screen, passing the jwt
+    let { api, type } = this.state
+    const password = form.elements.passField.value
+    const id = form.elements.idField.value
+
+    let res = await api.verifyAuth(id, password)
+
+    if (res.jwt) {
+      window.sessionStorage.setItem('jwt', res.jwt)
+      this.props.history.replace(`/${type}/${id}`) // navigates to the proper user screen, passing the jwt
+    }
+    if (res.error) this.animateMessage(res.error)
   }
 
   handleSkipAuth () {
-    let { api, type } = this.state
-    let id = `${type}Dev`
-    let jwt = api.verifyAuth(`${type}Dev`, 'password')
-    this.props.history.replace(`/${type}/${id}`, { id, jwt }) // todo remove dev skip for easy access
+    let { type, typeInfo } = this.state
+    let id = typeInfo.idSkip
+    window.sessionStorage.setItem('jwt', `Valid${type}JWT`)
+    this.props.history.replace(`/${type}/${id}`) // todo remove dev skip for easy access
   }
 
   animateMessage (msg) {
@@ -78,44 +106,56 @@ class LoginScreen extends Component {
   }
 
   render () {
+    let { typeInfo } = this.state
     let errorMessageStyle = this.state.showMessage ? messageStyles.messageShow : messageStyles.messageFading
-    let type = this.state.type.charAt(0).toLocaleUpperCase() + this.state.type.slice(1)
+    let signUpBtn = typeInfo.hasSignUp ? <Button onClick={this.handleSignup}>Signup</Button> : ''
     return (
       <React.Fragment>
-        <ModalDialog>
-          <ModalHeader>
-            <ModalTitle>{type} Login</ModalTitle>
-            <div className='flex-fill' />
-            <Button className='btn-warning mx-2' onClick={this.handleSkipAuth}>Dev Skip</Button>
-            <Button onClick={this.handleSignup}>Signup</Button>
-          </ModalHeader>
+        <Form onSubmit={e => this.handleVerifyAuth(e)}>
+          <ModalDialog>
+            <ModalHeader>
+              <ModalTitle>{typeInfo.userType} Login</ModalTitle>
+              <div className='flex-fill' />
+              <Button className='btn-warning mx-2' onClick={this.handleSkipAuth}>Dev Skip</Button>
+              {signUpBtn}
+            </ModalHeader>
 
-          <ModalBody>
-            <Form>
-              <FormGroup>
-                <FormLabel>User Id</FormLabel>
-                <FormControl type='text'
-                  placeholder='Id'
-                  ref={(ref) => { this._idInput = ref }} />
-              </FormGroup>
+            <ModalBody>
+              <Form.Group as={Col}>
+                <Form.Label>{ typeInfo.idTypeName }</Form.Label>
+                <Form.Control
+                  required
+                  name='idField'
+                  type={typeInfo.idType}
+                  placeholder={typeInfo.idTypeName} />
+                <Form.Control.Feedback type='invalid'>
+                  Please provide a valid {typeInfo.idTypeName}
+                </Form.Control.Feedback>
+              </Form.Group>
 
-              <FormGroup>
-                <FormLabel>Password</FormLabel>
-                <FormControl type='password'
-                  placeholder='Password'
-                  ref={(ref) => { this._passwordInput = ref }} />
-              </FormGroup>
-            </Form>
+              <Form.Group as={Col}>
+                <Form.Label>{ typeInfo.passTypeName }</Form.Label>
+                <Form.Control
+                  required
+                  name='passField'
+                  type={typeInfo.passType}
+                  placeholder={typeInfo.passTypeName} />
+                <Form.Control.Feedback type='invalid'>
+                  Please provide a valid {typeInfo.passTypeName}
+                </Form.Control.Feedback>
+              </Form.Group>
 
-          </ModalBody>
+            </ModalBody>
 
-          <ModalFooter>
-            <p style={errorMessageStyle}>{this.state.failedMessage}</p>
-            <div className='flex-fill' />
-            <Button onClick={() => this.props.history.push('/')}>Close</Button>
-            <Button type={'submit'} onClick={this.handleVerifyAuth}>Log in</Button>
-          </ModalFooter>
-        </ModalDialog>
+            <ModalFooter>
+              <p style={errorMessageStyle}>{this.state.failedMessage}</p>
+              <div className='flex-fill' />
+              <Button onClick={() => this.props.history.push('/')}>Close</Button>
+              <Button type='submit'>Log in</Button>
+            </ModalFooter>
+          </ModalDialog>
+        </Form>
+
       </React.Fragment>
     )
   }

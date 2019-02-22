@@ -1,20 +1,60 @@
+import fetch from 'isomorphic-fetch'
+
 class InstructorApiCalls {
   // This is where backend api call is made
-  static verifyAuth (id, pass) {
-    if (id === 'instructorDev' && pass === 'password') { // this is just for the devSkip button
-      return 'Valid JWT'
+  static async verifyAuth (id, pass) {
+    if (id === 'instructorDev@test.com' && pass === 'password') { // this is just for the devSkip button
+      return { jwt: 'Valid JWT' }
     }
-    console.log('Expected instructor api login call.')// todo
-    return null
+    let httpMessage = {
+      method: 'POST',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        email: id,
+        password: pass
+      })
+    }
+
+    const response = await fetch('/api/instructor/login', httpMessage)
+    console.log('loginRes: ' + response)
+    if (response.status !== 200) {
+      return {
+        jwt: null,
+        error: await response.json()
+      }
+    }
+    let jwt = response.headers.get('x-auth')
+    return { jwt, error: null }
   }
 
   // This is where backend api call is made
-  static verifySignup (id, pass) {
-    if (id.length > 3 && pass.length > 3) {
-      return 'Valid JWT'
+  static async verifySignup (id, pass) {
+    let httpMessage = {
+      method: 'POST',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        email: id,
+        password: pass
+      })
     }
-    console.log('Expected instructor api sign-up call.')// todo
-    return null
+
+    const response = await fetch(`api/instructor`, httpMessage)
+    console.log(response)
+    if (response.status !== 200) {
+      return {
+        jwt: null,
+        error: (await response.json()).error
+      }
+    }
+
+    let jwt = response.headers.get('x-auth')
+    return { jwt, error: null }
   }
 
   // This is where the api call is made to retrieve the specific instructor's classes
