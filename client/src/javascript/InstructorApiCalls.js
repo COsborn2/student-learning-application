@@ -1,7 +1,7 @@
 class InstructorApiCalls {
   // This is where backend api call is made
   static verifyAuth (id, pass) {
-    if (id === 'instructorDev' && pass === 'password') { // this is just for the devSkip button
+    if (id === 'instructorDev@test.com' && pass === 'password') { // this is just for the devSkip button
       return 'Valid JWT'
     }
     console.log('Expected instructor api login call.')// todo
