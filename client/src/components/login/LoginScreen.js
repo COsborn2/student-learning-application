@@ -64,7 +64,7 @@ class LoginScreen extends Component {
       type: type,
       api: api
     }
-    this.handleVerifyAuth = this.handleVerifyAuth.bind(this)
+    // this.handleVerifyAuth = this.handleVerifyAuth.bind(this)
     this.handleSkipAuth = this.handleSkipAuth.bind(this)
     this.handleSignup = this.handleSignup.bind(this)
   }
@@ -89,7 +89,7 @@ class LoginScreen extends Component {
     else this.props.history.replace(`/${type}/${id}`, { id, jwt: res.jwt }) // navigates to the proper user screen, passing the jwt
   }
 
-  async handleSkipAuth () {
+  handleSkipAuth () {
     let { type, typeInfo } = this.state
     let id = typeInfo.idSkip
     this.props.history.replace(`/${type}/${id}`, { id, jwt: 'ValidJWT' }) // todo remove dev skip for easy access

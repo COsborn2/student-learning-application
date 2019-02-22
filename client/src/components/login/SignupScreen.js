@@ -41,7 +41,7 @@ class SignupScreen extends Component {
       event.preventDefault()
       event.stopPropagation()
     }
-
+    
     let { api, type } = this.state
     const password = form.elements.passField.value
     const id = form.elements.idField.value
