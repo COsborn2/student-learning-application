@@ -72,7 +72,6 @@ class LoginScreen extends Component {
   // Hit backend for verification
   handleVerifyAuth (event) {
     const form = event.currentTarget
-    console.log(form.elements.id.value)
     if (form.checkValidity()) {
       event.preventDefault()
       event.stopPropagation()
