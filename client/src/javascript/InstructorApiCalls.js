@@ -3,9 +3,8 @@ import fetch from 'isomorphic-fetch'
 class InstructorApiCalls {
   // This is where backend api call is made
   static async verifyAuth (id, pass) {
-
     if (id === 'instructorDev@test.com' && pass === 'password') { // this is just for the devSkip button
-      return 'Valid JWT'
+      return { jwt: 'Valid JWT' }
     }
     let httpMessage = {
       method: 'POST',

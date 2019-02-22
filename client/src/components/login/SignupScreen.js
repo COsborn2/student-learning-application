@@ -48,9 +48,11 @@ class SignupScreen extends Component {
 
     let res = await api.verifySignup(id, password)
 
+    if (res.jwt) {
+      window.sessionStorage.setItem('jwt', res.jwt)
+      this.props.history.replace(`/${type}/${id}`) // navigates to the proper user screen, passing the jwt
+    }
     if (res.error) this.animateMessage(res.error)
-    else if (!res.jwt) this.animateMessage('* Invalid username or password')
-    else this.props.history.replace(`/${type}/${id}`, { id, jwt: res.jwt }) // navigates to the proper user screen, passing the jwt
   }
 
   animateMessage (msg) {
@@ -65,7 +67,7 @@ class SignupScreen extends Component {
     let errorMessageStyle = this.state.showMessage ? messageStyles.messageShow : messageStyles.messageFading
     return (
       <React.Fragment>
-        <Form onSubmit={e => this.handleSignup(e)} >
+        <Form onSubmit={e => this.handleSignup(e)}>
           <ModalDialog>
             <ModalHeader>
               <ModalTitle>Instructor Sign Up</ModalTitle>
