@@ -4,6 +4,9 @@ import './StudentSpelling.css'
 import SpellingCard from './spelling/SpellingCard.js'
 import DropZone from './spelling/DropZone.js'
 import PropTypes from 'prop-types'
+import ItemPreview from './spelling/ItemPreview.js'
+import { DragDropContext } from 'react-dnd'
+import TouchBackend from 'react-dnd-touch-backend'
 
 function isWordSpelled (curWordArray, wordToSpell) {
   return curWordArray.join('') === wordToSpell
@@ -90,8 +93,8 @@ class StudentSpelling extends React.Component {
     let { curDropZone, curHand, curWordToSpell } = this.state
     const expectedLetter = curWordToSpell[dropZoneID]
 
-    curDropZone[dropZoneID] = letterDropped
-    if (letterDropped === expectedLetter) curHand.splice(cardID, 1)
+    if (curDropZone[dropZoneID] !== expectedLetter) curDropZone[dropZoneID] = letterDropped
+    if (curDropZone[dropZoneID] === expectedLetter && letterDropped === expectedLetter) curHand.splice(cardID, 1)
 
     this.setState({ curDropZone, curHand })
   }
@@ -122,6 +125,7 @@ class StudentSpelling extends React.Component {
           {letterCards}
         </div>
         {button}
+        <ItemPreview key='__preview' name='Item' />
       </div>)
   }
 }
@@ -131,4 +135,4 @@ StudentSpelling.propTypes = {
   onWordCompletion: PropTypes.func.isRequired
 }
 
-export default StudentSpelling
+export default DragDropContext(TouchBackend({ enableMouseEvents: true }))(StudentSpelling)
