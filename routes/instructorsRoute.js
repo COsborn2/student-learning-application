@@ -1,6 +1,7 @@
 const _ = require('lodash')
 const { Token } = require('../models/token')
 const { Instructor } = require('../models/instructor')
+const { WarningMessage, SuccessMessage, ErrorMessage } = require('../middleware/message')
 const bcrypt = require('bcrypt')
 
 let createInstructor = (req, res) => {
@@ -20,14 +21,16 @@ let createInstructor = (req, res) => {
     instructor.save((err) => {
       if (err) {
         if (err.code === 11000) {
+          WarningMessage('User already exists with that email')
           return res.status(400).send({ error: 'User already exists with that email' })
         }
+        ErrorMessage(err.message)
         return res.status(400).send({ error: 'error' })
       }
       res.header('x-auth', token.token).send(instructor)
     })
   }).catch((err) => {
-    console.error(err)
+    WarningMessage(err)
     return res.status(400).send({ error: 'error' })
   })
 }
@@ -54,12 +57,13 @@ let loginInstructor = async (req, res) => { // need to find instructor from emai
 
     return res.header('x-auth', newToken.token).send(updatedInstructor)
   } catch (error) {
+    ErrorMessage(error.message)
     return res.status(401).send({ error: error.message })
   }
 }
 
 let validateInstructor = (req, res) => {
-  console.log('instructor validated')
+  SuccessMessage('instructor validated')
   res.send(req.user)
 }
 

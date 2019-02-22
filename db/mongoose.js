@@ -1,10 +1,11 @@
-var mongoose = require('mongoose')
+const mongoose = require('mongoose')
+const { SuccessMessage } = require('../middleware/message')
 
 mongoose.Promise = global.Promise
 mongoose.connect(process.env.DATABASE_URL, { useNewUrlParser: true })
 mongoose.set('useCreateIndex', true)
 mongoose.set('useFindAndModify', false)
 
-console.log('Mongo connected')
+SuccessMessage('Mongo connected')
 
 module.exports = { mongoose }

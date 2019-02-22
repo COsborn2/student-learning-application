@@ -1,14 +1,15 @@
+const { InfoMessage, SuccessMessage } = require('./middleware/message')
+const express = require('express')
+const path = require('path')
+const bodyParser = require('body-parser')
+
 var isProduction = true
 
 if (process.env.NODE_ENV !== 'production' && !process.env.DATABASE_URL) {
   require('dotenv').load()
-  console.log('development')
+  InfoMessage('Running in Development mode')
   isProduction = false
 }
-
-const express = require('express')
-const path = require('path')
-const bodyParser = require('body-parser')
 
 require('./db/mongoose') // this starts the connection to the server
 
@@ -36,7 +37,7 @@ app.post('/api/word', authenticateInstructor, wordsRoute.createWord)
 app.put('/api/updateWord', authenticateInstructor, wordsRoute.updateWord)
 
 if (isProduction) {
-  console.log('production')
+  InfoMessage('Running in production mode')
   app.use(express.static(path.join(__dirname, '/client/build')))
 
   app.get('*', (req, res) => {
@@ -44,4 +45,4 @@ if (isProduction) {
   })
 }
 
-app.listen(port, () => console.log(`Listening on port ${port}`))
+app.listen(port, () => SuccessMessage(`Listening on port ${port}`))

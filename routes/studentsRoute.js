@@ -1,6 +1,7 @@
 const _ = require('lodash')
 const { Token } = require('../models/token')
 const { Student } = require('../models/student')
+const { ErrorMessage, SuccessMessage, WarningMessage } = require('../middleware/message')
 
 let createStudent = (req, res) => {
   let body = _.pick(req.body, ['classcode', 'username'])
@@ -16,15 +17,17 @@ let createStudent = (req, res) => {
     student.save((err) => {
       if (err) {
         if (err.code === 11000) {
+          WarningMessage('User already exists with that username')
           return res.status(400).send({ error: 'User already exists with that username' })
         }
+        ErrorMessage(err.message)
         return res.status(400).send({ error: 'error' })
       }
       res.header('x-auth', token.token).send(student)
     })
   }).catch((err) => {
-    console.log(err)
-    res.status(400).send('here')
+    ErrorMessage(err)
+    res.status(400).send({ error: 'error' })
   })
 }
 
@@ -55,7 +58,7 @@ let loginStudent = async (req, res) => {
 }
 
 let validateStudent = (req, res) => {
-  console.log('student validated')
+  SuccessMessage('student validated')
   res.send(req.user)
 }
 

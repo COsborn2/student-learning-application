@@ -1,12 +1,13 @@
 const jwt = require('jsonwebtoken')
 const { Token } = require('../models/token')
+const { WarningMessage, InfoMessage } = require('./message')
 const _ = require('lodash')
 
 let authenticate = (req, res, next) => {
   let rawToken = req.header('x-auth')
 
   if (_.isUndefined(rawToken)) {
-    console.error('no token provided')
+    WarningMessage('No token provided')
     return res.send('token not provided')
   }
 
@@ -17,7 +18,7 @@ let authenticate = (req, res, next) => {
   let unvalidatedAccessTypes = unvalidatedHeader.access
 
   if (!(unvalidatedAccessTypes.indexOf(req.userType) > -1)) {
-    console.log('invalid permissions')
+    WarningMessage('invalid permissions')
     return res.status(401).send('Improper permissions')
   }
 
@@ -31,14 +32,14 @@ let authenticate = (req, res, next) => {
 }
 
 let authenticateStudent = (req, res, next) => {
-  console.log('Authenticating Student')
+  InfoMessage('Authenticating Student')
   req.userType = 'Student'
 
   authenticate(req, res, next)
 }
 
 let authenticateInstructor = (req, res, next) => {
-  console.log('Authenticating Instructor')
+  InfoMessage('Authenticating Instructor')
   req.userType = 'Instructor'
 
   authenticate(req, res, next)
