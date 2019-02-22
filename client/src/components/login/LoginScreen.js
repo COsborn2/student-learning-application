@@ -23,8 +23,9 @@ const messageStyles = {
   }
 }
 
-const userTypeInfo = {
+const userSpecificInfo = {
   instructor: {
+    api: InstructorApiCalls,
     userType: 'Instructor',
     idType: 'email',
     passType: 'password',
@@ -34,6 +35,7 @@ const userTypeInfo = {
     hasSignUp: true
   },
   student: {
+    api: StudentApiCalls,
     userType: 'Student',
     idType: 'text',
     passType: 'text',
@@ -48,21 +50,14 @@ class LoginScreen extends Component {
   constructor (props) {
     super(props)
     let type = this.props.match.params.type
-    let api = null
-    let typeInfo = null
-    if (type === 'instructor') {
-      api = InstructorApiCalls
-      typeInfo = userTypeInfo.instructor
-    } else {
-      api = StudentApiCalls
-      typeInfo = userTypeInfo.student
-    }
+    let typeInfo = (type === 'instructor') ? userSpecificInfo.instructor : userSpecificInfo.student
+
     this.state = {
       failedMessage: '',
       showMessage: false,
       typeInfo: typeInfo,
       type: type,
-      api: api
+      api: typeInfo.api
     }
     // this.handleVerifyAuth = this.handleVerifyAuth.bind(this)
     this.handleSkipAuth = this.handleSkipAuth.bind(this)
@@ -82,17 +77,19 @@ class LoginScreen extends Component {
     const id = form.elements.idField.value
 
     let res = await api.verifyAuth(id, password)
-    if (res.error) {
-      console.log(res.error)
-      this.animateMessage(res.error)
-    } else if (!res.jwt) this.animateMessage('* Incorrect username or password')
-    else this.props.history.replace(`/${type}/${id}`, { id, jwt: res.jwt }) // navigates to the proper user screen, passing the jwt
+
+    if (res.jwt) {
+      window.sessionStorage.setItem('jwt', res.jwt)
+      this.props.history.replace(`/${type}/${id}`) // navigates to the proper user screen, passing the jwt
+    }
+    if (res.error) this.animateMessage(res.error)
   }
 
   handleSkipAuth () {
     let { type, typeInfo } = this.state
     let id = typeInfo.idSkip
-    this.props.history.replace(`/${type}/${id}`, { id, jwt: 'ValidJWT' }) // todo remove dev skip for easy access
+    window.sessionStorage.setItem('jwt', `Valid${type}JWT`)
+    this.props.history.replace(`/${type}/${id}`) // todo remove dev skip for easy access
   }
 
   animateMessage (msg) {

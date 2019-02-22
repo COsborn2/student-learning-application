@@ -13,10 +13,10 @@ import Button from 'react-bootstrap/Button'
 class InstructorView extends Component {
   constructor (props) {
     super(props)
-    const user = this.props.history.location.state
+    const id = this.props.match.params.id
     this.state = {
-      id: user.id,
-      jwt: user.jwt,
+      id: id,
+      jwt: this.props.jwt,
       api: InstructorApiCalls,
       courses: null,
       selectedCourse: -1
@@ -36,7 +36,8 @@ class InstructorView extends Component {
       <div>
         {this.state.courses.map((course, index) =>
           <div key={index}>
-            <Button onClick={() => this.onCourseClick(index)} className='test btn-lg btn-primary rounded-pill'>{course.className}</Button>
+            <Button onClick={() => this.onCourseClick(index)}
+              className='test btn-lg btn-primary rounded-pill'>{course.className}</Button>
             <Course {...this.props} show={index === this.state.selectedCourse} course={course} />
             <hr />
           </div>
@@ -47,11 +48,9 @@ class InstructorView extends Component {
 
   componentDidMount () {
     let { api, jwt } = this.state
-    if (jwt) { // makes sure api isn't called if user is not valid
-      let courses = api.getCourses(jwt)
-      if (courses) {
-        this.setState({ courses })
-      }
+    let courses = api.getCourses(jwt)
+    if (courses) {
+      this.setState({ courses })
     }
   }
 
@@ -71,6 +70,7 @@ class InstructorView extends Component {
 }
 
 InstructorView.propTypes = {
+  jwt: PropTypes.string.isRequired,
   match: PropTypes.object.isRequired,
   history: PropTypes.object.isRequired
 }

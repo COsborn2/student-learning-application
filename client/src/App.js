@@ -5,6 +5,7 @@ import Home from './components/Home'
 import InstructorView from './components/instructor/InstructorView'
 import SignupScreen from './components/login/SignupScreen'
 import LoginScreen from './components/login/LoginScreen'
+import AuthenticatedRoute from './components/helpers/AuthenticatedRoute'
 
 class App extends Component {
   render () {
@@ -12,8 +13,8 @@ class App extends Component {
       <Browser>
         <Switch>
           <Route exact path='/' component={Home} />
-          <Route path='/instructor' component={InstructorView} />
-          <Route path='/student' component={StudentView} />
+          <AuthenticatedRoute path='/instructor' component={InstructorView} />
+          <AuthenticatedRoute path='/student' component={StudentView} />
           <Route path='/signup/:type' component={SignupScreen} />
           <Route path='/login/:type' component={LoginScreen} />
         </Switch>
