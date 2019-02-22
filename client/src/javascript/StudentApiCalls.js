@@ -4,8 +4,9 @@ class StudentApiCalls {
   // this is where a login is attempted
   static async verifyAuth (id, pass) {
     if (id === 'studentDev' && pass === 'password') { // todo this is just for the devSkip button
-      return 'ValidJWT'
+      return { jwt: 'ValidJwt' }
     }
+    console.log('wpw')
     let httpMessage = {
       method: 'POST',
       headers: {
@@ -18,7 +19,7 @@ class StudentApiCalls {
       })
     }
 
-    const response = await fetch(`/student/login`, httpMessage)
+    const response = await fetch(`api/student/login`, httpMessage)
     console.log(response)
     if (response.status !== 200) {
       return {
@@ -33,7 +34,7 @@ class StudentApiCalls {
   // this is where a sign up is attempted
   static async verifySignup (id, pass) {
     if (id === 'studentDev' && pass === 'password') { // todo this is just for the devSkip button
-      return 'ValidJWT'
+      return { jwt: 'ValidJwt' }
     }
     let httpMessage = {
       method: 'POST',
@@ -47,7 +48,7 @@ class StudentApiCalls {
       })
     }
 
-    const response = await fetch(`/student`, httpMessage)
+    const response = await fetch(`api/student`, httpMessage)
     console.log(response)
     if (response.status !== 200) {
       return {
@@ -76,7 +77,10 @@ class StudentApiCalls {
       letters: [],
       words: [
         { word: 'kite', imageURL: 'https://www.shareicon.net/download/2016/07/09/118997_activity.ico' },
-        { word: 'car', imageURL: 'https://images.vexels.com/media/users/3/154391/isolated/lists/430c48555fb4c80d9e77fc83d74fdb85-convertible-car-side-view-silhouette.png' }
+        {
+          word: 'car',
+          imageURL: 'https://images.vexels.com/media/users/3/154391/isolated/lists/430c48555fb4c80d9e77fc83d74fdb85-convertible-car-side-view-silhouette.png'
+        }
       ]
     }]
 

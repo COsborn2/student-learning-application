@@ -3,7 +3,7 @@ import fetch from 'isomorphic-fetch'
 class InstructorApiCalls {
   // This is where backend api call is made
   static async verifyAuth (id, pass) {
-    if (id === 'instructorDev' && pass === 'password') { // this is just for the devSkip button
+    if (id === 'instructorDev@test.com' && pass === 'password') { // this is just for the devSkip button
       return 'Valid JWT'
     }
     let httpMessage = {
@@ -18,8 +18,8 @@ class InstructorApiCalls {
       })
     }
 
-    const response = await fetch(`/instructor/login`, httpMessage)
-    console.log(response)
+    const response = await fetch('/api/instructor/login', httpMessage)
+    console.log('loginRes: ' + response)
     if (response.status !== 200) {
       return {
         jwt: null,
@@ -44,7 +44,7 @@ class InstructorApiCalls {
       })
     }
 
-    const response = await fetch(`/instructor`, httpMessage)
+    const response = await fetch(`api/instructor`, httpMessage)
     console.log(response)
     if (response.status !== 200) {
       return {

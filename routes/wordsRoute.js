@@ -13,4 +13,18 @@ let createWord = async (req, res) => {
   return res.send(word)
 }
 
-module.exports = { createWord }
+let updateWord = async (req, res) => {
+  let body = _.pick(req.body, ['text'], ['newText'])
+
+  let newWord = await Word.findOneAndUpdate({
+    text: body.text
+  }, {
+    text: body.newText
+  }, {
+    new: true
+  })
+
+  return res.send(newWord)
+}
+
+module.exports = { createWord, updateWord }
