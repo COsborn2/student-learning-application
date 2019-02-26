@@ -46,13 +46,12 @@ function initializeDropZone (numCharsInWord) {
   return dropZone
 }
 
-function calculateWrongMove(dropOrder, wordToSpell)
-{
-  let count = 0;
-  for(let i = 0; i < dropOrder.length; i = i + 2)
-  {
-    if(dropOrder[i+1] !== wordToSpell[dropOrder[i]])
-      count ++;
+function calculateWrongMove (dropOrder, wordToSpell) {
+  let count = 0
+  for (let i = 0; i < dropOrder.length; i = i + 2) {
+    if (dropOrder[i + 1] !== wordToSpell[dropOrder[i]]) {
+      count++
+    }
   }
   return count
 }
@@ -147,7 +146,7 @@ class StudentSpelling extends React.Component {
         <ItemPreview key='__preview' name='Item' />
         <span>Stat zone</span>
         <div className='mx-auto'>
-          Total Time: <Timer time = {this.state.endTime}/>
+          Total Time: <Timer time={this.state.endTime} />
           dropOrder: {dropOrder.toString()}
           Wrong Moves: {calculateWrongMove(dropOrder, curWordToSpell)}
         </div>
