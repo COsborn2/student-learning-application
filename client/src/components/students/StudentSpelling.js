@@ -3,7 +3,6 @@ import { Image } from 'react-bootstrap'
 import './StudentSpelling.css'
 import SpellingCard from './spelling/SpellingCard.js'
 import DropZone from './spelling/DropZone.js'
-import Timer from './spelling/Timer.js'
 import PropTypes from 'prop-types'
 import ItemPreview from './spelling/ItemPreview.js'
 import { DragDropContext } from 'react-dnd'
@@ -56,6 +55,20 @@ function calculateWrongMove (dropOrder, wordToSpell) {
   return count
 }
 
+function initializeTimeEvents () {
+  let timeEvents = []
+  timeEvents.push(new Date().getTime())
+  return timeEvents
+}
+
+function calculateTotalTime (timeEvents) {
+  return (timeEvents[timeEvents.length - 1] - timeEvents[0])
+}
+
+function debugConvertToMinutes (time) {
+  return time / 1000 / 60
+}
+
 /*
   We pass an array of wordObjects as a property. Each item in the array consists of a word, and an imageURL
   You can access them like shown below. When a word is completed move on to the next word.
@@ -74,13 +87,13 @@ class StudentSpelling extends React.Component {
       curImageURL: wordsToSpell[0].imageURL,
       curHand: getLetters(firstWordToSpell),
       curDropZone: initializeDropZone(firstWordToSpell.length),
-      dropOrder: []
-    }
+      dropOrder: [],
+      timeEvents: initializeTimeEvents() }
     this.advanceToNextWord = this.advanceToNextWord.bind(this)
   }
 
   advanceToNextWord () {
-    let { wordsToSpell, wordIndex, curWordToSpell, curImageURL, curHand, curDropZone, dropOrder } = this.state
+    let { wordsToSpell, wordIndex, curWordToSpell, curImageURL, curHand, curDropZone, dropOrder, timeEvents } = this.state
     const allWordsSpelled = wordIndex >= wordsToSpell.length - 1
     wordIndex++
     if (!allWordsSpelled) {
@@ -90,7 +103,8 @@ class StudentSpelling extends React.Component {
       curHand = getLetters(curWordToSpell)
       curDropZone = initializeDropZone(curWordToSpell.length)
       dropOrder = []
-      this.setState({ wordsToSpell, wordIndex, curWordToSpell, curImageURL, curHand, curDropZone, dropOrder })
+      timeEvents = initializeTimeEvents()
+      this.setState({ wordsToSpell, wordIndex, curWordToSpell, curImageURL, curHand, curDropZone, dropOrder, timeEvents })
     }
     this.props.onWordCompletion(wordIndex, allWordsSpelled)
   }
@@ -103,16 +117,17 @@ class StudentSpelling extends React.Component {
   }
 
   setDropZone = (dropZoneID, letterDropped, cardID) => {
-    let { curDropZone, curHand, curWordToSpell, dropOrder } = this.state
+    let { curDropZone, curHand, curWordToSpell, dropOrder, timeEvents } = this.state
     const expectedLetter = curWordToSpell[dropZoneID]
 
     dropOrder.push(dropZoneID)
     dropOrder.push(letterDropped)
+    timeEvents.push(new Date().getTime())
 
     if (curDropZone[dropZoneID] !== expectedLetter) curDropZone[dropZoneID] = letterDropped
     if (curDropZone[dropZoneID] === expectedLetter && letterDropped === expectedLetter) curHand.splice(cardID, 1)
 
-    this.setState({ curDropZone, curHand, dropOrder })
+    this.setState({ curDropZone, curHand, dropOrder, timeEvents })
   }
 
   render () {
@@ -144,10 +159,10 @@ class StudentSpelling extends React.Component {
           {button}
         </div>
         <ItemPreview key='__preview' name='Item' />
-        <span>Stat zone</span>
+        <span>Debug: Stat zone</span>
         <div className='mx-auto'>
-          Total Time: <Timer time={this.state.endTime} />
-          dropOrder: {dropOrder.toString()}
+          Total Time: {debugConvertToMinutes(calculateTotalTime(this.state.timeEvents))} ---
+          dropOrder: {dropOrder.toString()} ---
           Wrong Moves: {calculateWrongMove(dropOrder, curWordToSpell)}
         </div>
       </div>)
@@ -156,8 +171,7 @@ class StudentSpelling extends React.Component {
 
 StudentSpelling.propTypes = {
   wordsToSpell: PropTypes.array.isRequired,
-  onWordCompletion: PropTypes.func.isRequired,
-  totalTime: PropTypes.number
+  onWordCompletion: PropTypes.func.isRequired
 }
 
 export default DragDropContext(TouchBackend({ enableMouseEvents: true }))(StudentSpelling)
