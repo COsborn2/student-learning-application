@@ -28,6 +28,7 @@ let createClassroom = async (req, res) => {
     if (!curId) { // expected default assignment could not be found. Attempt to repair
       try {
         curId = await seedDatabase(index)
+        SuccessMessage(`Assignment "${curId}" successfully added`)
       } catch (err) {
         ErrorMessage(err.message)
         return res.status(500).send({ error: 'something went wrong when attempting to reseed database' })
@@ -43,13 +44,11 @@ let createClassroom = async (req, res) => {
     instructor: instructor._id
   })
 
-  console.log(JSON.stringify(classroom, undefined, 5))
-
   // Create classroom
   try {
     await classroom.save()
 
-    SuccessMessage('Classroom created with default assignments')
+    SuccessMessage(`Classroom created with ${classroom.assignments.length} assignments`)
   } catch (err) {
     if (err.code === 11000) {
       const message = 'User already exists with that email'
@@ -68,6 +67,8 @@ let createClassroom = async (req, res) => {
   }, {
     returnOriginal: false
   })
+
+  SuccessMessage('Instructor successfully updated with new classroom')
 
   return res.send({ classroom, updatedInstructor })
 }
@@ -120,7 +121,6 @@ let seedDatabase = async (index) => {
     words: wordIds
   })
 
-  console.log('attempting to save assignment')
   await newAssignment.save()
   return newAssignment._id
 }
