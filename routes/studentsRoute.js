@@ -1,6 +1,7 @@
 const _ = require('lodash')
 const { Token } = require('../models/token')
 const { Student } = require('../models/student')
+const { Classroom } = require('../models/classroom')
 const { ErrorMessage, SuccessMessage } = require('../middleware/message')
 const { ObjectID } = require('mongodb')
 
@@ -11,15 +12,6 @@ let createStudent = async (req, res) => {
     username: body.username,
     classcode: body.classcode
   })
-
-  let token
-
-  try {
-    token = await Token.generateAuthToken(['Student'], 'Student', student._id)
-    student.token = token
-  } catch (error) {
-    return res.status(400).send({ error: 'error' })
-  }
 
   // attach student to classroom
   let classroom
@@ -36,7 +28,16 @@ let createStudent = async (req, res) => {
     return res.status(400).send({ error: error.message })
   }
 
-  student.save((err) => { // save student into database
+  let token
+  try {
+    token = await Token.generateAuthToken(['Student'], 'Student', student._id)
+    student.token = token
+  } catch (error) {
+    return res.status(400).send({ error: 'error' })
+  }
+
+  // save student into database
+  student.save((err) => {
     if (err) {
       if (err.code === 11000) {
         ErrorMessage('User already exists with that username')
@@ -46,8 +47,15 @@ let createStudent = async (req, res) => {
       return res.status(400).send({ error: 'error' })
     }
     SuccessMessage('Student created')
-    return res.header('x-auth', token.token).send(student)
   })
+
+  await Classroom.findOneAndUpdate({
+    classcode: classroom.classcode
+  }, {
+    $push: { students: student._id }
+  })
+
+  res.header('x-auth', token.token).send(student)
 }
 
 let loginStudent = async (req, res) => {
