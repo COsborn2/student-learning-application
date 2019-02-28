@@ -1,7 +1,7 @@
 const _ = require('lodash')
 const { Token } = require('../models/token')
 const { Student } = require('../models/student')
-const { ErrorMessage, SuccessMessage, WarningMessage } = require('../middleware/message')
+const { ErrorMessage, SuccessMessage } = require('../middleware/message')
 const { ObjectID } = require('mongodb')
 
 let createStudent = async (req, res) => {
@@ -39,7 +39,7 @@ let createStudent = async (req, res) => {
   student.save((err) => { // save student into database
     if (err) {
       if (err.code === 11000) {
-        WarningMessage('User already exists with that username')
+        ErrorMessage('User already exists with that username')
         return res.status(400).send({ error: 'User already exists with that username' })
       }
       ErrorMessage(err.message)
@@ -115,9 +115,9 @@ let updateStudentProgress = async (req, res) => {
   let newCurrentAssignment = body.currentAssignment
 
   if (!_.isInteger(newCurrentAssignment) || !_.isInteger(newCurrentWord) || !_.isInteger(newCurrentLetter)) {
-    const ErrorMessage = 'currentLetter, currentWord, and currentAssignment must be specified'
-    ErrorMessage(ErrorMessage)
-    return res.status(400).send({ error: ErrorMessage })
+    const errorMessage = 'currentLetter, currentWord, and currentAssignment must be specified'
+    ErrorMessage(errorMessage)
+    return res.status(400).send({ error: errorMessage })
   }
 
   let student = await Student.findByToken(token)
@@ -137,23 +137,23 @@ let updateStudentProgress = async (req, res) => {
 
   // ensure that letters are not being skipped
   if (studentCurrentLetter + 1 !== newCurrentLetter) {
-    const ErrorMessage = `Skipping detected: new currentLetter value of ${newCurrentLetter} is more than 1 greater than new currentLetter value of ${studentCurrentLetter}`
-    ErrorMessage(ErrorMessage)
-    return res.status(400).send({ error: ErrorMessage })
+    const errorMessage = `Skipping detected: new currentLetter value of ${newCurrentLetter} is more than 1 greater than new currentLetter value of ${studentCurrentLetter}`
+    ErrorMessage(errorMessage)
+    return res.status(400).send({ error: errorMessage })
   }
 
   // ensure that words are not being skipped
   if (studentCurrentWord + 1 !== newCurrentWord) {
-    const ErrorMessage = `Skipping detected: new currentWord value of ${newCurrentWord} is more than 1 greater than new currentLetter value of ${studentCurrentWord}`
-    ErrorMessage(ErrorMessage)
-    return res.status(400).send({ error: ErrorMessage })
+    const errorMessage = `Skipping detected: new currentWord value of ${newCurrentWord} is more than 1 greater than new currentLetter value of ${studentCurrentWord}`
+    ErrorMessage(errorMessage)
+    return res.status(400).send({ error: errorMessage })
   }
 
   // ensure assignment is not being skipped
   if (studentCurrentAssignment + 1 !== newCurrentAssignment) {
-    const ErrorMessage = `Skipping detected: new currentAssignment value of ${newCurrentAssignment} is more than 1 greater than new currentLetter value of ${studentCurrentAssignment}`
-    ErrorMessage(ErrorMessage)
-    return res.status(400).send({ error: ErrorMessage })
+    const errorMessage = `Skipping detected: new currentAssignment value of ${newCurrentAssignment} is more than 1 greater than new currentLetter value of ${studentCurrentAssignment}`
+    ErrorMessage(errorMessage)
+    return res.status(400).send({ error: errorMessage })
   }
 
   if (newCurrentAssignment >= numberAssignments) { // if currentAssignment incremented is higher than all assignments then return finshedCourse = true

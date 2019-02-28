@@ -24,7 +24,7 @@ let InstructorSchema = new mongoose.Schema({
   },
   class: [{
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'Class'
+    ref: 'Classroom'
   }],
   token: TokenSchema
 })
@@ -33,7 +33,7 @@ InstructorSchema.methods.toJSON = function () {
   let instructor = this
   let instructorObject = instructor.toObject()
 
-  return _.pick(instructorObject, ['email'])
+  return _.pick(instructorObject, ['email', 'class'])
 }
 
 InstructorSchema.methods.hashPassword = function () {
@@ -61,7 +61,7 @@ InstructorSchema.statics.findByToken = function (token) {
 
   let instructorId = decoded._mid
 
-  return Instructor.findById(instructorId)
+  return Instructor.findById(instructorId).populate('class')
 }
 
 let Instructor = mongoose.model('Instructor', InstructorSchema)

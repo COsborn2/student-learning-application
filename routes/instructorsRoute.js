@@ -1,7 +1,7 @@
 const _ = require('lodash')
 const { Token } = require('../models/token')
 const { Instructor } = require('../models/instructor')
-const { WarningMessage, SuccessMessage, ErrorMessage } = require('../middleware/message')
+const { SuccessMessage, ErrorMessage } = require('../middleware/message')
 const bcrypt = require('bcrypt')
 
 let createInstructor = async (req, res) => {
@@ -28,7 +28,7 @@ let createInstructor = async (req, res) => {
   instructor.save((err) => {
     if (err) {
       if (err.code === 11000) {
-        WarningMessage('User already exists with that email')
+        ErrorMessage('User already exists with that email')
         return res.status(400).send({ error: 'User already exists with that email' })
       }
       ErrorMessage(err.message)

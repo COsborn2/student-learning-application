@@ -23,10 +23,7 @@ app.use(bodyParser.urlencoded({ extended: true }))
 const { authenticateStudent, authenticateInstructor } = require('./middleware/authenticate')
 const instructorsRoute = require('./routes/instructorsRoute')
 const studentsRoute = require('./routes/studentsRoute')
-const wordsRoute = require('./routes/wordsRoute')
-
-app.post('/api/word', authenticateInstructor, wordsRoute.createWord)
-app.put('/api/updateWord', authenticateInstructor, wordsRoute.updateWord)
+const classroomsRoute = require('./routes/classroomsRoute')
 
 app.post('/api/instructor', instructorsRoute.createInstructor)
 app.post('/api/instructor/login', instructorsRoute.loginInstructor)
@@ -36,6 +33,9 @@ app.post('/api/student', studentsRoute.createStudent)
 app.post('/api/student/login', studentsRoute.loginStudent)
 app.get('/api/student/progress', authenticateStudent, studentsRoute.getAssignmentAndProgress)
 app.put('/api/student/progress', authenticateStudent, studentsRoute.updateStudentProgress)
+
+app.get('/api/classrooms', authenticateInstructor, classroomsRoute.getAllClasses)
+app.post('/api/classrooms', authenticateInstructor, classroomsRoute.createClassroom)
 
 if (isProduction) {
   InfoMessage('Running in production mode')

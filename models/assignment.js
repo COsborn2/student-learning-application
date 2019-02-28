@@ -16,10 +16,13 @@ let AssignmentSchema = new mongoose.Schema({
   },
   words: [{
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'Word',
-    required: true
+    ref: 'Word'
   }]
 })
+
+AssignmentSchema.statics.findByLetter = async function (letter) {
+  return Assignment.findOne({ letters: letter })
+}
 
 let Assignment = mongoose.model('Assignment', AssignmentSchema)
 

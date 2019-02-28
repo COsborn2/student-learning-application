@@ -5,11 +5,13 @@ let ClassroomSchema = new mongoose.Schema({
     type: String,
     required: true,
     minlength: 1,
-    trim: true
+    trim: true,
+    unique: true
   },
   assignments: [{
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'Assignment'
+    ref: 'Assignment',
+    required: true
   }],
   students: [{
     type: mongoose.Schema.Types.ObjectId,
@@ -17,7 +19,8 @@ let ClassroomSchema = new mongoose.Schema({
   }],
   instructor: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'Instructor'
+    ref: 'Instructor',
+    required: true
   }
 })
 

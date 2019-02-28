@@ -3,7 +3,6 @@ const { TokenSchema } = require('./token')
 const { Classroom } = require('./classroom')
 const _ = require('lodash')
 const jwt = require('jsonwebtoken')
-require('./assignment') // FIXME: this is here temporarily to register the Assignment model
 
 let StudentSchema = new mongoose.Schema({
   username: {
