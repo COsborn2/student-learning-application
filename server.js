@@ -25,16 +25,17 @@ const instructorsRoute = require('./routes/instructorsRoute')
 const studentsRoute = require('./routes/studentsRoute')
 const wordsRoute = require('./routes/wordsRoute')
 
+app.post('/api/word', authenticateInstructor, wordsRoute.createWord)
+app.put('/api/updateWord', authenticateInstructor, wordsRoute.updateWord)
+
 app.post('/api/instructor', instructorsRoute.createInstructor)
 app.post('/api/instructor/login', instructorsRoute.loginInstructor)
 app.post('/api/instructor/testToken', authenticateInstructor, instructorsRoute.validateInstructor)
 
 app.post('/api/student', studentsRoute.createStudent)
 app.post('/api/student/login', studentsRoute.loginStudent)
-app.get('/api/student', authenticateStudent, studentsRoute.getAssignmentAndProgress)
-
-app.post('/api/word', authenticateInstructor, wordsRoute.createWord)
-app.put('/api/updateWord', authenticateInstructor, wordsRoute.updateWord)
+app.get('/api/student/progress', authenticateStudent, studentsRoute.getAssignmentAndProgress)
+app.put('/api/student/progress', authenticateStudent, studentsRoute.updateStudentProgress)
 
 if (isProduction) {
   InfoMessage('Running in production mode')

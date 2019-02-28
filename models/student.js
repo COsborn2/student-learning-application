@@ -3,6 +3,7 @@ const { TokenSchema } = require('./token')
 const { Classroom } = require('./classroom')
 const _ = require('lodash')
 const jwt = require('jsonwebtoken')
+require('./assignment') // FIXME: this is here temporarily to register the Assignment model
 
 let StudentSchema = new mongoose.Schema({
   username: {
@@ -35,6 +36,10 @@ let StudentSchema = new mongoose.Schema({
     type: Number,
     default: 0
   },
+  finishedCourse: {
+    type: Boolean,
+    default: false
+  },
   token: TokenSchema
 })
 
@@ -42,7 +47,7 @@ StudentSchema.methods.toJSON = function () {
   let student = this
   let studentObject = student.toObject()
 
-  return _.pick(studentObject, ['username', 'classcode', 'currentAssignment', 'currentLetter', 'currentWord'])
+  return _.pick(studentObject, ['username', 'classcode', 'currentAssignment', 'currentLetter', 'currentWord', 'finishedCourse'])
 }
 
 StudentSchema.methods.getClass = async function () {
@@ -52,6 +57,19 @@ StudentSchema.methods.getClass = async function () {
   let classroom = await Classroom.findOne({ classcode: studentObject.classcode })
 
   return classroom
+}
+
+StudentSchema.methods.getAssignments = async function () {
+  let student = this
+  let studentObject = student.toObject()
+
+  let classroom = await Classroom.findOne({ classcode: studentObject.classcode })
+    .populate({
+      path: 'assignments',
+      populate: { path: 'words' }
+    })
+
+  return classroom.assignments
 }
 
 // NOTE: This does NOT check if the token is authenticated. Only use this AFTER token is validated
