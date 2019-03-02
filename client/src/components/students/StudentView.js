@@ -4,6 +4,7 @@ import StudentHome from './StudentHome'
 import { Route, Switch } from 'react-router-dom'
 import StudentSpelling from './StudentSpelling'
 import StudentWriting from './StudentWriting'
+import StudentVideo from './StudentVideo'
 import { DragDropContextProvider } from 'react-dnd'
 import TouchBackend from 'react-dnd-touch-backend'
 import StudentApiCalls from '../../javascript/StudentApiCalls'
@@ -69,6 +70,7 @@ class StudentView extends Component {
               <StudentSpelling wordsToSpell={wordsToSpell}
                 onWordCompletion={(wordIndex, allWordsSpelled) => this.onWordCompletion(wordIndex, allWordsSpelled)} />
             </DragDropContextProvider>} />
+          <Route path='/student/:id/video' component={StudentVideo} />
         </Switch>
       </div>
     )
