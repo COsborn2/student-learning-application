@@ -1,6 +1,5 @@
 import React from 'react'
 import { Image } from 'react-bootstrap'
-import './StudentSpelling.css'
 import SpellingCard from './spelling/SpellingCard.js'
 import DropZone from './spelling/DropZone.js'
 import PropTypes from 'prop-types'
@@ -143,7 +142,7 @@ class StudentSpelling extends React.Component {
     return (
       <div className='container text-center'>
         <h1 color={'red'}>Spelling Cards!</h1>
-        <h2 className='headerDND'>
+        <h2 className='jumbotron bg-info'>
           {status}
           <Image className='img-fluid' alt='Responsive image' src={this.state.curImageURL} />
         </h2>
