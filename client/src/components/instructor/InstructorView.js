@@ -48,7 +48,7 @@ class InstructorView extends Component {
 
   onLoadingAnimComplete () {
     this.setState({ isLoadAnimComplete: true })
-    this.props.history.replace(`/instructor/${this.state.id}`)
+    this.props.history.replace(`/instructor/${this.state.id}`) // todo remove this. Handle redirection in authenticatedRoute
   }
 
   createCourseComponents (courses) {
