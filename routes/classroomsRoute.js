@@ -98,7 +98,7 @@ let seedDatabase = async (index) => {
     if (!word) {
       word = new Word({
         text: element.text,
-        picture: element.picture
+        picture: (element.picture) ? element.picture : 'urlNotSpecified'
       })
 
       try {

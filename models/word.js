@@ -6,8 +6,7 @@ let WordSchema = new mongoose.Schema({
     required: true,
     minlength: 1,
     trim: true,
-    unique: true,
-    lowercase: true
+    unique: true
   },
   picture: {
     type: String,
