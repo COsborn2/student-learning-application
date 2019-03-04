@@ -27,9 +27,9 @@ const classroomsRoute = require('./routes/classroomsRoute')
 
 app.post('/api/instructor', instructorsRoute.createInstructor)
 app.post('/api/instructor/login', instructorsRoute.loginInstructor)
-app.post('/api/instructor/testToken', authenticateInstructor, instructorsRoute.validateInstructor)
 
 app.post('/api/student', studentsRoute.createStudent)
+app.delete('/api/student', authenticateStudent, studentsRoute.deleteStudent)
 app.post('/api/student/login', studentsRoute.loginStudent)
 app.get('/api/student/progress', authenticateStudent, studentsRoute.getAssignmentAndProgress)
 app.put('/api/student/progress', authenticateStudent, studentsRoute.updateStudentProgress)

@@ -22,7 +22,7 @@ const DefaultAssignments = [
       { text: 'cad', picture: 'someURL' },
       { text: 'bad', picture: 'someURL' },
       { text: 'dab', picture: 'someURL' },
-      { text: 'Dad', picture: 'someURL' }
+      { text: 'dad', picture: 'someURL' }
     ]
   }
 //   { name: 'Assignment 4', letters: ['e'], words: [] },

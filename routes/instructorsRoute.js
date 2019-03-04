@@ -67,9 +67,4 @@ let loginInstructor = async (req, res) => { // need to find instructor from emai
   }
 }
 
-let validateInstructor = (req, res) => {
-  SuccessMessage('instructor validated')
-  res.send(req.user)
-}
-
-module.exports = { createInstructor, loginInstructor, validateInstructor }
+module.exports = { createInstructor, loginInstructor }

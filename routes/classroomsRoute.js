@@ -51,7 +51,7 @@ let createClassroom = async (req, res) => {
     SuccessMessage(`Classroom created with ${classroom.assignments.length} assignments`)
   } catch (err) {
     if (err.code === 11000) {
-      const message = 'User already exists with that email'
+      const message = 'Classroom already exists with that classcode'
       ErrorMessage(message)
       return res.status(400).send({ error: message })
     }

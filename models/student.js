@@ -77,7 +77,7 @@ StudentSchema.statics.findByToken = function (token) {
 
   let studentId = decoded._mid
 
-  return Student.findById(studentId)
+  return Student.findById(studentId).populate('class')
 }
 
 let Student = mongoose.model('Student', StudentSchema)

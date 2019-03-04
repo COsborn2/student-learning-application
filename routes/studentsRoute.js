@@ -32,22 +32,21 @@ let createStudent = async (req, res) => {
   try {
     token = await Token.generateAuthToken(['Student'], 'Student', student._id)
     student.token = token
-  } catch (error) {
+  } catch (err) {
     return res.status(400).send({ error: 'error' })
   }
 
-  // save student into database
-  student.save((err) => {
-    if (err) {
-      if (err.code === 11000) {
-        ErrorMessage('User already exists with that username')
-        return res.status(400).send({ error: 'User already exists with that username' })
-      }
-      ErrorMessage(err.message)
-      return res.status(400).send({ error: 'error' })
-    }
+  try {
+    await student.save()
     SuccessMessage('Student created')
-  })
+  } catch (err) {
+    if (err.code === 11000) {
+      ErrorMessage('User already exists with that username')
+      return res.status(400).send({ error: 'User already exists with that username' })
+    }
+    ErrorMessage(err.message)
+    return res.status(400).send({ error: 'error' })
+  }
 
   await Classroom.findOneAndUpdate({
     classcode: classroom.classcode
@@ -193,4 +192,20 @@ let updateStudentProgress = async (req, res) => {
   res.send({ updatedStudent })
 }
 
-module.exports = { createStudent, loginStudent, validateStudent, getAssignmentAndProgress, updateStudentProgress }
+let deleteStudent = async (req, res) => {
+  let token = req.header('x-auth')
+
+  let student = await Student.findByToken(token)
+
+  // remove student from classroom
+  await Classroom.findByIdAndUpdate(student.class, {
+    $pull: { students: student._id }
+  })
+
+  // remove student from DB
+  await Student.findByIdAndDelete(student._id)
+
+  res.send(student)
+}
+
+module.exports = { createStudent, loginStudent, validateStudent, getAssignmentAndProgress, updateStudentProgress, deleteStudent }

@@ -64,7 +64,7 @@ TokenSchema.statics.validateToken = function (rawToken, unvalidatedUserType, unv
       'token._id': unvalidatedTokenId
     }).then((doc) => {
       if (!doc) {
-        reject(new TypeError())
+        return reject(new TypeError())
       }
 
       let realToken = doc.token
@@ -72,7 +72,7 @@ TokenSchema.statics.validateToken = function (rawToken, unvalidatedUserType, unv
 
       jwt.verify(rawToken, realSalt, (err) => {
         if (err) {
-          reject(new TypeError())
+          return reject(new TypeError())
         }
 
         resolve(doc)
