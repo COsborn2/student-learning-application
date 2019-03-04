@@ -117,9 +117,14 @@ let updateStudentProgress = async (req, res) => {
   let body = _.pick(req.body, ['currentLetter', 'currentWord', 'currentAssignment'])
 
   // values passed in through body
-  let newCurrentLetter = body.currentLetter
-  let newCurrentWord = body.currentWord
-  let newCurrentAssignment = body.currentAssignment
+  let newCurrentLetter = _.toInteger(body.currentLetter)
+  let newCurrentWord = _.toInteger(body.currentWord)
+  let newCurrentAssignment = _.toInteger(body.currentAssignment)
+
+  // TODO: remove this
+  console.log('newCurrentLetter :', newCurrentLetter)
+  console.log('newCurrentWord :', newCurrentWord)
+  console.log('newCurrentAssignment :', newCurrentAssignment)
 
   if (!_.isInteger(newCurrentAssignment) || !_.isInteger(newCurrentWord) || !_.isInteger(newCurrentLetter)) {
     const errorMessage = 'currentLetter, currentWord, and currentAssignment must be specified'

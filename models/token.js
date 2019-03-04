@@ -1,12 +1,9 @@
 const mongoose = require('mongoose')
 const bcrypt = require('bcrypt')
 const jwt = require('jsonwebtoken')
+const { SuccessMessage } = require('../middleware/message')
 
 let TokenSchema = new mongoose.Schema({
-  _id: {
-    type: mongoose.Schema.Types.ObjectId,
-    required: true
-  },
   _mid: { // id of associated model
     type: mongoose.Schema.Types.ObjectId,
     required: true
@@ -40,44 +37,38 @@ TokenSchema.statics.generateAuthToken = function (access, userType, _mid) {
         reject(err)
       }
 
-      let tokenId = mongoose.Types.ObjectId()
-
-      let tokenVal = jwt.sign({ _id: tokenId, userType, access, _mid }, salt, { expiresIn: '4h' }).toString()
-
       let token = new Token({
-        _id: tokenId,
         _mid,
-        token: tokenVal,
         access,
         userType,
         salt
       })
 
+      let tokenVal = jwt.sign({ _id: token._id, userType, access, _mid }, salt, { expiresIn: '4h' }).toString()
+
+      token.token = tokenVal
       resolve(token)
     })
   })
 }
 
-TokenSchema.statics.validateToken = function (rawToken, unvalidatedUserType, unvalidatedTokenId) {
-  return new Promise((resolve, reject) => {
-    mongoose.model(unvalidatedUserType).findOne({
-      'token._id': unvalidatedTokenId
-    }).then((doc) => {
-      if (!doc) {
-        return reject(new TypeError())
-      }
+TokenSchema.statics.validateToken = function (rawToken, unvalidatedToken) {
+  return new Promise(async (resolve, reject) => {
+    let userType = unvalidatedToken.userType
+    let userId = unvalidatedToken._mid
 
-      let realToken = doc.token
-      let realSalt = realToken.salt
+    // attempt to find user model in DB
+    let user = await mongoose.model(userType).findById(userId)
 
-      jwt.verify(rawToken, realSalt, (err) => {
-        if (err) {
-          return reject(new TypeError())
-        }
+    if (!user) {
+      return reject(new TypeError('That user could not be found'))
+    }
 
-        resolve(doc)
-      })
-    })
+    let result = await jwt.verify(rawToken, user.token.salt)
+    console.log('result :', result)
+
+    SuccessMessage('Token validated')
+    return resolve(user)
   })
 }
 

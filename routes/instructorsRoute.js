@@ -67,4 +67,12 @@ let loginInstructor = async (req, res) => { // need to find instructor from emai
   }
 }
 
-module.exports = { createInstructor, loginInstructor }
+let getInstructor = async (req, res) => {
+  let token = req.header('x-auth')
+
+  let instructor = await Instructor.findByToken(token)
+
+  res.send(instructor)
+}
+
+module.exports = { createInstructor, loginInstructor, getInstructor }

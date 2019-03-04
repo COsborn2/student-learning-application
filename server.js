@@ -26,6 +26,7 @@ const studentsRoute = require('./routes/studentsRoute')
 const classroomsRoute = require('./routes/classroomsRoute')
 
 app.post('/api/instructor', instructorsRoute.createInstructor)
+app.get('/api/instructor', authenticateInstructor, instructorsRoute.getInstructor)
 app.post('/api/instructor/login', instructorsRoute.loginInstructor)
 
 app.post('/api/student', studentsRoute.createStudent)
@@ -34,7 +35,6 @@ app.post('/api/student/login', studentsRoute.loginStudent)
 app.get('/api/student/progress', authenticateStudent, studentsRoute.getAssignmentAndProgress)
 app.put('/api/student/progress', authenticateStudent, studentsRoute.updateStudentProgress)
 
-app.get('/api/classrooms', authenticateInstructor, classroomsRoute.getAllClasses)
 app.post('/api/classrooms', authenticateInstructor, classroomsRoute.createClassroom)
 
 if (isProduction) {

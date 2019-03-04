@@ -30,7 +30,7 @@ let createClassroom = async (req, res) => {
         curId = await seedDatabase(index)
         SuccessMessage(`Assignment "${curId}" successfully added`)
       } catch (err) {
-        ErrorMessage(err.message)
+        ErrorMessage(err)
         return res.status(500).send({ error: 'something went wrong when attempting to reseed database' })
       }
     }
@@ -73,15 +73,6 @@ let createClassroom = async (req, res) => {
   return res.send({ classroom, updatedInstructor })
 }
 
-// get all classes instructor is teaching
-let getAllClasses = async (req, res) => {
-  let token = req.header('x-auth')
-
-  let instructor = await Instructor.findByToken(token)
-
-  res.send(instructor)
-}
-
 // Given index of missing static assignment, try to insert into database
 let seedDatabase = async (index) => {
   WarningMessage('Attempting to seed database with missing values')
@@ -101,14 +92,7 @@ let seedDatabase = async (index) => {
         picture: (element.picture) ? element.picture : 'urlNotSpecified'
       })
 
-      try {
-        await word.save()
-      } catch (err) {
-        ErrorMessage(err)
-        ErrorMessage('Aborting attempting to reseed database')
-
-        throw TypeError('Something went wrong')
-      }
+      await word.save()
     }
 
     wordIds.push(word._id)
@@ -125,4 +109,4 @@ let seedDatabase = async (index) => {
   return newAssignment._id
 }
 
-module.exports = { createClassroom, getAllClasses }
+module.exports = { createClassroom }
