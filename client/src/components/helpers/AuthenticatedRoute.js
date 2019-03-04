@@ -4,8 +4,8 @@ import { Redirect, Route } from 'react-router-dom'
 import StudentView from '../students/StudentView'
 
 const AuthenticatedRoute = ({ component: Component, ...rest }) => {
-  const jwt = window.sessionStorage.getItem('jwt')
   const type = Component === StudentView ? 'student' : 'instructor'
+  const jwt = window.sessionStorage.getItem(`${type}jwt`)
   return jwt ? <Route {...rest} render={props => <Component {...props} jwt={jwt} />} />
     : <Redirect to={`/login/${type}`} />
 }

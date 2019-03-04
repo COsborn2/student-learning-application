@@ -46,6 +46,7 @@ class StudentView extends Component {
 
   onLoadingAnimComplete () {
     this.setState({ isLoadAnimComplete: true })
+    this.props.history.replace(`/student/${this.state.id}`)
   }
 
   onWordCompletion (wordIndex, allWordsSpelled) {
@@ -67,6 +68,7 @@ class StudentView extends Component {
 
   render () {
     const { assignments, progress, isLoadAnimComplete } = this.state
+    console.log('IsLoading complete: ' + isLoadAnimComplete)
     if (!isLoadAnimComplete) return <LoadingSpinner isLoading={this._isLoading} onLoadingAnimComplete={this.onLoadingAnimComplete} />
     let wordsToSpell = assignments[progress.curAssignmentIndex].words
 
