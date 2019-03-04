@@ -30,7 +30,7 @@ const LetterLine = (props) => {
       let curLetter = assignments[i].letters[j]
       let curLetterBtn =
         <button key={curLetterNum++} type='button' className='btn btn-link'
-          disabled={isDisabled} onClick={() => alert(`you clicked ${curLetter}`)}>
+          disabled={isDisabled} onClick={() => window.alert(`you clicked ${curLetter}`)}>
           <span className={btnStyle}>{curLetter.toLocaleUpperCase() + curLetter}</span>
         </button>
       letterLine.push(curLetterBtn)
