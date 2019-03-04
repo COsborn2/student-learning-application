@@ -40,7 +40,7 @@ class StudentView extends Component {
       setTimeout(() => {
         this._isLoading = false
         this.setState({ assignments, progress })
-      }, 2000)
+      }, 1000)
     }
   }
 

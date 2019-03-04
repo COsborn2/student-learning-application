@@ -28,6 +28,17 @@ class InstructorView extends Component {
     this.onLoadingAnimComplete = this.onLoadingAnimComplete.bind(this)
   }
 
+  componentDidMount () {
+    let { api, jwt } = this.state
+    let courses = api.getCourses(jwt)
+    if (courses) {
+      setTimeout(() => {
+        this._isLoading = false
+        this.setState({ courses })
+      }, 1000)
+    }
+  }
+
   onCourseClick (index) {
     let { selectedCourse } = this.state
     selectedCourse = index === selectedCourse ? -1 : index
@@ -52,17 +63,6 @@ class InstructorView extends Component {
         )}
       </div>
     )
-  }
-
-  componentDidMount () {
-    let { api, jwt } = this.state
-    let courses = api.getCourses(jwt)
-    if (courses) {
-      setTimeout(() => {
-        this._isLoading = false
-        this.setState({ courses })
-      }, 2000)
-    }
   }
 
   render () {
