@@ -73,7 +73,7 @@ class StudentView extends Component {
     return (
       <div style={{ background: '#a9a9a9' }}>
         <Switch>
-          <Route exact path='/student/:id' component={StudentHome} />
+          <Route exact path='/student/:id' render={(props) => <StudentHome {...props} assignments={assignments} progress={progress} />} />
           <Route path='/student/:id/writing' component={StudentWriting} />
           <Route path='/student/:id/spelling' render={() =>
             <DragDropContextProvider
