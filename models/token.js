@@ -64,8 +64,7 @@ TokenSchema.statics.validateToken = function (rawToken, unvalidatedToken) {
       return reject(new TypeError('That user could not be found'))
     }
 
-    let result = await jwt.verify(rawToken, user.token.salt)
-    console.log('result :', result)
+    await jwt.verify(rawToken, user.token.salt)
 
     SuccessMessage('Token validated')
     return resolve(user)
