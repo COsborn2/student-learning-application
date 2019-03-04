@@ -89,7 +89,7 @@ let seedDatabase = async (index) => {
     if (!word) {
       word = new Word({
         text: element.text,
-        picture: (element.picture) ? element.picture : 'urlNotSpecified'
+        picture: (element.picture) ? element.picture : 'https://via.placeholder.com/200'
       })
 
       await word.save()
