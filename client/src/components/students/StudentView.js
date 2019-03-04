@@ -8,6 +8,7 @@ import StudentVideo from './StudentVideo'
 import { DragDropContextProvider } from 'react-dnd'
 import TouchBackend from 'react-dnd-touch-backend'
 import StudentApiCalls from '../../javascript/StudentApiCalls'
+import LoadingSpinner from '../helpers/LoadingSpinner'
 
 /* The student view manages all screens and routes for a specific student user
  the login screen creates and authenticates a student object, and passes it
@@ -23,9 +24,12 @@ class StudentView extends Component {
       jwt: this.props.jwt,
       api: StudentApiCalls,
       assignments: null,
-      progress: null
+      progress: null,
+      isLoadAnimComplete: false
     }
+    this._isLoading = true
     this.onWordCompletion = this.onWordCompletion.bind(this)
+    this.onLoadingAnimComplete = this.onLoadingAnimComplete.bind(this)
   }
 
   componentDidMount () {
@@ -33,8 +37,15 @@ class StudentView extends Component {
     let assignments = api.getAssignments(jwt)
     let progress = api.getProgress(jwt)
     if (assignments && progress) {
-      this.setState({ assignments, progress })
+      setTimeout(() => {
+        this._isLoading = false
+        this.setState({ assignments, progress })
+      }, 2000)
     }
+  }
+
+  onLoadingAnimComplete () {
+    this.setState({ isLoadAnimComplete: true })
   }
 
   onWordCompletion (wordIndex, allWordsSpelled) {
@@ -55,8 +66,8 @@ class StudentView extends Component {
   }
 
   render () {
-    const { assignments, progress } = this.state
-    if (!assignments || !progress) return <div /> // this is because the component is rendered one time before componentDidMount is called. ie the users assignments will be null
+    const { assignments, progress, isLoadAnimComplete } = this.state
+    if (!isLoadAnimComplete) return <LoadingSpinner isLoading={this._isLoading} onLoadingAnimComplete={this.onLoadingAnimComplete} />
     let wordsToSpell = assignments[progress.curAssignmentIndex].words
 
     return (
