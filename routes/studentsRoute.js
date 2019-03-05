@@ -110,7 +110,6 @@ let getAssignmentAndProgress = async (req, res) => {
   res.send({ student, classroom })
 }
 
-// TODO: test this route
 let updateStudentProgress = async (req, res) => {
   let token = req.header('x-auth')
 
@@ -120,11 +119,6 @@ let updateStudentProgress = async (req, res) => {
   let newCurrentLetter = _.toInteger(body.currentLetter)
   let newCurrentWord = _.toInteger(body.currentWord)
   let newCurrentAssignment = _.toInteger(body.currentAssignment)
-
-  // TODO: remove this
-  console.log('newCurrentLetter :', newCurrentLetter)
-  console.log('newCurrentWord :', newCurrentWord)
-  console.log('newCurrentAssignment :', newCurrentAssignment)
 
   if (!_.isInteger(newCurrentAssignment) || !_.isInteger(newCurrentWord) || !_.isInteger(newCurrentLetter)) {
     const errorMessage = 'currentLetter, currentWord, and currentAssignment must be specified'
@@ -169,10 +163,6 @@ let updateStudentProgress = async (req, res) => {
   }
 
   // if student has completed all the letters and words in an assignment, reset letter and word indexes
-  console.log('newCurrentLetter :', newCurrentLetter)
-  console.log('numberOfLetters :', numberOfLetters)
-  console.log('newCurrentWord :', newCurrentWord)
-  console.log('numberOfWords :', numberOfWords)
   if ((newCurrentLetter + 1 > numberOfLetters) && (newCurrentWord + 1 > numberOfWords)) {
     newCurrentLetter = 0
     newCurrentWord = 0
