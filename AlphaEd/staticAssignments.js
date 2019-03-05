@@ -7,19 +7,14 @@
 const DefaultAssignments = [
   {
     name: 'Assignment 1',
-    letters: ['a', 'b'],
-    words: []
-  },
-  {
-    name: 'Assignment 2',
-    letters: ['c'],
+    letters: ['a', 'b', 'c'],
     words: [
       { text: 'cab' }
       // { text: 'Babb' }
     ]
   },
   {
-    name: 'Assignment 3',
+    name: 'Assignment 2',
     letters: ['d'],
     words: [
       { text: 'add' },
@@ -30,7 +25,7 @@ const DefaultAssignments = [
     ]
   },
   {
-    name: 'Assignment 4',
+    name: 'Assignment 3',
     letters: ['e'],
     words: [
       { text: 'Ed' },
@@ -38,7 +33,7 @@ const DefaultAssignments = [
     ]
   },
   {
-    name: 'Assignment 5',
+    name: 'Assignment 4',
     letters: ['f'],
     words: [
       { text: 'fad' },
@@ -46,7 +41,7 @@ const DefaultAssignments = [
     ]
   },
   {
-    name: 'Assignment 6',
+    name: 'Assignment 5',
     letters: ['g'],
     words: [
       { text: 'gab' },
@@ -57,7 +52,7 @@ const DefaultAssignments = [
     ]
   },
   {
-    name: 'Assignment 7',
+    name: 'Assignment 6',
     letters: ['h'],
     words: [
       { text: 'had' },
@@ -65,7 +60,7 @@ const DefaultAssignments = [
     ]
   },
   {
-    name: 'Assignment 8',
+    name: 'Assignment 7',
     letters: ['i'],
     words: [
       { text: 'bib' },
@@ -81,7 +76,7 @@ const DefaultAssignments = [
     ]
   },
   {
-    name: 'Assignment 9',
+    name: 'Assignment 8',
     letters: ['j'],
     words: [
       { text: 'jab' },
@@ -90,7 +85,7 @@ const DefaultAssignments = [
     ]
   },
   {
-    name: 'Assignment 10',
+    name: 'Assignment 9',
     letters: ['k'],
     words: [
       { text: 'keg' },
@@ -103,7 +98,7 @@ const DefaultAssignments = [
     ]
   },
   {
-    name: 'Assignment 11',
+    name: 'Assignment 10',
     letters: ['l'],
     words: [
       { text: 'lab' },

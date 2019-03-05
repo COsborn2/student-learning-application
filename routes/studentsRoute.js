@@ -148,36 +148,40 @@ let updateStudentProgress = async (req, res) => {
   let finishedCourse = false
 
   // ensure that letters are not being skipped
-  if (studentCurrentLetter + 1 !== newCurrentLetter) {
+  if (studentCurrentLetter + 1 > newCurrentLetter + 1) {
     const errorMessage = `Skipping detected: new currentLetter value of ${newCurrentLetter} is more than 1 greater than new currentLetter value of ${studentCurrentLetter}`
     ErrorMessage(errorMessage)
     return res.status(400).send({ error: errorMessage })
   }
 
   // ensure that words are not being skipped
-  if (studentCurrentWord + 1 !== newCurrentWord) {
+  if (studentCurrentWord + 1 > newCurrentWord + 1) {
     const errorMessage = `Skipping detected: new currentWord value of ${newCurrentWord} is more than 1 greater than new currentLetter value of ${studentCurrentWord}`
     ErrorMessage(errorMessage)
     return res.status(400).send({ error: errorMessage })
   }
 
   // ensure assignment is not being skipped
-  if (studentCurrentAssignment + 1 !== newCurrentAssignment) {
+  if (studentCurrentAssignment + 1 > newCurrentAssignment + 1) {
     const errorMessage = `Skipping detected: new currentAssignment value of ${newCurrentAssignment} is more than 1 greater than new currentLetter value of ${studentCurrentAssignment}`
     ErrorMessage(errorMessage)
     return res.status(400).send({ error: errorMessage })
   }
 
-  if (newCurrentAssignment >= numberAssignments) { // if currentAssignment incremented is higher than all assignments then return finshedCourse = true
-    finishedCourse = true
-    SuccessMessage('Student has completed all assignments in the course')
-  }
-
   // if student has completed all the letters and words in an assignment, reset letter and word indexes
-  if ((newCurrentLetter >= numberOfLetters) && (newCurrentWord >= numberOfWords)) {
+  console.log('newCurrentLetter :', newCurrentLetter)
+  console.log('numberOfLetters :', numberOfLetters)
+  console.log('newCurrentWord :', newCurrentWord)
+  console.log('numberOfWords :', numberOfWords)
+  if ((newCurrentLetter + 1 > numberOfLetters) && (newCurrentWord + 1 > numberOfWords)) {
     newCurrentLetter = 0
     newCurrentWord = 0
     SuccessMessage('Student has completed assignment')
+  }
+
+  if (newCurrentAssignment >= numberAssignments) { // if currentAssignment incremented is higher than all assignments then return finshedCourse = true
+    finishedCourse = true
+    SuccessMessage('Student has completed all assignments in the course')
   }
 
   // update currentLetter, currentWord, currentAssignment and finishedCourse flag
@@ -191,7 +195,7 @@ let updateStudentProgress = async (req, res) => {
       finishedCourse
     }
   }, {
-    returnOriginal: false
+    new: true
   })
 
   res.send({ updatedStudent })
