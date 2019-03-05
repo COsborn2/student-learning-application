@@ -1,6 +1,23 @@
 import fetch from 'isomorphic-fetch'
 
 class InstructorApiCalls {
+
+  static async login (email, password) {
+    console.log(`Instructor Login\nEmail: ${email}\nPassword: ${password}`)
+    return {
+      jwt: 'ValidInstructorJwt',
+      error: 'err'
+    }
+  }
+
+  static async signup (email, password) {
+    console.log(`Instructor Signup\nEmail: ${email}\nPassword: ${password}`)
+    return {
+      jwt: 'ValidInstructorJwt',
+      error: null
+    }
+  }
+
   // This is where backend api call is made
   static async verifyAuth (id, pass) {
     if (id === 'instructorDev@test.com' && pass === 'password') { // this is just for the devSkip button

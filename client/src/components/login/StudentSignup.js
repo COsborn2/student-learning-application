@@ -7,7 +7,7 @@ import Button from 'react-bootstrap/Button'
 import Form from 'react-bootstrap/Form'
 import ModalBody from 'react-bootstrap/ModalBody'
 import ModalFooter from 'react-bootstrap/ModalFooter'
-import InstructorApiCalls from '../../javascript/InstructorApiCalls'
+import StudentApiCalls from '../../javascript/StudentApiCalls'
 
 const messageStyles = {
   messageFading: {
@@ -21,13 +21,12 @@ const messageStyles = {
   }
 }
 
-class SignupScreen extends Component {
+class StudentSignup extends Component {
   constructor (props) {
     super(props)
     this.state = {
       failedMessage: '',
-      showMessage: false,
-      api: InstructorApiCalls
+      showMessage: false
     }
   }
 
@@ -38,17 +37,16 @@ class SignupScreen extends Component {
       event.stopPropagation()
     }
 
-    let { api } = this.state
-    const password = form.elements.passField.value
-    const id = form.elements.idField.value
+    const courseCode = form.elements.courseCodeField.value
+    const userName = form.elements.userNameField.value
 
-    let res = await api.verifySignup(id, password)
+    let res = await StudentApiCalls.signup(courseCode, userName)
 
-    if (res.jwt) {
-      window.sessionStorage.setItem(`instructorjwt`, res.jwt)
-      this.props.history.replace(`/instructor/${id}`) // navigates to the proper user screen, passing the jwt
-    }
     if (res.error) this.animateMessage(res.error)
+    else if (res.jwt) {
+      window.sessionStorage.setItem(`studentjwt`, res.jwt)
+      this.props.history.replace(`/student/${userName}`) // navigates to the proper user screen, passing the jwt
+    } else this.animateMessage('Whoops... An error occurred, Try again')
   }
 
   animateMessage (msg) {
@@ -66,26 +64,26 @@ class SignupScreen extends Component {
         <Form onSubmit={e => this.handleSignup(e)}>
           <ModalDialog>
             <ModalHeader>
-              <ModalTitle>Instructor Sign Up</ModalTitle>
+              <ModalTitle>Student Sign Up</ModalTitle>
             </ModalHeader>
 
             <ModalBody>
               <Form.Group>
-                <Form.Label>Email</Form.Label>
+                <Form.Label>Course Code</Form.Label>
                 <Form.Control
-                  name='idField'
+                  name='courseCodeField'
                   required
                   type='text'
-                  placeholder='Id' />
+                  placeholder='course code' />
               </Form.Group>
 
               <Form.Group>
                 <Form.Label>Password</Form.Label>
                 <Form.Control
-                  name='passField'
+                  name='userNameField'
                   required
-                  type='password'
-                  placeholder='Password' />
+                  type='text'
+                  placeholder='text' />
               </Form.Group>
             </ModalBody>
 
@@ -102,8 +100,8 @@ class SignupScreen extends Component {
   }
 }
 
-SignupScreen.propTypes = {
+StudentSignup.propTypes = {
   history: PropTypes.object.isRequired
 }
 
-export default SignupScreen
+export default StudentSignup
