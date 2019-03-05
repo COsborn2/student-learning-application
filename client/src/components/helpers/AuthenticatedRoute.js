@@ -6,7 +6,8 @@ import StudentView from '../students/StudentView'
 const AuthenticatedRoute = ({ component: Component, ...rest }) => {
   const type = Component === StudentView ? 'student' : 'instructor'
   const jwt = window.sessionStorage.getItem(`${type}jwt`)
-  return jwt ? <Route {...rest} render={props => <Component {...props} jwt={jwt} />} />
+  const id = window.sessionStorage.getItem(`${type}id`)
+  return jwt ? <Route {...rest} render={props => <Component {...props} id={id} jwt={jwt} />} />
     : <Redirect to={`/login/${type}`} />
 }
 AuthenticatedRoute.propTypes = {

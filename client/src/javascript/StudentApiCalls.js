@@ -1,6 +1,23 @@
 import fetch from 'isomorphic-fetch'
 
 class StudentApiCalls {
+
+  static async login (courseCode, userName) {
+    console.log(`Student Login\n Course Code: ${courseCode}\nUsername: ${userName}`)
+    return {
+      jwt: 'ValidStudentJwt',
+      error: null
+    }
+  }
+
+  static async signup (courseCode, userName) {
+    console.log(`Student Signup\n Course Code: ${courseCode}\nUsername: ${userName}`)
+    return {
+      jwt: 'ValidStudentJwt',
+      error: null
+    }
+  }
+
   // this is where a login is attempted
   static async verifyAuth (id, pass) {
     if (id === 'studentDev' && pass === 'password') { // todo this is just for the devSkip button
