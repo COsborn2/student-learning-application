@@ -79,7 +79,7 @@ class LoginScreen extends Component {
     let res = await api.verifyAuth(id, password)
 
     if (res.jwt) {
-      window.sessionStorage.setItem('jwt', res.jwt)
+      window.sessionStorage.setItem(`${type}jwt`, res.jwt)
       this.props.history.replace(`/${type}/${id}`) // navigates to the proper user screen, passing the jwt
     }
     if (res.error) this.animateMessage(res.error)
@@ -88,7 +88,7 @@ class LoginScreen extends Component {
   handleSkipAuth () {
     let { type, typeInfo } = this.state
     let id = typeInfo.idSkip
-    window.sessionStorage.setItem('jwt', `Valid${type}JWT`)
+    window.sessionStorage.setItem(`${type}jwt`, `Valid${type}JWT`)
     this.props.history.replace(`/${type}/${id}`) // todo remove dev skip for easy access
   }
 

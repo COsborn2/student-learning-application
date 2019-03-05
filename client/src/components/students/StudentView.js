@@ -46,6 +46,7 @@ class StudentView extends Component {
 
   onLoadingAnimComplete () {
     this.setState({ isLoadAnimComplete: true })
+    this.props.history.replace(`/student/${this.state.id}`) // todo remove this. Handle redirection in authenticatedRoute
   }
 
   onWordCompletion (wordIndex, allWordsSpelled) {
@@ -73,7 +74,7 @@ class StudentView extends Component {
     return (
       <div style={{ background: '#a9a9a9' }}>
         <Switch>
-          <Route exact path='/student/:id' component={StudentHome} />
+          <Route exact path='/student/:id' render={(props) => <StudentHome {...props} assignments={assignments} progress={progress} />} />
           <Route path='/student/:id/writing' component={StudentWriting} />
           <Route path='/student/:id/spelling' render={() =>
             <DragDropContextProvider

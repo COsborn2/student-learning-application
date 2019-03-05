@@ -8,7 +8,6 @@ import Form from 'react-bootstrap/Form'
 import ModalBody from 'react-bootstrap/ModalBody'
 import ModalFooter from 'react-bootstrap/ModalFooter'
 import InstructorApiCalls from '../../javascript/InstructorApiCalls'
-import StudentApiCalls from '../../javascript/StudentApiCalls'
 
 const messageStyles = {
   messageFading: {
@@ -25,13 +24,10 @@ const messageStyles = {
 class SignupScreen extends Component {
   constructor (props) {
     super(props)
-    let type = this.props.match.params.type
-    let api = type === 'instructor' ? InstructorApiCalls : StudentApiCalls
     this.state = {
       failedMessage: '',
       showMessage: false,
-      type: type,
-      api: api
+      api: InstructorApiCalls
     }
   }
 
@@ -42,15 +38,15 @@ class SignupScreen extends Component {
       event.stopPropagation()
     }
 
-    let { api, type } = this.state
+    let { api } = this.state
     const password = form.elements.passField.value
     const id = form.elements.idField.value
 
     let res = await api.verifySignup(id, password)
 
     if (res.jwt) {
-      window.sessionStorage.setItem('jwt', res.jwt)
-      this.props.history.replace(`/${type}/${id}`) // navigates to the proper user screen, passing the jwt
+      window.sessionStorage.setItem(`instructorjwt`, res.jwt)
+      this.props.history.replace(`/instructor/${id}`) // navigates to the proper user screen, passing the jwt
     }
     if (res.error) this.animateMessage(res.error)
   }
