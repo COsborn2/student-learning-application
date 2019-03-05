@@ -38,8 +38,7 @@ class StudentLogin extends Component {
     const userName = form.elements.userNameField.value
 
     let res = await StudentApiCalls.login(courseCode, userName)
-    console.log('response: ' + res)
-    console.log('error: ' + res.error)
+
     if (res.error) this.animateMessage(res.error)
     else if (res.jwt) {
       window.sessionStorage.setItem('studentid', userName)

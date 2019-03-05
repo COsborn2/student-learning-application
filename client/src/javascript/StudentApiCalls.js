@@ -7,8 +7,6 @@ const getAssignmentsAndProgressURL = '/api/student/progress'
 
 class StudentApiCalls {
   static async login (courseCode, userName) {
-    console.log(`Student Login\nCourse Code: ${courseCode}\nUsername: ${userName}`)
-
     let httpMessage = {
       method: 'POST',
       headers: {
@@ -21,19 +19,19 @@ class StudentApiCalls {
     }
 
     const res = await fetch(loginURL, httpMessage)
-    console.log(res)
     if (res.status !== 200) {
       const body = await res.json()
-      return { jwt: null, error: body.error }
+      console.log(httpMessage) // todo remove log statements
+      console.log(res)
+      console.log(`Error: ${body.error}`)
+      return { error: body.error }
     }
 
     let jwt = res.headers.get('x-auth')
-    return { jwt, error: null }
+    return { jwt }
   }
 
   static async signup (courseCode, userName) {
-    console.log(`Student Signup\nCourse Code: ${courseCode}\nUsername: ${userName}`)
-
     let httpMessage = {
       method: 'POST',
       headers: {
@@ -46,19 +44,19 @@ class StudentApiCalls {
     }
 
     const res = await fetch(signupURL, httpMessage)
-    console.log(res)
     if (res.status !== 200) {
       const body = await res.json()
-      return { jwt: null, error: body.error }
+      console.log(httpMessage) // todo remove log statements
+      console.log(res)
+      console.log(`Error: ${body.error}`)
+      return { error: body.error }
     }
 
     let jwt = res.headers.get('x-auth')
-    return { jwt, error: null }
+    return { jwt }
   }
 
   static async getAssignmentsAndProgress (jwt) {
-    console.log(`Student Signup\nJWT: ${jwt}`)
-
     let httpMessage = {
       method: 'GET',
       headers: {
@@ -68,14 +66,24 @@ class StudentApiCalls {
     }
 
     const res = await fetch(getAssignmentsAndProgressURL, httpMessage)
-    console.log(res)
     if (res.status !== 200) {
       const body = await res.json()
-      return { jwt: null, error: body.error }
+      console.log(httpMessage) // todo remove log statements
+      console.log(res)
+      console.log(`Error: ${body.error}`)
+      return { error: body.error }
     }
     let body = await res.json()
-
     return { student: body.student, classroom: body.classroom }
+  }
+
+  static getProgress (jwt) {
+    let progress = {
+      curAssignmentIndex: 0,
+      curWordIndex: 0, // if word index is equal to the array size, all words have been spelled
+      curLetterIndex: 0
+    }
+    return progress
   }
 
   // This is where the api call is made to retrieve the specific student's assignments

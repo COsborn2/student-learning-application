@@ -21,7 +21,6 @@ class StudentView extends Component {
     this.state = {
       id: this.props.id,
       jwt: this.props.jwt,
-      api: StudentApiCalls,
       assignments: null,
       progress: null,
       isLoadAnimComplete: false
@@ -31,16 +30,32 @@ class StudentView extends Component {
     this.onLoadingAnimComplete = this.onLoadingAnimComplete.bind(this)
   }
 
-  componentDidMount () {
-    let { api, jwt } = this.state
-    let assignments = api.getAssignments(jwt)
-    let progress = api.getProgress(jwt)
+  async componentDidMount () {
+    let { jwt } = this.state
+    // const res = await StudentApiCalls.getAssignmentsAndProgress(jwt)
+    // const student = res.student
+    //    let progress = {
+    //      currentAssignment: student.currentAssignment,
+    //      currentLetter: student.currentLetter,
+    //      currentWord: student.currentWord,
+    //      finishedCourse: student.finishedCourse
+    //    }
+    //    const classroom = res.classroom
+    //    console.log(student)
+    //    console.log(classroom)
+
+    let assignments = StudentApiCalls.getAssignments(jwt)
+    let progress = StudentApiCalls.getProgress(jwt)
     if (assignments && progress) {
       setTimeout(() => {
         this._isLoading = false
         this.setState({ assignments, progress })
       }, 1000)
     }
+    setTimeout(() => {
+      this._isLoading = false
+      this.setState({ assignments: [] })
+    }, 1000)
   }
 
   onLoadingAnimComplete () {
