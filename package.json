@@ -43,6 +43,7 @@
     "lodash": "^4.17.11",
     "mongodb": "^3.1.13",
     "mongoose": "^5.4.6",
+    "react-dnd-touch-backend": "^0.7.1",
     "validator": "^10.11.0"
   }
 }

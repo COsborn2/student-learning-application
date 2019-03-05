@@ -1,12 +1,14 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 import StudentHome from './StudentHome'
-import { Redirect, Route, Switch } from 'react-router-dom'
+import { Route, Switch } from 'react-router-dom'
 import StudentSpelling from './StudentSpelling'
 import StudentWriting from './StudentWriting'
+import StudentVideo from './StudentVideo'
 import { DragDropContextProvider } from 'react-dnd'
-import HTML5Backend from 'react-dnd-html5-backend'
+import TouchBackend from 'react-dnd-touch-backend'
 import StudentApiCalls from '../../javascript/StudentApiCalls'
+import LoadingSpinner from '../helpers/LoadingSpinner'
 
 /* The student view manages all screens and routes for a specific student user
  the login screen creates and authenticates a student object, and passes it
@@ -16,26 +18,34 @@ import StudentApiCalls from '../../javascript/StudentApiCalls'
 class StudentView extends Component {
   constructor (props) {
     super(props)
-    const user = this.props.history.location.state
     this.state = {
-      id: user.id,
-      jwt: user.jwt,
+      id: this.props.id,
+      jwt: this.props.jwt,
       api: StudentApiCalls,
       assignments: null,
-      progress: null
+      progress: null,
+      isLoadAnimComplete: false
     }
+    this._isLoading = true
     this.onWordCompletion = this.onWordCompletion.bind(this)
+    this.onLoadingAnimComplete = this.onLoadingAnimComplete.bind(this)
   }
 
   componentDidMount () {
     let { api, jwt } = this.state
-    if (jwt) { // makes sure api isn't called if user is not valid
-      let assignments = api.getAssignments(jwt)
-      let progress = api.getProgress(jwt)
-      if (assignments && progress) {
+    let assignments = api.getAssignments(jwt)
+    let progress = api.getProgress(jwt)
+    if (assignments && progress) {
+      setTimeout(() => {
+        this._isLoading = false
         this.setState({ assignments, progress })
-      }
+      }, 1000)
     }
+  }
+
+  onLoadingAnimComplete () {
+    this.setState({ isLoadAnimComplete: true })
+    this.props.history.replace(`/student/${this.state.id}`) // todo remove this. Handle redirection in authenticatedRoute
   }
 
   onWordCompletion (wordIndex, allWordsSpelled) {
@@ -56,20 +66,22 @@ class StudentView extends Component {
   }
 
   render () {
-    const { jwt, assignments, progress } = this.state
-    if (!jwt) return <Redirect to='/login/student' />
-    if (!assignments || !progress) return <div /> // this is because the component is rendered one time before componentDidMount is called. ie the users assignments will be null
+    const { assignments, progress, isLoadAnimComplete } = this.state
+    if (!isLoadAnimComplete) return <LoadingSpinner isLoading={this._isLoading} onLoadingAnimComplete={this.onLoadingAnimComplete} />
     let wordsToSpell = assignments[progress.curAssignmentIndex].words
 
     return (
       <div style={{ background: '#a9a9a9' }}>
         <Switch>
-          <Route exact path='/student/:id' component={StudentHome} />
+          <Route exact path='/student/:id' render={(props) => <StudentHome {...props} assignments={assignments} progress={progress} />} />
           <Route path='/student/:id/writing' component={StudentWriting} />
           <Route path='/student/:id/spelling' render={() =>
-            <DragDropContextProvider backend={HTML5Backend}>  { /* this needed to be moved up from StudentSpelling because advancing to the next word would cause multiple HTML5Backend's to be instantiated */ }
-              <StudentSpelling wordsToSpell={wordsToSpell} onWordCompletion={(wordIndex, allWordsSpelled) => this.onWordCompletion(wordIndex, allWordsSpelled)} />
+            <DragDropContextProvider
+              backend={TouchBackend}>  { /* this needed to be moved up from StudentSpelling because advancing to the next word would cause multiple HTML5Backend's to be instantiated */}
+              <StudentSpelling wordsToSpell={wordsToSpell}
+                onWordCompletion={(wordIndex, allWordsSpelled) => this.onWordCompletion(wordIndex, allWordsSpelled)} />
             </DragDropContextProvider>} />
+          <Route path='/student/:id/video' component={StudentVideo} />
         </Switch>
       </div>
     )
@@ -77,6 +89,9 @@ class StudentView extends Component {
 }
 
 StudentView.propTypes = {
+  id: PropTypes.string.isRequired,
+  jwt: PropTypes.string.isRequired,
+  match: PropTypes.object.isRequired,
   history: PropTypes.object.isRequired
 }
 
