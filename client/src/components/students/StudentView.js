@@ -70,7 +70,7 @@ class StudentView extends Component {
   }
 
   onWordCompletion (wordIndex, allWordsSpelled) {
-    let { username, jwt, api, progress } = this.state
+    let { username, jwt, progress } = this.state
     progress.currentWordIndex = wordIndex
     if (allWordsSpelled) {
       progress.currentWordIndex = 0 // todo this is temporary so it resets, rather than be over
@@ -78,7 +78,7 @@ class StudentView extends Component {
       this.setState({ progress })
       this.props.history.push(`/student/${username}`)
     }
-    api.putAssignments(jwt, progress)
+    StudentApiCalls.putAssignments(jwt, progress)
   }
 
   onLetterCompletion () {
