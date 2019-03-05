@@ -2,14 +2,12 @@
     display: block;
     margin-right: auto;
     margin-left: auto;
-    transform: translateY(50%);
 }
 
 .loading-img-finish{
     display: block;
     margin-right: auto;
     margin-left: auto;
-    transform: translateY(50%);
     opacity: 0;
     transition: opacity .5s;
 }

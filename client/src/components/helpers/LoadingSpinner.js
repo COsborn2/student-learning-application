@@ -1,23 +1,25 @@
 import React from 'react'
 import PropTypes from 'prop-types'
+import Spinner from '../../assets/Spinner.gif'
 
 function LoadingSpinner (props) {
   let loadingStyle = ''
-  if (props.isLoading) {
-    loadingStyle = 'loading-img'
-  } else {
+  if (props.triggerFadeAway) {
     loadingStyle = 'loading-img-finish'
-    setTimeout(() => props.onLoadComplete(), 500)
-  }
+    setTimeout(() => {
+      props.onStopped()
+    }, 500)
+  } else { loadingStyle = 'loading-img' }
+
   return (
     <img className={loadingStyle}
-      src='https://media0.giphy.com/media/5AtXMjjrTMwvK/giphy.gif?cid=3640f6095c7cdfe533726d36630279e9'
+      src={Spinner}
       alt='Loading' />)
 }
 
 LoadingSpinner.propTypes = {
-  isLoading: PropTypes.bool.isRequired,
-  onLoadComplete: PropTypes.func.isRequired
+  triggerFadeAway: PropTypes.bool.isRequired,
+  onStopped: PropTypes.func.isRequired
 }
 
 export default LoadingSpinner
