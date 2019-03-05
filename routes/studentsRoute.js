@@ -100,7 +100,7 @@ let getAssignmentAndProgress = async (req, res) => {
     return res.status(400).send({ error: 'Student not found with specified _id' })
   }
 
-  let classroom = await student.getClass()
+  let classroom = await Classroom.findById(student.class).populate('assignments')
 
   if (!classroom) {
     ErrorMessage('Classroom not found')
