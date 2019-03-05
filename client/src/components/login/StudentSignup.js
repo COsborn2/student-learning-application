@@ -37,9 +37,8 @@ class StudentSignup extends Component {
 
     if (res.error) this.animateMessage(res.error)
     else if (res.jwt) {
-      window.sessionStorage.setItem('studentid', userName)
-      window.sessionStorage.setItem(`studentjwt`, res.jwt)
-      this.props.history.replace(`/student/${userName}`) // navigates to the proper user screen, passing the jwt
+      window.sessionStorage.setItem('student', JSON.stringify(res))
+      this.props.history.replace(`/student/${res.username}`)
     } else this.animateMessage('Whoops... An error occurred, Try again')
   }
 

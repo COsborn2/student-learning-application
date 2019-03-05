@@ -19,13 +19,13 @@ class StudentView extends Component {
   constructor (props) {
     super(props)
     this.state = {
-      username: this.props.id,
-      jwt: this.props.jwt,
+      username: this.props.user.username,
+      jwt: this.props.user.jwt,
       classCode: null,
       assignments: null,
       currentAssignment: null,
       progress: null,
-      isLoadAnimComplete: false
+      isLoadComplete: false
     }
     this._isLoading = true
     this.onWordCompletion = this.onWordCompletion.bind(this)
@@ -58,15 +58,15 @@ class StudentView extends Component {
   }
 
   onLoadingComplete () {
-    this.setState({ isLoadAnimComplete: true })
-    this.props.history.replace(`/student/${this.state.username}`) // todo remove this. Handle redirection in authenticatedRoute
+    this.setState({ isLoadComplete: true })
+    this.props.history.replace(`/student/${this.state.username}`)
   }
 
   onWordCompletion (wordIndex, allWordsSpelled) {
     let { username, jwt, api, progress } = this.state
     progress.currentWordIndex = wordIndex
     if (allWordsSpelled) {
-      progress.currentWordIndex = 0 // todo this is temporary
+      progress.currentWordIndex = 0 // todo this is temporary so it resets, rather than be over
       console.log('All words have been spelled. For now the words will repeat')
       this.setState({ progress })
       this.props.history.push(`/student/${username}`)
@@ -80,9 +80,8 @@ class StudentView extends Component {
   }
 
   render () {
-    const { currentAssignment, assignments, progress, isLoadAnimComplete } = this.state
-    if (!isLoadAnimComplete) return <LoadingSpinner isLoading={this._isLoading} onLoadingAnimComplete={this.onLoadingComplete} />
-    console.log(currentAssignment)
+    const { currentAssignment, assignments, progress, isLoadComplete } = this.state
+    if (!isLoadComplete) return <LoadingSpinner isLoading={this._isLoading} onLoadingAnimComplete={this.onLoadingComplete} />
     return (
       <div style={{ background: '#a9a9a9' }}>
         <Switch>
@@ -102,8 +101,7 @@ class StudentView extends Component {
 }
 
 StudentView.propTypes = {
-  id: PropTypes.string.isRequired,
-  jwt: PropTypes.string.isRequired,
+  user: PropTypes.object.isRequired,
   match: PropTypes.object.isRequired,
   history: PropTypes.object.isRequired
 }

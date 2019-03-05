@@ -6,21 +6,21 @@ const signupURL = '/api/student'
 const getAssignmentsAndProgressURL = '/api/student/progress'
 
 class StudentApiCalls {
-  static async login (courseCode, userName) {
+  static async login (classCode, username) {
     let httpMessage = {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
       },
       body: JSON.stringify({
-        username: userName,
-        classcode: courseCode
+        username: username,
+        classcode: classCode
       })
     }
 
     const res = await fetch(loginURL, httpMessage)
+    const body = await res.json()
     if (res.status !== 200) {
-      const body = await res.json()
       console.log(httpMessage) // todo remove log statements
       console.log(res)
       console.log(`Error: ${body.error}`)
@@ -28,24 +28,24 @@ class StudentApiCalls {
     }
 
     let jwt = res.headers.get('x-auth')
-    return { jwt }
+    return { jwt, username: body.username }
   }
 
-  static async signup (courseCode, userName) {
+  static async signup (classCode, username) {
     let httpMessage = {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
       },
       body: JSON.stringify({
-        username: userName,
-        classcode: courseCode
+        username: username,
+        classcode: classCode
       })
     }
 
     const res = await fetch(signupURL, httpMessage)
+    const body = await res.json()
     if (res.status !== 200) {
-      const body = await res.json()
       console.log(httpMessage) // todo remove log statements
       console.log(res)
       console.log(`Error: ${body.error}`)
@@ -53,7 +53,7 @@ class StudentApiCalls {
     }
 
     let jwt = res.headers.get('x-auth')
-    return { jwt }
+    return { jwt, username: body.username }
   }
 
   static async getAssignmentsAndProgress (jwt) {
