@@ -1,9 +1,17 @@
 const mongoose = require('mongoose')
 
 let AssignmentSchema = new mongoose.Schema({
-  order: { // what place the assignment falls in the course
-    type: Number,
-    required: true
+  name: {
+    type: String,
+    required: true,
+    minlength: 1,
+    trim: true,
+    unique: true
+  },
+  videos: {
+    type: [String],
+    trim: true,
+    minlength: 1
   },
   letters: {
     type: [String],
@@ -16,6 +24,10 @@ let AssignmentSchema = new mongoose.Schema({
     ref: 'Word'
   }]
 })
+
+AssignmentSchema.statics.findByLetter = async function (letter) {
+  return Assignment.findOne({ letters: letter })
+}
 
 let Assignment = mongoose.model('Assignment', AssignmentSchema)
 

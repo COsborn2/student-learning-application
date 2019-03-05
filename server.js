@@ -1,14 +1,15 @@
+const { InfoMessage, SuccessMessage } = require('./middleware/message')
+const express = require('express')
+const path = require('path')
+const bodyParser = require('body-parser')
+
 var isProduction = true
 
 if (process.env.NODE_ENV !== 'production' && !process.env.DATABASE_URL) {
   require('dotenv').load()
-  console.log('development')
+  InfoMessage('Running in Development mode')
   isProduction = false
 }
-
-const express = require('express')
-const path = require('path')
-const bodyParser = require('body-parser')
 
 require('./db/mongoose') // this starts the connection to the server
 
@@ -22,21 +23,22 @@ app.use(bodyParser.urlencoded({ extended: true }))
 const { authenticateStudent, authenticateInstructor } = require('./middleware/authenticate')
 const instructorsRoute = require('./routes/instructorsRoute')
 const studentsRoute = require('./routes/studentsRoute')
-const wordsRoute = require('./routes/wordsRoute')
+const classroomsRoute = require('./routes/classroomsRoute')
 
 app.post('/api/instructor', instructorsRoute.createInstructor)
+app.get('/api/instructor', authenticateInstructor, instructorsRoute.getInstructor)
 app.post('/api/instructor/login', instructorsRoute.loginInstructor)
-app.post('/api/instructor/testToken', authenticateInstructor, instructorsRoute.validateInstructor)
 
-app.post('/api/student', studentsRoute.createStudent)
+app.post('/api/student', authenticateInstructor, studentsRoute.createStudent)
+app.delete('/api/student', authenticateStudent, studentsRoute.deleteStudent) // TODO: convert this route to require instructor to delete?
 app.post('/api/student/login', studentsRoute.loginStudent)
-app.post('/api/student/testToken', authenticateStudent, studentsRoute.validateStudent)
+app.get('/api/student/progress', authenticateStudent, studentsRoute.getAssignmentAndProgress)
+app.put('/api/student/progress', authenticateStudent, studentsRoute.updateStudentProgress)
 
-app.post('/api/word', authenticateInstructor, wordsRoute.createWord)
-app.put('/api/updateWord', authenticateInstructor, wordsRoute.updateWord)
+app.post('/api/classrooms', authenticateInstructor, classroomsRoute.createClassroom)
 
 if (isProduction) {
-  console.log('production')
+  InfoMessage('Running in production mode')
   app.use(express.static(path.join(__dirname, '/client/build')))
 
   app.get('*', (req, res) => {
@@ -44,4 +46,4 @@ if (isProduction) {
   })
 }
 
-app.listen(port, () => console.log(`Listening on port ${port}`))
+app.listen(port, () => SuccessMessage(`Listening on port ${port}`))

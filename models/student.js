@@ -1,6 +1,8 @@
 const mongoose = require('mongoose')
 const { TokenSchema } = require('./token')
+const { Classroom } = require('./classroom')
 const _ = require('lodash')
+const jwt = require('jsonwebtoken')
 
 let StudentSchema = new mongoose.Schema({
   username: {
@@ -18,7 +20,8 @@ let StudentSchema = new mongoose.Schema({
   },
   class: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'Class'
+    ref: 'Classroom',
+    required: true
   },
   currentAssignment: {
     type: Number,
@@ -32,6 +35,10 @@ let StudentSchema = new mongoose.Schema({
     type: Number,
     default: 0
   },
+  finishedCourse: {
+    type: Boolean,
+    default: false
+  },
   token: TokenSchema
 })
 
@@ -39,7 +46,38 @@ StudentSchema.methods.toJSON = function () {
   let student = this
   let studentObject = student.toObject()
 
-  return _.pick(studentObject, ['username', 'classcode'])
+  return _.pick(studentObject, ['username', 'classcode', 'currentAssignment', 'currentLetter', 'currentWord', 'finishedCourse'])
+}
+
+StudentSchema.methods.getClass = async function () {
+  let student = this
+  let studentObject = student.toObject()
+
+  let classroom = await Classroom.findOne({ classcode: studentObject.classcode })
+
+  return classroom
+}
+
+StudentSchema.methods.getAssignments = async function () {
+  let student = this
+  let studentObject = student.toObject()
+
+  let classroom = await Classroom.findOne({ classcode: studentObject.classcode })
+    .populate({
+      path: 'assignments',
+      populate: { path: 'words' }
+    })
+
+  return classroom.assignments
+}
+
+// NOTE: This does NOT check if the token is authenticated. Only use this AFTER token is validated
+StudentSchema.statics.findByToken = function (token) {
+  let decoded = jwt.decode(token)
+
+  let studentId = decoded._mid
+
+  return Student.findById(studentId).populate('class')
 }
 
 let Student = mongoose.model('Student', StudentSchema)
