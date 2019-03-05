@@ -10,7 +10,6 @@ import Button from 'react-bootstrap/Button'
 import InstructorApiCalls from '../../javascript/InstructorApiCalls.js'
 import Col from 'react-bootstrap/Col'
 import { AuthMessageStyles as messageStyles } from './AuthMessageStyles'
-import StudentApiCalls from '../../javascript/StudentApiCalls'
 
 class InstructorLogin extends Component {
   constructor (props) {
@@ -47,7 +46,7 @@ class InstructorLogin extends Component {
   }
 
   async handleSkipLogin () { // todo remove dev skip
-    let res = await InstructorApiCalls.login('dev', 'instructor-dev@gmail.com', 'password')
+    let res = await InstructorApiCalls.login('instructor-dev@gmail.com', 'Password')
     if (res.error) this.animateMessage(res.error)
     else if (res.jwt) {
       window.sessionStorage.setItem('instructor', JSON.stringify(res))

@@ -81,7 +81,7 @@ class StudentView extends Component {
 
   render () {
     const { currentAssignment, assignments, progress, isLoadComplete } = this.state
-    if (!isLoadComplete) return <LoadingSpinner isLoading={this._isLoading} onLoadingAnimComplete={this.onLoadingComplete} />
+    if (!isLoadComplete) return <LoadingSpinner isLoading={this._isLoading} onLoadComplete={this.onLoadingComplete} />
     return (
       <div style={{ background: '#a9a9a9' }}>
         <Switch>

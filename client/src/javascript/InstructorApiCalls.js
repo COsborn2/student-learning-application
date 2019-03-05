@@ -31,7 +31,7 @@ class InstructorApiCalls {
     return { jwt, name: body.name }
   }
 
-  static async login (name, email, password) {
+  static async login (email, password) {
     let httpMessage = {
       method: 'POST',
       headers: {
@@ -39,8 +39,7 @@ class InstructorApiCalls {
       },
       body: JSON.stringify({
         email: email,
-        password: password,
-        name: name
+        password: password
       })
     }
 
@@ -52,7 +51,6 @@ class InstructorApiCalls {
       console.log(`Error: ${body.error}`)
       return { error: body.error }
     }
-
     let jwt = res.headers.get('x-auth')
     return { jwt, name: body.name }
   }

@@ -7,7 +7,7 @@ function LoadingSpinner (props) {
     loadingStyle = 'loading-img'
   } else {
     loadingStyle = 'loading-img-finish'
-    setTimeout(() => props.onLoadingAnimComplete(), 1000)
+    setTimeout(() => props.onLoadComplete(), 500)
   }
   return (
     <img className={loadingStyle}
@@ -17,7 +17,7 @@ function LoadingSpinner (props) {
 
 LoadingSpinner.propTypes = {
   isLoading: PropTypes.bool.isRequired,
-  onLoadingAnimComplete: PropTypes.func.isRequired
+  onLoadComplete: PropTypes.func.isRequired
 }
 
 export default LoadingSpinner
