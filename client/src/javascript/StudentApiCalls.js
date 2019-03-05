@@ -1,8 +1,7 @@
 import fetch from 'isomorphic-fetch'
 
 /* ROUTES */
-const loginURL = '/api/student/login'
-const signupURL = '/api/student'
+const authURL = '/api/student/login'
 const getAssignmentsAndProgressURL = '/api/student/progress'
 
 class StudentApiCalls {
@@ -18,7 +17,7 @@ class StudentApiCalls {
       })
     }
 
-    const res = await fetch(loginURL, httpMessage)
+    const res = await fetch(authURL, httpMessage)
     const body = await res.json()
     if (res.status !== 200) {
       console.log(httpMessage) // todo remove log statements
@@ -43,7 +42,7 @@ class StudentApiCalls {
       })
     }
 
-    const res = await fetch(signupURL, httpMessage)
+    const res = await fetch(authURL, httpMessage)
     const body = await res.json()
     if (res.status !== 200) {
       console.log(httpMessage) // todo remove log statements
