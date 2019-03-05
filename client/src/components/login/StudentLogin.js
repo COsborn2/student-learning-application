@@ -34,24 +34,24 @@ class StudentLogin extends Component {
       return
     }
 
-    const courseCode = form.elements.courseCodeField.value
-    const userName = form.elements.userNameField.value
+    const classCode = form.elements.courseCodeField.value
+    const username = form.elements.userNameField.value
 
-    let res = await StudentApiCalls.login(courseCode, userName)
-    console.log('response: ' + res)
-    console.log('error: ' + res.error)
+    let res = await StudentApiCalls.login(classCode, username)
     if (res.error) this.animateMessage(res.error)
     else if (res.jwt) {
-      window.sessionStorage.setItem('studentid', userName)
-      window.sessionStorage.setItem('studentjwt', res.jwt)
-      this.props.history.replace(`/student/${userName}`)
+      window.sessionStorage.setItem('student', JSON.stringify(res))
+      this.props.history.replace(`/student/${res.username}`)
     } else this.animateMessage('Whoops... An error occurred, Try again')
   }
 
-  handleSkipLogin () { // todo remove dev skip
-    window.sessionStorage.setItem('studentid', 'dev-student')
-    window.sessionStorage.setItem('studentjwt', `ValidStudentJWT`)
-    this.props.history.replace('/student/dev-student')
+  async handleSkipLogin () { // todo remove dev skip
+    let res = await StudentApiCalls.login('someClasscode', 'someUsername')
+    if (res.error) this.animateMessage(res.error)
+    else if (res.jwt) {
+      window.sessionStorage.setItem('student', JSON.stringify(res))
+      this.props.history.replace(`/student/${res.username}`)
+    } else this.animateMessage('Whoops... An error occurred, Try again')
   }
 
   animateMessage (msg) {

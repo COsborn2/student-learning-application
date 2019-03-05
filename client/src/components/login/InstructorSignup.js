@@ -30,17 +30,16 @@ class InstructorSignup extends Component {
       return
     }
 
+    const name = form.elements.nameField.value
     const email = form.elements.emailField.value
     const password = form.elements.passField.value
 
-    let res = await InstructorApiCalls.signup(email, password)
+    let res = await InstructorApiCalls.signup(name, email, password)
 
     if (res.error) this.animateMessage(res.error)
     else if (res.jwt) {
-      const id = email.split('@')[0]
-      window.sessionStorage.setItem('instructorid', id)
-      window.sessionStorage.setItem('instructorjwt', res.jwt)
-      this.props.history.replace(`/instructor/${id}`)
+      window.sessionStorage.setItem('instructor', JSON.stringify(res))
+      this.props.history.replace(`/instructor/${res.name}`)
     } else this.animateMessage('Whoops... An error occurred, Try again')
   }
 
@@ -64,12 +63,22 @@ class InstructorSignup extends Component {
 
           <ModalBody>
             <Form.Group as={Col}>
+              <Form.Label>Name</Form.Label>
+              <Form.Control
+                required
+                name='nameField'
+                type='text'
+                placeholder='Name' />
+              <Form.Control.Feedback type='invalid'>Please provide a valid name</Form.Control.Feedback>
+            </Form.Group>
+
+            <Form.Group as={Col}>
               <Form.Label>Email</Form.Label>
               <Form.Control
                 required
                 name='emailField'
                 type='email'
-                placeholder='email' />
+                placeholder='Email' />
               <Form.Control.Feedback type='invalid'>Please provide a valid email</Form.Control.Feedback>
             </Form.Group>
 

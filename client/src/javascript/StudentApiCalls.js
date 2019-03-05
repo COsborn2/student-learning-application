@@ -1,89 +1,100 @@
 import fetch from 'isomorphic-fetch'
 
+/* ROUTES */
+const signupURL = '/api/student/login'
+const loginURL = '/api/student/login'
+const getAssignmentsAndProgressURL = '/api/student/progress'
+
 class StudentApiCalls {
-
-  static async login (courseCode, userName) {
-    console.log(`Student Login\n Course Code: ${courseCode}\nUsername: ${userName}`)
-    return {
-      jwt: 'ValidStudentJwt',
-      error: null
-    }
-  }
-
-  static async signup (courseCode, userName) {
-    console.log(`Student Signup\n Course Code: ${courseCode}\nUsername: ${userName}`)
-    return {
-      jwt: 'ValidStudentJwt',
-      error: null
-    }
-  }
-
-  // this is where a login is attempted
-  static async verifyAuth (id, pass) {
-    if (id === 'studentDev' && pass === 'password') { // todo this is just for the devSkip button
-      return { jwt: 'ValidJwt' }
-    }
-    console.log('wpw')
+  static async signup (classCode, username) {
     let httpMessage = {
       method: 'POST',
       headers: {
-        'Accept': 'application/json',
         'Content-Type': 'application/json'
       },
       body: JSON.stringify({
-        email: id,
-        password: pass
+        username: username,
+        classcode: classCode
       })
     }
 
-    const response = await fetch(`api/student/login`, httpMessage)
-    console.log(response)
-    if (response.status !== 200) {
-      return {
-        jwt: null,
-        error: (await response.json()).error
-      }
+    const res = await fetch(signupURL, httpMessage)
+    const body = await res.json()
+    if (res.status !== 200) {
+      console.log(httpMessage) // todo remove log statements
+      console.log(res)
+      console.log(`Error: ${body.error}`)
+      return { error: body.error }
     }
-    let jwt = response.headers.get('x-auth')
-    return { jwt, error: null }
+
+    let jwt = res.headers.get('x-auth')
+    return { jwt, username: body.username }
   }
 
-  // this is where a sign up is attempted
-  static async verifySignup (id, pass) {
-    if (id === 'studentDev' && pass === 'password') { // todo this is just for the devSkip button
-      return { jwt: 'ValidJwt' }
-    }
+  static async login (classCode, username) {
     let httpMessage = {
       method: 'POST',
       headers: {
-        'Accept': 'application/json',
         'Content-Type': 'application/json'
       },
       body: JSON.stringify({
-        email: id,
-        password: pass
+        username: username,
+        classcode: classCode
       })
     }
 
-    const response = await fetch(`api/student`, httpMessage)
-    console.log(response)
-    if (response.status !== 200) {
-      return {
-        jwt: null,
-        error: (await response.json()).error
+    const res = await fetch(loginURL, httpMessage)
+    const body = await res.json()
+    if (res.status !== 200) {
+      console.log(httpMessage) // todo remove log statements
+      console.log(res)
+      console.log(`Error: ${body.error}`)
+      return { error: body.error }
+    }
+
+    let jwt = res.headers.get('x-auth')
+    return { jwt, username: body.username }
+  }
+
+  static async getAssignmentsAndProgress (jwt) {
+    let httpMessage = {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-auth': jwt
       }
     }
 
-    let jwt = response.headers.get('x-auth')
-    return { jwt, error: null }
+    const res = await fetch(getAssignmentsAndProgressURL, httpMessage)
+    if (res.status !== 200) {
+      const body = await res.json()
+      console.log(httpMessage) // todo remove log statements
+      console.log(res)
+      console.log(`Error: ${body.error}`)
+      return { error: body.error }
+    }
+    let body = await res.json()
+    return { student: body.student, classroom: body.classroom }
   }
 
-  // this is where the api call to retrieve the progress is
+  static async getAssignmentById (id) {
+    return {
+      letters: ['a', 'b', 'c'],
+      words: [
+        { word: 'kite', imageURL: 'https://www.shareicon.net/download/2016/07/09/118997_activity.ico' },
+        {
+          word: 'car',
+          imageURL: 'https://images.vexels.com/media/users/3/154391/isolated/lists/430c48555fb4c80d9e77fc83d74fdb85-convertible-car-side-view-silhouette.png'
+        }
+      ]
+    }
+  }
+
   static getProgress (jwt) {
     let progress = {
-      curAssignmentIndex: 0,
-      curWordIndex: 0, // if word index is equal to the array size, all words have been spelled
-      curLetterIndex: 1
+      currentAssignmentIndex: 0,
+      currentWordIndex: 0, // if word index is equal to the array size, all words have been spelled
+      currentLetterIndex: 0
     }
     return progress
   }
