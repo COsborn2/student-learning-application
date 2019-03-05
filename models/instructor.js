@@ -6,6 +6,13 @@ const _ = require('lodash')
 const jwt = require('jsonwebtoken')
 
 let InstructorSchema = new mongoose.Schema({
+  name: {
+    type: String,
+    required: true,
+    minlength: 1,
+    trim: true,
+    unique: true
+  },
   email: {
     type: String,
     required: true,
@@ -33,7 +40,7 @@ InstructorSchema.methods.toJSON = function () {
   let instructor = this
   let instructorObject = instructor.toObject()
 
-  return _.pick(instructorObject, ['email', 'class'])
+  return _.pick(instructorObject, ['name', 'email', 'class'])
 }
 
 InstructorSchema.methods.hashPassword = function () {

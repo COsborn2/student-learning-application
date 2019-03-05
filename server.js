@@ -29,8 +29,8 @@ app.post('/api/instructor', instructorsRoute.createInstructor)
 app.get('/api/instructor', authenticateInstructor, instructorsRoute.getInstructor)
 app.post('/api/instructor/login', instructorsRoute.loginInstructor)
 
-app.post('/api/student', studentsRoute.createStudent)
-app.delete('/api/student', authenticateStudent, studentsRoute.deleteStudent)
+app.post('/api/student', authenticateInstructor, studentsRoute.createStudent)
+app.delete('/api/student', authenticateStudent, studentsRoute.deleteStudent) // TODO: instructor only
 app.post('/api/student/login', studentsRoute.loginStudent)
 app.get('/api/student/progress', authenticateStudent, studentsRoute.getAssignmentAndProgress)
 app.put('/api/student/progress', authenticateStudent, studentsRoute.updateStudentProgress)

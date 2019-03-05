@@ -8,6 +8,11 @@ let AssignmentSchema = new mongoose.Schema({
     trim: true,
     unique: true
   },
+  videos: {
+    type: [String],
+    trim: true,
+    minlength: 1
+  },
   letters: {
     type: [String],
     required: true,

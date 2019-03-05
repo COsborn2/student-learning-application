@@ -5,11 +5,12 @@ const { SuccessMessage, ErrorMessage } = require('../middleware/message')
 const bcrypt = require('bcrypt')
 
 let createInstructor = async (req, res) => {
-  let body = _.pick(req.body, ['email', 'password'])
+  let body = _.pick(req.body, ['email', 'password', 'name'])
 
   let instructor = new Instructor({
     email: body.email,
-    hashedPassword: body.password
+    hashedPassword: body.password,
+    name: body.name
   })
 
   let token
