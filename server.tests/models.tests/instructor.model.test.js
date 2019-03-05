@@ -8,6 +8,7 @@ const Instructor = require('../../models/instructor').Instructor
 describe('instructor model tests', () => {
   it('valid if all properties exist', (done) => {
     let instructor = new Instructor({
+      name: 'Cameron Osborn',
       email: 'test-email@gmail.com',
       hashedPassword: 'password!',
       salt: 'exampleofasalt'
@@ -19,8 +20,22 @@ describe('instructor model tests', () => {
     })
   })
 
+  it('invalid if name does not exist', (done) => {
+    let instructor = new Instructor({
+      email: 'test-emailgmail.com',
+      hashedPassword: 'smallpassword',
+      salt: 'exampleofasalt'
+    })
+
+    instructor.validate((err) => {
+      expect(err.errors.name).to.exist
+      done()
+    })
+  })
+
   it('invalid if email does not exist', (done) => {
     let instructor = new Instructor({
+      name: 'Cameron Osborn',
       hashedPassword: 'small',
       salt: 'exampleofasalt'
     })
@@ -33,6 +48,7 @@ describe('instructor model tests', () => {
 
   it('invalid if hashedPassword does not exist', (done) => {
     let instructor = new Instructor({
+      name: 'Cameron Osborn',
       email: 'test-email@gmail.com',
       salt: 'exampleofasalt'
     })
@@ -45,6 +61,7 @@ describe('instructor model tests', () => {
 
   it('invalid if password is not of valid length', (done) => {
     let instructor = new Instructor({
+      name: 'Cameron Osborn',
       email: 'test-email@gmail.com',
       hashedPassword: 'small',
       salt: 'exampleofasalt'
@@ -58,6 +75,7 @@ describe('instructor model tests', () => {
 
   it('invalid if email is of improper format (handled by validator package)', (done) => {
     let instructor = new Instructor({
+      name: 'Cameron Osborn',
       email: 'test-emailgmail.com',
       hashedPassword: 'smallpassword',
       salt: 'exampleofasalt'
