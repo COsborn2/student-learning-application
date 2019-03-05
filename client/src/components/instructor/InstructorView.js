@@ -19,21 +19,31 @@ class InstructorView extends Component {
       jwt: this.props.user.jwt,
       courses: null,
       selectedCourse: -1,
-      isLoadComplete: false
+      isLoading: true
     }
-    this._isLoading = true
+    this._triggerAnimFade = false
+    this._isMounted = true
     this.onCourseClick = this.onCourseClick.bind(this)
-    this.onLoadingComplete = this.onLoadingComplete.bind(this)
+    this.onLoadingAnimationStop = this.onLoadingAnimationStop.bind(this)
   }
 
-  componentDidMount () {
+  async componentDidMount () {
     let { jwt } = this.state
-    let courses = InstructorApiCalls.getCourses(jwt)
-    if (courses) {
-      setTimeout(() => {
-        this._isLoading = false
-        this.setState({ courses })
-      }, 1000)
+    let courses = await InstructorApiCalls.getCourses(jwt)
+    if (courses && this._isMounted) {
+      this._triggerAnimFade = true
+      this.setState({ courses })
+    }
+  }
+
+  componentWillUnmount () {
+    this._isMounted = false
+  }
+
+  onLoadingAnimationStop () {
+    if (this._isMounted) {
+      this.setState({ isLoading: false })
+      this.props.history.replace(`/student/${this.state.username}`)
     }
   }
 
@@ -42,11 +52,6 @@ class InstructorView extends Component {
     selectedCourse = index === selectedCourse ? -1 : index
     this.setState({ selectedCourse })
     console.log('courseClicked: ' + selectedCourse)
-  }
-
-  onLoadingComplete () {
-    this.setState({ isLoadComplete: true })
-    this.props.history.replace(`/instructor/${this.state.name}`) // todo remove this. Handle redirection in authenticatedRoute
   }
 
   createCourseComponents (courses) {
@@ -65,8 +70,8 @@ class InstructorView extends Component {
   }
 
   render () {
-    let { courses, name, isLoadComplete } = this.state
-    if (!isLoadComplete) return <LoadingSpinner isLoading={this._isLoading} onLoadComplete={this.onLoadingComplete} />
+    let { courses, name, isLoading } = this.state
+    if (isLoading) return <LoadingSpinner triggerFadeAway={this._triggerAnimFade} onStopped={this.onLoadingAnimationStop} />
     return (
       <div className='container text-center'>
         <header className='jumbotron my-3 bg-info'>

@@ -56,7 +56,7 @@ class InstructorApiCalls {
   }
 
   // This is where the api call is made to retrieve the specific instructor's classes
-  static getCourses () {
+  static async getCourses () {
     let courses = [
       {
         classCode: 1,

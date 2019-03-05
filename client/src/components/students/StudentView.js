@@ -25,11 +25,12 @@ class StudentView extends Component {
       assignments: null,
       currentAssignment: null,
       progress: null,
-      isLoadComplete: false
+      isLoading: true
     }
-    this._isLoading = true
+    this._triggerAnimFade = false
+    this._isMounted = true
     this.onWordCompletion = this.onWordCompletion.bind(this)
-    this.onLoadingComplete = this.onLoadingComplete.bind(this)
+    this.onLoadingAnimationStop = this.onLoadingAnimationStop.bind(this)
   }
 
   async componentDidMount () {
@@ -51,15 +52,21 @@ class StudentView extends Component {
     console.log(student)
     console.log(classAssignments)
 
-    if (student && classroom) {
-      this._isLoading = false
+    if (student && classroom && this._isMounted) {
+      this._triggerAnimFade = true
       this.setState({ assignments, progress, classCode, currentAssignment })
     }
   }
 
-  onLoadingComplete () {
-    this.setState({ isLoadComplete: true })
-    this.props.history.replace(`/student/${this.state.username}`)
+  componentWillUnmount () {
+    this._isMounted = false
+  }
+
+  onLoadingAnimationStop () {
+    if (this._isMounted) {
+      this.setState({ isLoading: false })
+      this.props.history.replace(`/student/${this.state.username}`)
+    }
   }
 
   onWordCompletion (wordIndex, allWordsSpelled) {
@@ -80,16 +87,15 @@ class StudentView extends Component {
   }
 
   render () {
-    const { currentAssignment, assignments, progress, isLoadComplete } = this.state
-    if (!isLoadComplete) return <LoadingSpinner isLoading={this._isLoading} onLoadComplete={this.onLoadingComplete} />
+    const { currentAssignment, assignments, progress, isLoading } = this.state
+    if (isLoading) return <LoadingSpinner triggerFadeAway={this._triggerAnimFade} onStopped={this.onLoadingAnimationStop} />
     return (
       <div style={{ background: '#a9a9a9' }}>
         <Switch>
           <Route exact path='/student/:username' render={(props) => <StudentHome {...props} assignments={assignments} progress={progress} />} />
           <Route path='/student/:username/writing' component={StudentWriting} />
           <Route path='/student/:username/spelling' render={() =>
-            <DragDropContextProvider
-              backend={TouchBackend}>  { /* this needed to be moved up from StudentSpelling because advancing to the next word would cause multiple HTML5Backend's to be instantiated */}
+            <DragDropContextProvider backend={TouchBackend}>
               <StudentSpelling wordsToSpell={currentAssignment.words}
                 onWordCompletion={(wordIndex, allWordsSpelled) => this.onWordCompletion(wordIndex, allWordsSpelled)} />
             </DragDropContextProvider>} />
