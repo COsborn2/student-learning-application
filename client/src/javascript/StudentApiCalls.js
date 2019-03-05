@@ -1,35 +1,11 @@
 import fetch from 'isomorphic-fetch'
 
 /* ROUTES */
-const authURL = '/api/student/login'
+const signupURL = '/api/student/login'
+const loginURL = '/api/student/login'
 const getAssignmentsAndProgressURL = '/api/student/progress'
 
 class StudentApiCalls {
-  static async login (classCode, username) {
-    let httpMessage = {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({
-        username: username,
-        classcode: classCode
-      })
-    }
-
-    const res = await fetch(authURL, httpMessage)
-    const body = await res.json()
-    if (res.status !== 200) {
-      console.log(httpMessage) // todo remove log statements
-      console.log(res)
-      console.log(`Error: ${body.error}`)
-      return { error: body.error }
-    }
-
-    let jwt = res.headers.get('x-auth')
-    return { jwt, username: body.username }
-  }
-
   static async signup (classCode, username) {
     let httpMessage = {
       method: 'POST',
@@ -42,7 +18,32 @@ class StudentApiCalls {
       })
     }
 
-    const res = await fetch(authURL, httpMessage)
+    const res = await fetch(signupURL, httpMessage)
+    const body = await res.json()
+    if (res.status !== 200) {
+      console.log(httpMessage) // todo remove log statements
+      console.log(res)
+      console.log(`Error: ${body.error}`)
+      return { error: body.error }
+    }
+
+    let jwt = res.headers.get('x-auth')
+    return { jwt, username: body.username }
+  }
+
+  static async login (classCode, username) {
+    let httpMessage = {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        username: username,
+        classcode: classCode
+      })
+    }
+
+    const res = await fetch(loginURL, httpMessage)
     const body = await res.json()
     if (res.status !== 200) {
       console.log(httpMessage) // todo remove log statements
