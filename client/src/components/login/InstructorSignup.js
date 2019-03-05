@@ -9,18 +9,7 @@ import ModalBody from 'react-bootstrap/ModalBody'
 import ModalFooter from 'react-bootstrap/ModalFooter'
 import Col from 'react-bootstrap/Col'
 import InstructorApiCalls from '../../javascript/InstructorApiCalls'
-
-const messageStyles = {
-  messageFading: {
-    color: 'red',
-    transition: 'opacity 1.0s',
-    opacity: 0
-  },
-  messageShow: {
-    color: 'red',
-    opacity: 1
-  }
-}
+import { AuthMessageStyles as messageStyles } from './AuthMessageStyles'
 
 class InstructorSignup extends Component {
   constructor (props) {
