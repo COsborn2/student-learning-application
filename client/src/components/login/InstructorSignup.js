@@ -7,6 +7,7 @@ import Button from 'react-bootstrap/Button'
 import Form from 'react-bootstrap/Form'
 import ModalBody from 'react-bootstrap/ModalBody'
 import ModalFooter from 'react-bootstrap/ModalFooter'
+import Col from 'react-bootstrap/Col'
 import InstructorApiCalls from '../../javascript/InstructorApiCalls'
 
 const messageStyles = {
@@ -26,15 +27,18 @@ class InstructorSignup extends Component {
     super(props)
     this.state = {
       failedMessage: '',
-      showMessage: false
+      showMessage: false,
+      validated: false
     }
   }
 
   async handleSignup (event) {
     const form = event.currentTarget
-    if (form.checkValidity()) {
-      event.preventDefault()
+    event.preventDefault()
+    this.setState({ validated: true })
+    if (form.checkValidity() === false) {
       event.stopPropagation()
+      return
     }
 
     const email = form.elements.emailField.value
@@ -44,8 +48,10 @@ class InstructorSignup extends Component {
 
     if (res.error) this.animateMessage(res.error)
     else if (res.jwt) {
+      const id = email.split('@')[0]
+      window.sessionStorage.setItem('instructorid', id)
       window.sessionStorage.setItem('instructorjwt', res.jwt)
-      this.props.history.replace(`/instructor/${email}`)
+      this.props.history.replace(`/instructor/${id}`)
     } else this.animateMessage('Whoops... An error occurred, Try again')
   }
 
@@ -54,48 +60,49 @@ class InstructorSignup extends Component {
 
     setTimeout(() => {
       this.setState({ showMessage: false })
-    }, 1000)
+    }, 3000)
   }
 
   render () {
-    let errorMessageStyle = this.state.showMessage ? messageStyles.messageShow : messageStyles.messageFading
+    const { validated, showMessage } = this.state
+    let errorMessageStyle = showMessage ? messageStyles.messageShow : messageStyles.messageFading
     return (
-      <React.Fragment>
-        <Form onSubmit={e => this.handleSignup(e)}>
-          <ModalDialog>
-            <ModalHeader>
-              <ModalTitle>Instructor Sign Up</ModalTitle>
-            </ModalHeader>
+      <Form noValidate validated={validated} onSubmit={e => this.handleSignup(e)}>
+        <ModalDialog>
+          <ModalHeader>
+            <ModalTitle>Instructor Sign Up</ModalTitle>
+          </ModalHeader>
 
-            <ModalBody>
-              <Form.Group>
-                <Form.Label>Email</Form.Label>
-                <Form.Control
-                  name='emailField'
-                  required
-                  type='email'
-                  placeholder='email' />
-              </Form.Group>
+          <ModalBody>
+            <Form.Group as={Col}>
+              <Form.Label>Email</Form.Label>
+              <Form.Control
+                required
+                name='emailField'
+                type='email'
+                placeholder='email' />
+              <Form.Control.Feedback type='invalid'>Please provide a valid email</Form.Control.Feedback>
+            </Form.Group>
 
-              <Form.Group>
-                <Form.Label>Password</Form.Label>
-                <Form.Control
-                  name='passField'
-                  required
-                  type='password'
-                  placeholder='Password' />
-              </Form.Group>
-            </ModalBody>
+            <Form.Group as={Col}>
+              <Form.Label>Password</Form.Label>
+              <Form.Control
+                required
+                name='passField'
+                type='password'
+                placeholder='Password' />
+              <Form.Control.Feedback type='invalid'>Please provide a valid password</Form.Control.Feedback>
+            </Form.Group>
+          </ModalBody>
 
-            <ModalFooter>
-              <p style={errorMessageStyle}>{this.state.failedMessage}</p>
-              <div style={{ flex: 1 }} />
-              <Button onClick={() => this.props.history.push('/')}>Close</Button>
-              <Button type='submit'>Sign Up</Button>
-            </ModalFooter>
-          </ModalDialog>
-        </Form>
-      </React.Fragment>
+          <ModalFooter>
+            <p style={errorMessageStyle}>{this.state.failedMessage}</p>
+            <div style={{ flex: 1 }} />
+            <Button onClick={() => this.props.history.push('/')}>Close</Button>
+            <Button type='submit'>Sign Up</Button>
+          </ModalFooter>
+        </ModalDialog>
+      </Form>
     )
   }
 }

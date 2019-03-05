@@ -18,9 +18,8 @@ import LoadingSpinner from '../helpers/LoadingSpinner'
 class StudentView extends Component {
   constructor (props) {
     super(props)
-    const id = this.props.match.params.id
     this.state = {
-      id: id,
+      id: this.props.id,
       jwt: this.props.jwt,
       api: StudentApiCalls,
       assignments: null,
@@ -90,6 +89,7 @@ class StudentView extends Component {
 }
 
 StudentView.propTypes = {
+  id: PropTypes.string.isRequired,
   jwt: PropTypes.string.isRequired,
   match: PropTypes.object.isRequired,
   history: PropTypes.object.isRequired

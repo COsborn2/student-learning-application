@@ -1,12 +1,11 @@
 import fetch from 'isomorphic-fetch'
 
 class InstructorApiCalls {
-
   static async login (email, password) {
     console.log(`Instructor Login\nEmail: ${email}\nPassword: ${password}`)
     return {
       jwt: 'ValidInstructorJwt',
-      error: 'err'
+      error: null
     }
   }
 

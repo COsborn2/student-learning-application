@@ -8,6 +8,7 @@ import Form from 'react-bootstrap/Form'
 import ModalBody from 'react-bootstrap/ModalBody'
 import ModalFooter from 'react-bootstrap/ModalFooter'
 import StudentApiCalls from '../../javascript/StudentApiCalls'
+import Col from 'react-bootstrap/Col'
 
 const messageStyles = {
   messageFading: {
@@ -26,15 +27,18 @@ class StudentSignup extends Component {
     super(props)
     this.state = {
       failedMessage: '',
-      showMessage: false
+      showMessage: false,
+      validated: false
     }
   }
 
   async handleSignup (event) {
     const form = event.currentTarget
-    if (form.checkValidity()) {
-      event.preventDefault()
+    event.preventDefault()
+    this.setState({ validated: true })
+    if (form.checkValidity() === false) {
       event.stopPropagation()
+      return
     }
 
     const courseCode = form.elements.courseCodeField.value
@@ -44,6 +48,7 @@ class StudentSignup extends Component {
 
     if (res.error) this.animateMessage(res.error)
     else if (res.jwt) {
+      window.sessionStorage.setItem('studentid', userName)
       window.sessionStorage.setItem(`studentjwt`, res.jwt)
       this.props.history.replace(`/student/${userName}`) // navigates to the proper user screen, passing the jwt
     } else this.animateMessage('Whoops... An error occurred, Try again')
@@ -54,48 +59,49 @@ class StudentSignup extends Component {
 
     setTimeout(() => {
       this.setState({ showMessage: false })
-    }, 1000)
+    }, 3000)
   }
 
   render () {
-    let errorMessageStyle = this.state.showMessage ? messageStyles.messageShow : messageStyles.messageFading
+    const { validated, showMessage } = this.state
+    let errorMessageStyle = showMessage ? messageStyles.messageShow : messageStyles.messageFading
     return (
-      <React.Fragment>
-        <Form onSubmit={e => this.handleSignup(e)}>
-          <ModalDialog>
-            <ModalHeader>
-              <ModalTitle>Student Sign Up</ModalTitle>
-            </ModalHeader>
+      <Form noValidate validated={validated} onSubmit={e => this.handleSignup(e)}>
+        <ModalDialog>
+          <ModalHeader>
+            <ModalTitle>Student Sign Up</ModalTitle>
+          </ModalHeader>
 
-            <ModalBody>
-              <Form.Group>
-                <Form.Label>Course Code</Form.Label>
-                <Form.Control
-                  name='courseCodeField'
-                  required
-                  type='text'
-                  placeholder='course code' />
-              </Form.Group>
+          <ModalBody>
+            <Form.Group as={Col}>
+              <Form.Label>Course Code</Form.Label>
+              <Form.Control
+                required
+                name='courseCodeField'
+                type='text'
+                placeholder='course code' />
+              <Form.Control.Feedback type='invalid'> Please provide a valid course code</Form.Control.Feedback>
+            </Form.Group>
 
-              <Form.Group>
-                <Form.Label>Password</Form.Label>
-                <Form.Control
-                  name='userNameField'
-                  required
-                  type='text'
-                  placeholder='text' />
-              </Form.Group>
-            </ModalBody>
+            <Form.Group as={Col}>
+              <Form.Label>Password</Form.Label>
+              <Form.Control
+                required
+                name='userNameField'
+                type='text'
+                placeholder='text' />
+              <Form.Control.Feedback type='invalid'> Please provide a valid username</Form.Control.Feedback>
+            </Form.Group>
+          </ModalBody>
 
-            <ModalFooter>
-              <p style={errorMessageStyle}>{this.state.failedMessage}</p>
-              <div style={{ flex: 1 }} />
-              <Button onClick={() => this.props.history.push('/')}>Close</Button>
-              <Button type='submit'>Sign Up</Button>
-            </ModalFooter>
-          </ModalDialog>
-        </Form>
-      </React.Fragment>
+          <ModalFooter>
+            <p style={errorMessageStyle}>{this.state.failedMessage}</p>
+            <div style={{ flex: 1 }} />
+            <Button onClick={() => this.props.history.push('/')}>Close</Button>
+            <Button type='submit'>Sign Up</Button>
+          </ModalFooter>
+        </ModalDialog>
+      </Form>
     )
   }
 }

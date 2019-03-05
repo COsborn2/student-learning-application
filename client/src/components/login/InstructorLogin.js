@@ -27,7 +27,8 @@ class InstructorLogin extends Component {
     super(props)
     this.state = {
       failedMessage: '',
-      showMessage: false
+      showMessage: false,
+      validated: false
     }
     this.handleLogin = this.handleLogin.bind(this)
     this.handleSkipLogin = this.handleSkipLogin.bind(this) // todo remove dev skip
@@ -36,12 +37,13 @@ class InstructorLogin extends Component {
   // Hit backend for verification
   async handleLogin (event) {
     const form = event.currentTarget
+    event.preventDefault()
+    this.setState({ validated: true })
     if (form.checkValidity() === false) {
-      console.log('isInvalid')
-      event.preventDefault()
       event.stopPropagation()
+      return
     }
-    console.log('passed validate')
+
     const password = form.elements.passField.value
     const email = form.elements.emailField.value
 
@@ -49,12 +51,15 @@ class InstructorLogin extends Component {
 
     if (res.error) this.animateMessage(res.error)
     else if (res.jwt) {
-      window.sessionStorage.setItem(`instructorjwt`, res.jwt)
-      this.props.history.replace(`/instructor/${email}`) // navigates to the proper user screen, passing the jwt
+      const id = email.split('@')[0]
+      window.sessionStorage.setItem('instructorid', id)
+      window.sessionStorage.setItem('instructorjwt', res.jwt)
+      this.props.history.replace(`/instructor/${id}`) // navigates to the proper user screen, passing the jwt
     } else this.animateMessage('Whoops... An error occurred, Try again')
   }
 
   handleSkipLogin () { // todo remove dev skip
+    window.sessionStorage.setItem('instructorid', 'dev-instructor')
     window.sessionStorage.setItem('instructorjwt', 'ValidInstructorJWT')
     this.props.history.replace(`/instructor/dev-instructor`)
   }
@@ -64,13 +69,14 @@ class InstructorLogin extends Component {
 
     setTimeout(() => {
       this.setState({ showMessage: false })
-    }, 1000)
+    }, 3000)
   }
 
   render () {
-    let errorMessageStyle = this.state.showMessage ? messageStyles.messageShow : messageStyles.messageFading
+    const { validated, showMessage } = this.state
+    let errorMessageStyle = showMessage ? messageStyles.messageShow : messageStyles.messageFading
     return (
-      <Form validated={false} onSubmit={e => this.handleLogin(e)}>
+      <Form noValidate validated={validated} onSubmit={e => this.handleLogin(e)}>
         <ModalDialog>
           <ModalHeader>
             <ModalTitle>Instructor Login</ModalTitle>
@@ -80,26 +86,25 @@ class InstructorLogin extends Component {
           </ModalHeader>
 
           <ModalBody>
-            <Form.Group as={Col} controlId='emailInputGroup'>
+            <Form.Group as={Col}>
               <Form.Label>Email</Form.Label>
               <Form.Control
+                required
                 name='emailField'
                 type='email'
                 placeholder='Email' />
-              <Form.Control.Feedback type='invalid'>
-                Please provide a valid email
-              </Form.Control.Feedback>
+              <Form.Control.Feedback type='invalid'> Please provide a valid email</Form.Control.Feedback>
             </Form.Group>
 
-            <Form.Group as={Col} controlId='passwordInputGroup'>
-              <Form.Label>password</Form.Label>
+            <Form.Group as={Col}>
+              <Form.Label>Password</Form.Label>
               <Form.Control
+                required
                 name='passField'
                 type='password'
                 placeholder='password' />
-              <Form.Control.Feedback type='invalid'>
-                Please provide a valid password
-              </Form.Control.Feedback>
+              <Form.Control.Feedback type='invalid'> Please provide a valid password</Form.Control.Feedback>
+
             </Form.Group>
 
           </ModalBody>
