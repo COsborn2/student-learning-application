@@ -1,91 +1,81 @@
 import fetch from 'isomorphic-fetch'
 
-class StudentApiCalls {
+/* ROUTES */
+const loginURL = '/api/student/login'
+const signupURL = '/api/student'
+const getAssignmentsAndProgressURL = '/api/student/progress'
 
+class StudentApiCalls {
   static async login (courseCode, userName) {
-    console.log(`Student Login\n Course Code: ${courseCode}\nUsername: ${userName}`)
-    return {
-      jwt: 'ValidStudentJwt',
-      error: null
+    console.log(`Student Login\nCourse Code: ${courseCode}\nUsername: ${userName}`)
+
+    let httpMessage = {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        username: userName,
+        classcode: courseCode
+      })
     }
+
+    const res = await fetch(loginURL, httpMessage)
+    console.log(res)
+    if (res.status !== 200) {
+      const body = await res.json()
+      return { jwt: null, error: body.error }
+    }
+
+    let jwt = res.headers.get('x-auth')
+    return { jwt, error: null }
   }
 
   static async signup (courseCode, userName) {
-    console.log(`Student Signup\n Course Code: ${courseCode}\nUsername: ${userName}`)
-    return {
-      jwt: 'ValidStudentJwt',
-      error: null
-    }
-  }
+    console.log(`Student Signup\nCourse Code: ${courseCode}\nUsername: ${userName}`)
 
-  // this is where a login is attempted
-  static async verifyAuth (id, pass) {
-    if (id === 'studentDev' && pass === 'password') { // todo this is just for the devSkip button
-      return { jwt: 'ValidJwt' }
-    }
-    console.log('wpw')
     let httpMessage = {
       method: 'POST',
       headers: {
-        'Accept': 'application/json',
         'Content-Type': 'application/json'
       },
       body: JSON.stringify({
-        email: id,
-        password: pass
+        username: userName,
+        classcode: courseCode
       })
     }
 
-    const response = await fetch(`api/student/login`, httpMessage)
-    console.log(response)
-    if (response.status !== 200) {
-      return {
-        jwt: null,
-        error: (await response.json()).error
-      }
+    const res = await fetch(signupURL, httpMessage)
+    console.log(res)
+    if (res.status !== 200) {
+      const body = await res.json()
+      return { jwt: null, error: body.error }
     }
-    let jwt = response.headers.get('x-auth')
+
+    let jwt = res.headers.get('x-auth')
     return { jwt, error: null }
   }
 
-  // this is where a sign up is attempted
-  static async verifySignup (id, pass) {
-    if (id === 'studentDev' && pass === 'password') { // todo this is just for the devSkip button
-      return { jwt: 'ValidJwt' }
-    }
+  static async getAssignmentsAndProgress (jwt) {
+    console.log(`Student Signup\nJWT: ${jwt}`)
+
     let httpMessage = {
-      method: 'POST',
+      method: 'GET',
       headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({
-        email: id,
-        password: pass
-      })
-    }
-
-    const response = await fetch(`api/student`, httpMessage)
-    console.log(response)
-    if (response.status !== 200) {
-      return {
-        jwt: null,
-        error: (await response.json()).error
+        'Content-Type': 'application/json',
+        'x-auth': jwt
       }
     }
 
-    let jwt = response.headers.get('x-auth')
-    return { jwt, error: null }
-  }
-
-  // this is where the api call to retrieve the progress is
-  static getProgress (jwt) {
-    let progress = {
-      curAssignmentIndex: 0,
-      curWordIndex: 0, // if word index is equal to the array size, all words have been spelled
-      curLetterIndex: 1
+    const res = await fetch(getAssignmentsAndProgressURL, httpMessage)
+    console.log(res)
+    if (res.status !== 200) {
+      const body = await res.json()
+      return { jwt: null, error: body.error }
     }
-    return progress
+    let body = await res.json()
+
+    return { student: body.student, classroom: body.classroom }
   }
 
   // This is where the api call is made to retrieve the specific student's assignments

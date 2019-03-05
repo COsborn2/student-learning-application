@@ -73,12 +73,12 @@ class StudentSignup extends Component {
             </Form.Group>
 
             <Form.Group as={Col}>
-              <Form.Label>Password</Form.Label>
+              <Form.Label>Username</Form.Label>
               <Form.Control
                 required
                 name='userNameField'
                 type='text'
-                placeholder='text' />
+                placeholder='username' />
               <Form.Control.Feedback type='invalid'> Please provide a valid username</Form.Control.Feedback>
             </Form.Group>
           </ModalBody>
