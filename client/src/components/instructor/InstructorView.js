@@ -43,7 +43,7 @@ class InstructorView extends Component {
   onLoadingAnimationStop () {
     if (this._isMounted) {
       this.setState({ isLoading: false })
-      this.props.history.replace(`/student/${this.state.username}`)
+      this.props.history.replace(`/instructor/${this.state.name}`)
     }
   }
 
