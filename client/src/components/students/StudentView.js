@@ -8,7 +8,7 @@ import StudentVideo from './StudentVideo'
 import { DragDropContextProvider } from 'react-dnd'
 import TouchBackend from 'react-dnd-touch-backend'
 import StudentApiCalls from '../../javascript/StudentApiCalls'
-import LoadingSpinner from '../helpers/LoadingSpinner'
+import LoadingScreen from '../loading/LoadingScreen'
 
 /* The student view manages all screens and routes for a specific student user
  the login screen creates and authenticates a student object, and passes it
@@ -88,7 +88,7 @@ class StudentView extends Component {
 
   render () {
     const { currentAssignment, assignments, progress, isLoading } = this.state
-    if (isLoading) return <LoadingSpinner triggerFadeAway={this._triggerAnimFade} onStopped={this.onLoadingAnimationStop} />
+    if (isLoading) return <LoadingScreen triggerFadeAway={this._triggerAnimFade} onStopped={this.onLoadingAnimationStop} />
     return (
       <div style={{ background: '#a9a9a9' }}>
         <Switch>

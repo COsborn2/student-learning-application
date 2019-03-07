@@ -11,3 +11,8 @@
     opacity: 0;
     transition: opacity .5s;
 }
+
+.fade-away {
+    opacity: 0;
+    transition: opacity .5s;
+}

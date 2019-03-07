@@ -2,6 +2,7 @@ import React, { Component, Suspense, lazy } from 'react'
 import { BrowserRouter as Browser, Route, Switch } from 'react-router-dom'
 import Home from './components/Home'
 import AuthenticatedRoute from './components/helpers/AuthenticatedRoute'
+import LoadingScreenGif from './components/loading/LoadingScreenGif'
 
 const StudentLogin = lazy(() => import('./components/login/StudentLogin'))
 const StudentView = lazy(() => import('./components/students/StudentView'))
@@ -14,11 +15,11 @@ class App extends Component {
   render () {
     return (
       <Browser>
-        <Suspense fallback={<div>Loading...</div>}>
+        <Suspense fallback={<LoadingScreenGif />}>
           <Switch>
             <Route exact path='/' component={Home} />
-            <AuthenticatedRoute path='/instructor' render={(props) => <InstructorView {...props} />} />
-            <AuthenticatedRoute path='/student' render={(props) => <StudentView {...props} />} />
+            <AuthenticatedRoute path='/instructor' lazyComponent={InstructorView} />
+            <AuthenticatedRoute path='/student' lazyComponent={StudentView} />
             <Route path='/login/instructor' render={(props) => <InstructorLogin {...props} />} />
             <Route path='/login/student' render={(props) => <StudentLogin {...props} />} />
             <Route path='/signup/instructor' render={(props) => <InstructorSignup {...props} />} />
