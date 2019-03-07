@@ -6,6 +6,7 @@ import PropTypes from 'prop-types'
 import ItemPreview from './spelling/ItemPreview.js'
 import { DragDropContext } from 'react-dnd'
 import TouchBackend from 'react-dnd-touch-backend'
+import ScrollLock from 'react-scrolllock'
 
 function isWordSpelled (curWordArray, wordToSpell) {
   return curWordArray.join('') === wordToSpell
@@ -44,6 +45,14 @@ function initializeDropZone (numCharsInWord) {
   return dropZone
 }
 
+function initializeTimeEvents () {
+  let timeEvents = []
+  timeEvents.push(new Date().getTime())
+  return timeEvents
+}
+
+// Commented out to comply with coding standards. Didnt want to get rid of it as we still need them for stat tracking once we can send stuff to the back end
+/*
 function calculateWrongMove (dropOrder, wordToSpell) {
   let count = 0
   for (let i = 0; i < dropOrder.length; i = i + 2) {
@@ -54,12 +63,6 @@ function calculateWrongMove (dropOrder, wordToSpell) {
   return count
 }
 
-function initializeTimeEvents () {
-  let timeEvents = []
-  timeEvents.push(new Date().getTime())
-  return timeEvents
-}
-
 function calculateTotalTime (timeEvents) {
   return (timeEvents[timeEvents.length - 1] - timeEvents[0])
 }
@@ -67,7 +70,7 @@ function calculateTotalTime (timeEvents) {
 function debugConvertToMinutes (time) {
   return time / 1000 / 60
 }
-
+*/
 /*
   We pass an array of wordObjects as a property. Each item in the array consists of a word, and an imageURL
   You can access them like shown below. When a word is completed move on to the next word.
@@ -130,7 +133,7 @@ class StudentSpelling extends React.Component {
   }
 
   render () {
-    const { curHand, curDropZone, curWordToSpell, dropOrder } = this.state
+    const { curHand, curDropZone, curWordToSpell } = this.state
     const isSpelled = isWordSpelled(curDropZone, curWordToSpell)
     const button = this.renderButton(isSpelled)
     const status = getStatus(isSpelled, curWordToSpell)
@@ -140,7 +143,9 @@ class StudentSpelling extends React.Component {
         expectedLetter={letter} />)
 
     return (
+
       <div className='container text-center'>
+        <ItemPreview key='__preview' name='Item' />
         <h1 color={'red'}>Spelling Cards!</h1>
         <h2 className='jumbotron bg-info'>
           {status}
@@ -151,18 +156,13 @@ class StudentSpelling extends React.Component {
           {dropZoneCards}
         </div>
         <span>Letter Cards</span>
-        <div className='row'>
-          {letterCards}
-        </div>
+        <ScrollLock>
+          <div className='row'>
+            {letterCards}
+          </div>
+        </ScrollLock>
         <div className='row'>
           {button}
-        </div>
-        <ItemPreview key='__preview' name='Item' />
-        <span>Debug: Stat zone</span>
-        <div className='mx-auto'>
-          Total Time: {debugConvertToMinutes(calculateTotalTime(this.state.timeEvents))} ---
-          dropOrder: {dropOrder.toString()} ---
-          Wrong Moves: {calculateWrongMove(dropOrder, curWordToSpell)}
         </div>
       </div>)
   }

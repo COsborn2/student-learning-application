@@ -30,21 +30,13 @@ function collect (connect, monitor) {
 function SpellingCard (props) {
   const { id, letter, isDragging, connectDragSource } = props
 
-  let content
-
-  if (!isDragging) {
-    content = connectDragSource(
-      <div key={id} className='col-md-2 mx-auto card badge-success'>
-        <h5 className='card-title card badge-light'>
-          {letter}
-        </h5>
-      </div>
-    )
-  } else {
-    content = connectDragSource(<div key={id} className='mx-1 col-md-1' />)
-  }
-  content = props.connectDragPreview(content)
-  return content
+  return props.connectDragPreview(connectDragSource(
+    <div key={id} className='col-md-2 mx-auto card badge-success' style={{ display: isDragging ? 'none' : 'block' }}>
+      <h5 className='card-title card badge-light'>
+        {letter}
+      </h5>
+    </div>
+  ))
 }
 
 SpellingCard.proptypes = {
