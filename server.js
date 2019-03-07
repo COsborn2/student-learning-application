@@ -24,6 +24,7 @@ const { authenticateStudent, authenticateInstructor } = require('./middleware/au
 const instructorsRoute = require('./routes/instructorsRoute')
 const studentsRoute = require('./routes/studentsRoute')
 const classroomsRoute = require('./routes/classroomsRoute')
+const assignmentsRoute = require('./routes/assignmentsRoute')
 
 app.post('/api/instructor', instructorsRoute.createInstructor)
 app.get('/api/instructor', authenticateInstructor, instructorsRoute.getInstructor)
@@ -35,7 +36,7 @@ app.post('/api/student/login', studentsRoute.loginStudent)
 app.get('/api/student/progress', authenticateStudent, studentsRoute.getAssignmentAndProgress)
 app.put('/api/student/progress', authenticateStudent, studentsRoute.updateStudentProgress)
 
-// TODO: add get assignment route /api/assignment/:id to get full assignment details
+app.get('/api/assignment/:id', assignmentsRoute.getAssignmentById)
 
 app.post('/api/classrooms', authenticateInstructor, classroomsRoute.createClassroom)
 
