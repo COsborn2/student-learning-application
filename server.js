@@ -31,7 +31,7 @@ app.get('/api/instructor', authenticateInstructor, instructorsRoute.getInstructo
 app.post('/api/instructor/login', instructorsRoute.loginInstructor)
 
 app.post('/api/student', studentsRoute.createStudent)
-app.delete('/api/student', authenticateStudent, studentsRoute.deleteStudent) // TODO: convert this route to require instructor to delete?
+app.delete('/api/student/:id', authenticateInstructor, studentsRoute.deleteStudent)
 app.post('/api/student/login', studentsRoute.loginStudent)
 app.get('/api/student/progress', authenticateStudent, studentsRoute.getAssignmentAndProgress)
 app.put('/api/student/progress', authenticateStudent, studentsRoute.updateStudentProgress)
