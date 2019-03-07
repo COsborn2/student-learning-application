@@ -30,8 +30,10 @@ class InstructorView extends Component {
     let { jwt } = this.state
     let courses = await InstructorApiCalls.getCourses(jwt)
     if (courses && this._isMounted) {
-      this._triggerAnimFade = true
-      this.setState({ courses })
+      setTimeout(() => {
+        this._triggerAnimFade = true
+        this.setState({ courses })
+      }, 1000)
     }
   }
 
