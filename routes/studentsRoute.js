@@ -107,7 +107,7 @@ let getAssignmentAndProgress = async (req, res) => {
     return res.status(400).send({ error: 'Classroom not found' })
   }
 
-  res.send({ student, classroom })
+  res.send({ classroom })
 }
 
 let updateStudentProgress = async (req, res) => {
