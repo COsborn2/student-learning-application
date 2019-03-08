@@ -1,11 +1,14 @@
 import React, { Component } from 'react'
 import { SketchField, Tools } from 'react-sketch'
-import { Button, ListGroupItem, ListGroup } from 'react-bootstrap'
+import { Button } from 'react-bootstrap'
+import StudentApiCalls from '../../javascript/StudentApiCalls'
 
 class StudentWriting extends Component {
   constructor (props) {
     super(props)
     this.state = { words: ['pig', 'cat', 'raccoon'] }
+    this.clearCanvas = this.clearCanvas.bind(this)
+    this.checkWrittenCorrectly = this.checkWrittenCorrectly.bind(this)
   }
 
   componentDidMount () {
@@ -23,6 +26,12 @@ class StudentWriting extends Component {
     this._sketch.setBackgroundFromDataUrl('')
   };
 
+  async checkWrittenCorrectly () {
+    let image64 = this._sketch.toDataURL()
+    console.log(image64)
+    await StudentApiCalls.checkSpelling(1, 1)
+  }
+
   render () {
     return (
       <div className='container p-3'>
@@ -36,17 +45,7 @@ class StudentWriting extends Component {
             lineWidth={10} />
 
           <Button className='btn-primary p-2 m-1' onClick={this.clearCanvas}>Clear</Button>
-        </div>
-
-        <div className='card col-md-4 m-4 shadow-lg text-center'>
-          <div className='card-title'> <h1 className='display-4 font-weight-bold'>Words To Write</h1 ></div>
-          <div className='card-body'>
-            <ListGroup>
-              {this.state.words.map(curWord =>
-                <ListGroupItem key={curWord}>{curWord}</ListGroupItem>
-              )}
-            </ListGroup>
-          </div>
+          <Button className='btn-primary p-2 m-1' onClick={this.checkWrittenCorrectly}>Submit</Button>
         </div>
       </div>
     )

@@ -81,6 +81,10 @@ class StudentApiCalls {
     return { student: body.student, classroom: body.classroom }
   }
 
+  static async checkSpelling (jwt, image64) {
+    await stall(1000)
+  }
+
   static async getAssignmentByIdMock (id) {
     return {
       letters: ['a', 'b', 'c'],
