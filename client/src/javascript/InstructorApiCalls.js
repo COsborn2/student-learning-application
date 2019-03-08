@@ -4,6 +4,10 @@ import fetch from 'isomorphic-fetch'
 const signupURL = '/api/instructor'
 const loginURL = '/api/instructor/login'
 
+async function stall (stallTime = 3000) {
+  await new Promise(resolve => setTimeout(resolve, stallTime))
+}
+
 class InstructorApiCalls {
   static async signup (name, email, password) {
     let httpMessage = {
@@ -83,6 +87,7 @@ class InstructorApiCalls {
         }]
       }
     ]
+    await stall(1500)
     return courses
   }
 }

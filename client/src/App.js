@@ -1,14 +1,15 @@
-import React, { Component } from 'react'
+import React, { Component, Suspense, lazy } from 'react'
 import { BrowserRouter as Browser, Route, Switch } from 'react-router-dom'
-import StudentView from './components/students/StudentView'
-import Home from './components/Home'
-import InstructorView from './components/instructor/InstructorView'
 import AuthenticatedRoute from './components/helpers/AuthenticatedRoute'
-import InstructorLogin from './components/login/InstructorLogin'
-import StudentSignup from './components/login/StudentSignup'
-import StudentLogin from './components/login/StudentLogin'
-import InstructorSignup from './components/login/InstructorSignup'
-// import LandScape from './components/helpers/LandScape' to up keep standard
+import LoadingScreen from './components/loading/LoadingScreen'
+
+const Home = lazy(() => import('./components/Home'))
+const StudentLogin = lazy(() => import('./components/login/StudentLogin'))
+const StudentView = lazy(() => import('./components/students/StudentView'))
+const InstructorView = lazy(() => import('./components/instructor/InstructorView'))
+const InstructorLogin = lazy(() => import('./components/login/InstructorLogin'))
+const StudentSignup = lazy(() => import('./components/login/StudentSignup'))
+const InstructorSignup = lazy(() => import('./components/login/InstructorSignup'))
 
 class App extends Component {
   constructor (props) {
@@ -37,15 +38,17 @@ class App extends Component {
   render () {
     return (
       <Browser>
-        <Switch>
-          <Route exact path='/' component={Home} />
-          <AuthenticatedRoute path='/instructor' component={InstructorView} />
-          <AuthenticatedRoute path='/student' component={StudentView} />
-          <Route path='/login/instructor' component={InstructorLogin} />
-          <Route path='/login/student' component={StudentLogin} />
-          <Route path='/signup/instructor' component={InstructorSignup} />
-          <Route path='/signup/student' component={StudentSignup} />
-        </Switch>
+        <Suspense fallback={<LoadingScreen />}>
+          <Switch>
+            <Route exact path='/' render={(props) => <Home {...props} />} />
+            <AuthenticatedRoute path='/instructor' lazyComponent={InstructorView} />
+            <AuthenticatedRoute path='/student' lazyComponent={StudentView} />
+            <Route path='/login/instructor' render={(props) => <InstructorLogin {...props} />} />
+            <Route path='/login/student' render={(props) => <StudentLogin {...props} />} />
+            <Route path='/signup/instructor' render={(props) => <InstructorSignup {...props} />} />
+            <Route path='/signup/student' render={(props) => <StudentSignup {...props} />} />
+          </Switch>
+        </Suspense>
       </Browser>
     )
   }

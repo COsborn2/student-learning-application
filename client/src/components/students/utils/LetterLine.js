@@ -2,7 +2,7 @@ import React from 'react'
 import PropTypes from 'prop-types'
 
 const LetterLine = (props) => {
-  const { progress, assignments } = props
+  const { progress, letters } = props
   const curAssignmentIndex = progress.currentAssignmentIndex
   const curLetterIndex = progress.currentLetterIndex
 
@@ -11,8 +11,8 @@ const LetterLine = (props) => {
   let btnStyle = ''
   let isDisabled = false
 
-  for (let i = 0; i < assignments.length; i++) {
-    for (let j = 0; j < assignments[i].letters.length; j++) {
+  for (let i = 0; i < letters.length; i++) {
+    for (let j = 0; j < letters[i].length; j++) {
       if (i < curAssignmentIndex) {
         btnStyle = 'text-info'
       } else if (i > curAssignmentIndex) {
@@ -27,10 +27,10 @@ const LetterLine = (props) => {
         } else btnStyle = 'text-success'
       }
 
-      let curLetter = assignments[i].letters[j]
+      let curLetter = letters[i][j]
       let curLetterBtn =
         <button key={curLetterNum++} type='button' className='btn btn-link'
-          disabled={isDisabled} onClick={() => window.alert(`you clicked ${curLetter}`)}>
+          disabled={isDisabled} onClick={() => window.alert(`you clicked ${curLetter}\n which is assignment ${i + 1} letter ${j + 1}`)}>
           <span className={btnStyle}>{curLetter.toLocaleUpperCase() + curLetter}</span>
         </button>
       letterLine.push(curLetterBtn)
@@ -41,7 +41,7 @@ const LetterLine = (props) => {
 
 LetterLine.propTypes = {
   progress: PropTypes.object.isRequired,
-  assignments: PropTypes.array.isRequired
+  letters: PropTypes.array.isRequired
 }
 
 export default LetterLine
