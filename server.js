@@ -24,18 +24,22 @@ const { authenticateStudent, authenticateInstructor } = require('./middleware/au
 const instructorsRoute = require('./routes/instructorsRoute')
 const studentsRoute = require('./routes/studentsRoute')
 const classroomsRoute = require('./routes/classroomsRoute')
+const assignmentsRoute = require('./routes/assignmentsRoute')
 
 app.post('/api/instructor', instructorsRoute.createInstructor)
 app.get('/api/instructor', authenticateInstructor, instructorsRoute.getInstructor)
 app.post('/api/instructor/login', instructorsRoute.loginInstructor)
 
-app.post('/api/student', authenticateInstructor, studentsRoute.createStudent)
-app.delete('/api/student', authenticateStudent, studentsRoute.deleteStudent) // TODO: convert this route to require instructor to delete?
+app.post('/api/student', studentsRoute.createStudent)
+app.delete('/api/student/:id', authenticateInstructor, studentsRoute.deleteStudent)
 app.post('/api/student/login', studentsRoute.loginStudent)
 app.get('/api/student/progress', authenticateStudent, studentsRoute.getAssignmentAndProgress)
 app.put('/api/student/progress', authenticateStudent, studentsRoute.updateStudentProgress)
 
+app.get('/api/assignment/:id', assignmentsRoute.getAssignmentById)
+
 app.post('/api/classrooms', authenticateInstructor, classroomsRoute.createClassroom)
+app.get('/api/classrooms/:id', classroomsRoute.getLetters)
 
 if (isProduction) {
   InfoMessage('Running in production mode')
