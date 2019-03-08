@@ -14,6 +14,29 @@ const InstructorSignup = lazy(() => import('./components/login/InstructorSignup'
 const centerStyle = { top: 0, bottom: 0, left: 0, right: 0 }
 
 class App extends Component {
+  constructor (props) {
+    super(props)
+    this.state = { width: 0, height: 0, isLandScape: true }
+    this.updateWindowDimensions = this.updateWindowDimensions.bind(this)
+  }
+
+  componentDidMount () {
+    this.updateWindowDimensions()
+    window.addEventListener('resize', this.updateWindowDimensions)
+  }
+
+  componentWillUnmount () {
+    window.removeEventListener('resize', this.updateWindowDimensions)
+  }
+
+  updateWindowDimensions () {
+    this.setState({ width: window.innerWidth, height: window.innerHeight, isLandScape: this.checkLandScape() })
+  }
+
+  checkLandScape () {
+    return this.state.height > this.state.width
+  }
+  // <LandScape isLandScape = {this.state.isLandScape} /> Dont know where to put this
   render () {
     return (
       <Browser>
