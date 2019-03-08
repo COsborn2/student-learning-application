@@ -109,4 +109,30 @@ let seedDatabase = async (index) => {
   return newAssignment._id
 }
 
-module.exports = { createClassroom }
+// /api/classrooms/id
+let getLetters = async (req, res) => {
+  let classroomId = req.params.id
+
+  let letters = []
+
+  let classroom = await Classroom.findById(classroomId)
+    .populate('assignments')
+    .populate('students')
+
+  if (!classroom) {
+    const err = `Classroom with id of ${classroomId} could not be found`
+    WarningMessage(err)
+    return res.send(404).send({ error: err })
+  }
+
+  classroom.assignments.forEach(assignment => {
+    assignment.letters.forEach(letter => {
+      letters.push(letter)
+    })
+  })
+
+  SuccessMessage(`Letters (${letters}) found with classroom id of (${classroomId})`)
+  res.send({ letters })
+}
+
+module.exports = { createClassroom, getLetters }
