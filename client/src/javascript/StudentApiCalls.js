@@ -142,7 +142,7 @@ class StudentApiCalls {
 
   // This is where the api call is made to update the specific students's assignment progress on the server
   static putAssignmentsMock (jwt, progress) {
-    console.log('user wordIndex: ' + progress.currentWordIndex)
+    console.log('user wordIndex: ' + progress.curWordIndex)
     console.log('Expected api signup call.')
   }
 }

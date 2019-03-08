@@ -1,7 +1,8 @@
 import React, { Component, Suspense, lazy } from 'react'
 import { BrowserRouter as Browser, Route, Switch } from 'react-router-dom'
 import AuthenticatedRoute from './components/helpers/AuthenticatedRoute'
-import LoadingScreen from './components/loading/LoadingScreen'
+import LoadingGif from './assets/images/LoadingScreenGif.gif'
+import './assets/css/LoadingStyles.css'
 
 const Home = lazy(() => import('./components/Home'))
 const StudentLogin = lazy(() => import('./components/login/StudentLogin'))
@@ -10,6 +11,7 @@ const InstructorView = lazy(() => import('./components/instructor/InstructorView
 const InstructorLogin = lazy(() => import('./components/login/InstructorLogin'))
 const StudentSignup = lazy(() => import('./components/login/StudentSignup'))
 const InstructorSignup = lazy(() => import('./components/login/InstructorSignup'))
+const centerStyle = { top: 0, bottom: 0, left: 0, right: 0 }
 
 class App extends Component {
   constructor (props) {
@@ -38,7 +40,7 @@ class App extends Component {
   render () {
     return (
       <Browser>
-        <Suspense fallback={<LoadingScreen />}>
+        <Suspense fallback={<img src={LoadingGif} alt='Loading...' className='img-fluid position-absolute m-auto fade-in' style={centerStyle} />}>
           <Switch>
             <Route exact path='/' render={(props) => <Home {...props} />} />
             <AuthenticatedRoute path='/instructor' lazyComponent={InstructorView} />
