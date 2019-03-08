@@ -5,7 +5,7 @@
 
 import React from 'react'
 import PropTypes from 'prop-types'
-import DragLayer from 'react-dnd/lib/DragLayer'
+import { DragLayer } from 'react-dnd'
 
 function collect (monitor) {
   var item = monitor.getItem()
