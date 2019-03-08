@@ -43,11 +43,12 @@ class StudentView extends Component {
 
     const progress = await StudentApiCalls.getProgressMock(jwt)
     const assignments = await StudentApiCalls.getAssignmentsMock(jwt)
+    const letters = await StudentApiCalls.getLettersMock(jwt)
     const currentAssignment = assignments[progress.currentAssignmentIndex]
 
     if (assignments && this._isMounted) {
       this._triggerAnimFade = true
-      this.setState({ assignments, progress, currentAssignment })
+      this.setState({ assignments, progress, currentAssignment, letters })
     }
   }
 
@@ -80,13 +81,13 @@ class StudentView extends Component {
   }
 
   render () {
-    const { currentAssignment, assignments, progress, isLoading } = this.state
+    const { currentAssignment, progress, letters, isLoading } = this.state
     if (isLoading) return <LoadingScreen triggerFadeAway={this._triggerAnimFade} onStopped={this.onLoadingAnimationStop} />
     return (
       <div style={{ background: '#a9a9a9' }}>
         <Suspense fallback={<img src={LoadingGif} alt='Loading...' className='img-fluid position-absolute m-auto fade-in' style={centerStyle} />}>
           <Switch>
-            <Route exact path='/student/:username' render={(props) => <StudentHome {...props} assignments={assignments} progress={progress} />} />
+            <Route exact path='/student/:username' render={(props) => <StudentHome {...props} progress={progress} letters={letters} />} />
             <Route path='/student/:username/writing' render={(props) => <StudentWriting />} />
             <Route path='/student/:username/spelling' render={() =>
               <DragDropContextProvider backend={TouchBackend}>

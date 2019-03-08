@@ -10,7 +10,7 @@ const videoImgSrc = 'http://www.getyoutubevideothumbnail.com/Images/Icons/19.png
 
 class StudentHome extends PureComponent {
   render () {
-    let { match, assignments, history, progress } = this.props
+    const { match, history, progress, letters } = this.props
     return (
       <div className='p-4 text-center'>
         <header className='jumbotron bg-info'>
@@ -48,7 +48,7 @@ class StudentHome extends PureComponent {
             </Button>
           </div>
         </div>
-        <LetterLine assignments={assignments} progress={progress} />
+        <LetterLine letters={letters} progress={progress} />
       </div>
     )
   }
@@ -58,7 +58,7 @@ StudentHome.propTypes = {
   match: PropTypes.object.isRequired,
   history: PropTypes.object.isRequired,
   progress: PropTypes.object.isRequired,
-  assignments: PropTypes.array.isRequired
+  letters: PropTypes.array.isRequired
 }
 
 export default StudentHome

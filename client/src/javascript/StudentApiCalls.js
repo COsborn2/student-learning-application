@@ -97,7 +97,7 @@ class StudentApiCalls {
   static async getProgressMock (jwt) {
     await stall(500)
     let progress = {
-      currentAssignmentIndex: 0,
+      currentAssignmentIndex: 1,
       currentWordIndex: 0, // if word index is equal to the array size, all words have been spelled
       currentLetterIndex: 0
     }
@@ -133,6 +133,12 @@ class StudentApiCalls {
     return assignments
   }
 
+  static async getLettersMock (jwt) {
+    return [
+      ['a', 'b', 'c'],
+      ['d'], ['e'], ['f']
+    ]
+  }
 
   // This is where the api call is made to update the specific students's assignment progress on the server
   static putAssignmentsMock (jwt, progress) {
