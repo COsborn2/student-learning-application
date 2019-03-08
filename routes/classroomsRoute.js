@@ -4,6 +4,7 @@ const { SuccessMessage, WarningMessage, ErrorMessage } = require('../middleware/
 const { Assignment } = require('../models/assignment')
 const { Classroom } = require('../models/classroom')
 const { Word } = require('../models/word')
+const { Student } = require('../models/student')
 
 const { DefaultAssignments } = require('../AlphaEd/staticAssignments')
 
@@ -135,4 +136,24 @@ let getLetters = async (req, res) => {
   res.send({ letters })
 }
 
-module.exports = { createClassroom, getLetters }
+let getClassroom = async (req, res) => {
+  let token = req.header('x-auth')
+
+  let student = await Student.findByToken(token)
+
+  if (!student) {
+    ErrorMessage('Student not found with specified _id')
+    return res.status(400).send({ error: 'Student not found with specified _id' })
+  }
+
+  let classroom = await Classroom.findById(student.class)
+
+  if (!classroom) {
+    ErrorMessage('Classroom not found')
+    return res.status(400).send({ error: 'Classroom not found' })
+  }
+
+  res.send({ classroom })
+}
+
+module.exports = { createClassroom, getLetters, getClassroom }

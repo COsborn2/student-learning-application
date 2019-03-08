@@ -90,26 +90,6 @@ let validateStudent = (req, res) => {
   res.send(req.user)
 }
 
-let getAssignmentAndProgress = async (req, res) => {
-  let token = req.header('x-auth')
-
-  let student = await Student.findByToken(token)
-
-  if (!student) {
-    ErrorMessage('Student not found with specified _id')
-    return res.status(400).send({ error: 'Student not found with specified _id' })
-  }
-
-  let classroom = await Classroom.findById(student.class).populate('assignments')
-
-  if (!classroom) {
-    ErrorMessage('Classroom not found')
-    return res.status(400).send({ error: 'Classroom not found' })
-  }
-
-  res.send({ classroom })
-}
-
 let updateStudentProgress = async (req, res) => {
   let token = req.header('x-auth')
 
@@ -142,28 +122,28 @@ let updateStudentProgress = async (req, res) => {
   let finishedCourse = false
 
   // ensure that letters are not being skipped
-  if (studentCurrentLetter + 1 > newCurrentLetter + 1) {
+  if (studentCurrentLetter > newCurrentLetter) {
     const errorMessage = `Skipping detected: new currentLetter value of ${newCurrentLetter} is more than 1 greater than new currentLetter value of ${studentCurrentLetter}`
     ErrorMessage(errorMessage)
     return res.status(400).send({ error: errorMessage })
   }
 
   // ensure that words are not being skipped
-  if (studentCurrentWord + 1 > newCurrentWord + 1) {
+  if (studentCurrentWord > newCurrentWord) {
     const errorMessage = `Skipping detected: new currentWord value of ${newCurrentWord} is more than 1 greater than new currentLetter value of ${studentCurrentWord}`
     ErrorMessage(errorMessage)
     return res.status(400).send({ error: errorMessage })
   }
 
   // ensure assignment is not being skipped
-  if (studentCurrentAssignment + 1 > newCurrentAssignment + 1) {
+  if (studentCurrentAssignment > newCurrentAssignment) {
     const errorMessage = `Skipping detected: new currentAssignment value of ${newCurrentAssignment} is more than 1 greater than new currentLetter value of ${studentCurrentAssignment}`
     ErrorMessage(errorMessage)
     return res.status(400).send({ error: errorMessage })
   }
 
   // if student has completed all the letters and words in an assignment, reset letter and word indexes
-  if ((newCurrentLetter + 1 > numberOfLetters) && (newCurrentWord + 1 > numberOfWords)) {
+  if ((newCurrentLetter > numberOfLetters) && (newCurrentWord > numberOfWords)) {
     newCurrentLetter = 0
     newCurrentWord = 0
     SuccessMessage('Student has completed assignment')
@@ -208,4 +188,4 @@ let deleteStudent = async (req, res) => {
   res.send({ student })
 }
 
-module.exports = { createStudent, loginStudent, validateStudent, getAssignmentAndProgress, updateStudentProgress, deleteStudent }
+module.exports = { createStudent, loginStudent, validateStudent, updateStudentProgress, deleteStudent }
