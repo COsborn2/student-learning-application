@@ -19,45 +19,66 @@ class StudentView extends Component {
   constructor (props) {
     super(props)
     this.state = {
-      id: this.props.id,
-      jwt: this.props.jwt,
-      api: StudentApiCalls,
+      username: this.props.user.username,
+      jwt: this.props.user.jwt,
+      classCode: null,
       assignments: null,
+      currentAssignment: null,
       progress: null,
-      isLoadAnimComplete: false
+      isLoading: true
     }
-    this._isLoading = true
+    this._triggerAnimFade = false
+    this._isMounted = true
     this.onWordCompletion = this.onWordCompletion.bind(this)
-    this.onLoadingAnimComplete = this.onLoadingAnimComplete.bind(this)
+    this.onLoadingAnimationStop = this.onLoadingAnimationStop.bind(this)
   }
 
-  componentDidMount () {
-    let { api, jwt } = this.state
-    let assignments = api.getAssignments(jwt)
-    let progress = api.getProgress(jwt)
-    if (assignments && progress) {
-      setTimeout(() => {
-        this._isLoading = false
-        this.setState({ assignments, progress })
-      }, 1000)
+  async componentDidMount () {
+    let { jwt } = this.state
+    const res = await StudentApiCalls.getAssignmentsAndProgress(jwt)
+    const student = res.student
+    const progress = {
+      currentAssignmentIndex: 0, // student.currentAssignment, todo remove mock
+      currentLetterIndex: student.currentLetter,
+      currentWordIndex: student.currentWord,
+      finishedCourse: student.finishedCourse
+    }
+    const classroom = res.classroom
+    const classCode = classroom.classcode
+    const classAssignments = classroom.assignments
+    const currentAssignment = await StudentApiCalls.getAssignmentById(progress.currentAssignmentIndex)
+    const assignments = StudentApiCalls.getAssignments(jwt) // todo remove mocked assignments when a route is created for the letter bar
+
+    console.log(student)
+    console.log(classAssignments)
+
+    if (student && classroom && this._isMounted) {
+      this._triggerAnimFade = true
+      this.setState({ assignments, progress, classCode, currentAssignment })
     }
   }
 
-  onLoadingAnimComplete () {
-    this.setState({ isLoadAnimComplete: true })
-    this.props.history.replace(`/student/${this.state.id}`) // todo remove this. Handle redirection in authenticatedRoute
+  componentWillUnmount () {
+    this._isMounted = false
+  }
+
+  onLoadingAnimationStop () {
+    if (this._isMounted) {
+      this.setState({ isLoading: false })
+      this.props.history.replace(`/student/${this.state.username}`)
+    }
   }
 
   onWordCompletion (wordIndex, allWordsSpelled) {
-    let { id, jwt, api, progress } = this.state
-    progress.curWordIndex = wordIndex
+    let { username, jwt, progress } = this.state
+    progress.currentWordIndex = wordIndex
     if (allWordsSpelled) {
-      progress.curWordIndex = 0 // todo this is temporary
+      progress.currentWordIndex = 0 // todo this is temporary so it resets, rather than be over
       console.log('All words have been spelled. For now the words will repeat')
       this.setState({ progress })
-      this.props.history.push(`/student/${id}`)
+      this.props.history.push(`/student/${username}`)
     }
-    api.putAssignments(jwt, progress)
+    StudentApiCalls.putAssignments(jwt, progress)
   }
 
   onLetterCompletion () {
@@ -66,22 +87,19 @@ class StudentView extends Component {
   }
 
   render () {
-    const { assignments, progress, isLoadAnimComplete } = this.state
-    if (!isLoadAnimComplete) return <LoadingSpinner isLoading={this._isLoading} onLoadingAnimComplete={this.onLoadingAnimComplete} />
-    let wordsToSpell = assignments[progress.curAssignmentIndex].words
-
+    const { currentAssignment, assignments, progress, isLoading } = this.state
+    if (isLoading) return <LoadingSpinner triggerFadeAway={this._triggerAnimFade} onStopped={this.onLoadingAnimationStop} />
     return (
       <div style={{ background: '#a9a9a9' }}>
         <Switch>
-          <Route exact path='/student/:id' render={(props) => <StudentHome {...props} assignments={assignments} progress={progress} />} />
-          <Route path='/student/:id/writing' component={StudentWriting} />
-          <Route path='/student/:id/spelling' render={() =>
-            <DragDropContextProvider
-              backend={TouchBackend}>  { /* this needed to be moved up from StudentSpelling because advancing to the next word would cause multiple HTML5Backend's to be instantiated */}
-              <StudentSpelling wordsToSpell={wordsToSpell}
+          <Route exact path='/student/:username' render={(props) => <StudentHome {...props} assignments={assignments} progress={progress} />} />
+          <Route path='/student/:username/writing' component={StudentWriting} />
+          <Route path='/student/:username/spelling' render={() =>
+            <DragDropContextProvider backend={TouchBackend}>
+              <StudentSpelling wordsToSpell={currentAssignment.words}
                 onWordCompletion={(wordIndex, allWordsSpelled) => this.onWordCompletion(wordIndex, allWordsSpelled)} />
             </DragDropContextProvider>} />
-          <Route path='/student/:id/video' component={StudentVideo} />
+          <Route path='/student/:username/video' component={StudentVideo} />
         </Switch>
       </div>
     )
@@ -89,8 +107,7 @@ class StudentView extends Component {
 }
 
 StudentView.propTypes = {
-  id: PropTypes.string.isRequired,
-  jwt: PropTypes.string.isRequired,
+  user: PropTypes.object.isRequired,
   match: PropTypes.object.isRequired,
   history: PropTypes.object.isRequired
 }

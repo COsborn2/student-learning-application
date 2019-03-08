@@ -3,8 +3,8 @@ import PropTypes from 'prop-types'
 
 const LetterLine = (props) => {
   const { progress, assignments } = props
-  const curAssignmentIndex = progress.curAssignmentIndex
-  const curLetterIndex = progress.curLetterIndex
+  const curAssignmentIndex = progress.currentAssignmentIndex
+  const curLetterIndex = progress.currentLetterIndex
 
   let letterLine = []
   let curLetterNum = 1

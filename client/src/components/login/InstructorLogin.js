@@ -40,17 +40,18 @@ class InstructorLogin extends Component {
 
     if (res.error) this.animateMessage(res.error)
     else if (res.jwt) {
-      const id = email.split('@')[0]
-      window.sessionStorage.setItem('instructorid', id)
-      window.sessionStorage.setItem('instructorjwt', res.jwt)
-      this.props.history.replace(`/instructor/${id}`) // navigates to the proper user screen, passing the jwt
+      window.sessionStorage.setItem('instructor', JSON.stringify(res))
+      this.props.history.replace(`/instructor/${res.name}`)
     } else this.animateMessage('Whoops... An error occurred, Try again')
   }
 
-  handleSkipLogin () { // todo remove dev skip
-    window.sessionStorage.setItem('instructorid', 'dev-instructor')
-    window.sessionStorage.setItem('instructorjwt', 'ValidInstructorJWT')
-    this.props.history.replace(`/instructor/dev-instructor`)
+  async handleSkipLogin () { // todo remove dev skip
+    let res = await InstructorApiCalls.login('instructor-dev@gmail.com', 'Password')
+    if (res.error) this.animateMessage(res.error)
+    else if (res.jwt) {
+      window.sessionStorage.setItem('instructor', JSON.stringify(res))
+      this.props.history.replace(`/instructor/${res.name}`)
+    } else this.animateMessage('Whoops... An error occurred, Try again')
   }
 
   animateMessage (msg) {

@@ -37,9 +37,8 @@ class StudentSignup extends Component {
 
     if (res.error) this.animateMessage(res.error)
     else if (res.jwt) {
-      window.sessionStorage.setItem('studentid', userName)
-      window.sessionStorage.setItem(`studentjwt`, res.jwt)
-      this.props.history.replace(`/student/${userName}`) // navigates to the proper user screen, passing the jwt
+      window.sessionStorage.setItem('student', JSON.stringify(res))
+      this.props.history.replace(`/student/${res.username}`)
     } else this.animateMessage('Whoops... An error occurred, Try again')
   }
 
@@ -73,12 +72,12 @@ class StudentSignup extends Component {
             </Form.Group>
 
             <Form.Group as={Col}>
-              <Form.Label>Password</Form.Label>
+              <Form.Label>Username</Form.Label>
               <Form.Control
                 required
                 name='userNameField'
                 type='text'
-                placeholder='text' />
+                placeholder='username' />
               <Form.Control.Feedback type='invalid'> Please provide a valid username</Form.Control.Feedback>
             </Form.Group>
           </ModalBody>

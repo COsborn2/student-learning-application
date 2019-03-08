@@ -1,80 +1,62 @@
 import fetch from 'isomorphic-fetch'
 
+/* ROUTES */
+const signupURL = '/api/instructor'
+const loginURL = '/api/instructor/login'
+
 class InstructorApiCalls {
+  static async signup (name, email, password) {
+    let httpMessage = {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        email: email,
+        password: password,
+        name: name
+      })
+    }
+
+    const res = await fetch(signupURL, httpMessage)
+    const body = await res.json()
+    if (res.status !== 200) {
+      console.log(httpMessage) // todo remove log statements
+      console.log(res)
+      console.log(`Error: ${body.error}`)
+      return { error: body.error }
+    }
+
+    let jwt = res.headers.get('x-auth')
+    return { jwt, name: body.name }
+  }
+
   static async login (email, password) {
-    console.log(`Instructor Login\nEmail: ${email}\nPassword: ${password}`)
-    return {
-      jwt: 'ValidInstructorJwt',
-      error: null
-    }
-  }
-
-  static async signup (email, password) {
-    console.log(`Instructor Signup\nEmail: ${email}\nPassword: ${password}`)
-    return {
-      jwt: 'ValidInstructorJwt',
-      error: null
-    }
-  }
-
-  // This is where backend api call is made
-  static async verifyAuth (id, pass) {
-    if (id === 'instructorDev@test.com' && pass === 'password') { // this is just for the devSkip button
-      return { jwt: 'Valid JWT' }
-    }
     let httpMessage = {
       method: 'POST',
       headers: {
-        'Accept': 'application/json',
         'Content-Type': 'application/json'
       },
       body: JSON.stringify({
-        email: id,
-        password: pass
+        email: email,
+        password: password
       })
     }
 
-    const response = await fetch('/api/instructor/login', httpMessage)
-    console.log('loginRes: ' + response)
-    if (response.status !== 200) {
-      return {
-        jwt: null,
-        error: await response.json()
-      }
+    const res = await fetch(loginURL, httpMessage)
+    const body = await res.json()
+    if (res.status !== 200) {
+      console.log(httpMessage) // todo remove log statements
+      console.log(res)
+      console.log(`Error: ${body.error}`)
+      return { error: body.error }
     }
-    let jwt = response.headers.get('x-auth')
-    return { jwt, error: null }
-  }
-
-  // This is where backend api call is made
-  static async verifySignup (id, pass) {
-    let httpMessage = {
-      method: 'POST',
-      headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({
-        email: id,
-        password: pass
-      })
-    }
-
-    const response = await fetch(`api/instructor`, httpMessage)
-    console.log(response)
-    if (response.status !== 200) {
-      return {
-        jwt: null,
-        error: (await response.json()).error
-      }
-    }
-
-    let jwt = response.headers.get('x-auth')
-    return { jwt, error: null }
+    let jwt = res.headers.get('x-auth')
+    return { jwt, name: body.name }
   }
 
   // This is where the api call is made to retrieve the specific instructor's classes
-  static getCourses () {
+  static async getCourses () {
     let courses = [
       {
         classCode: 1,

@@ -15,26 +15,35 @@ class InstructorView extends Component {
   constructor (props) {
     super(props)
     this.state = {
-      id: this.props.id,
-      jwt: this.props.jwt,
-      api: InstructorApiCalls,
+      name: this.props.user.name,
+      jwt: this.props.user.jwt,
       courses: null,
       selectedCourse: -1,
-      isLoadAnimComplete: false
+      isLoading: true
     }
-    this._isLoading = true
+    this._triggerAnimFade = false
+    this._isMounted = true
     this.onCourseClick = this.onCourseClick.bind(this)
-    this.onLoadingAnimComplete = this.onLoadingAnimComplete.bind(this)
+    this.onLoadingAnimationStop = this.onLoadingAnimationStop.bind(this)
   }
 
-  componentDidMount () {
-    let { api, jwt } = this.state
-    let courses = api.getCourses(jwt)
-    if (courses) {
-      setTimeout(() => {
-        this._isLoading = false
-        this.setState({ courses })
-      }, 1000)
+  async componentDidMount () {
+    let { jwt } = this.state
+    let courses = await InstructorApiCalls.getCourses(jwt)
+    if (courses && this._isMounted) {
+      this._triggerAnimFade = true
+      this.setState({ courses })
+    }
+  }
+
+  componentWillUnmount () {
+    this._isMounted = false
+  }
+
+  onLoadingAnimationStop () {
+    if (this._isMounted) {
+      this.setState({ isLoading: false })
+      this.props.history.replace(`/instructor/${this.state.name}`)
     }
   }
 
@@ -42,12 +51,7 @@ class InstructorView extends Component {
     let { selectedCourse } = this.state
     selectedCourse = index === selectedCourse ? -1 : index
     this.setState({ selectedCourse })
-    console.log('instructorView courseClicked: ' + selectedCourse)
-  }
-
-  onLoadingAnimComplete () {
-    this.setState({ isLoadAnimComplete: true })
-    this.props.history.replace(`/instructor/${this.state.id}`) // todo remove this. Handle redirection in authenticatedRoute
+    console.log('courseClicked: ' + selectedCourse)
   }
 
   createCourseComponents (courses) {
@@ -66,12 +70,12 @@ class InstructorView extends Component {
   }
 
   render () {
-    let { courses, id, isLoadAnimComplete } = this.state
-    if (!isLoadAnimComplete) return <LoadingSpinner isLoading={this._isLoading} onLoadingAnimComplete={this.onLoadingAnimComplete} />
+    let { courses, name, isLoading } = this.state
+    if (isLoading) return <LoadingSpinner triggerFadeAway={this._triggerAnimFade} onStopped={this.onLoadingAnimationStop} />
     return (
       <div className='container text-center'>
         <header className='jumbotron my-3 bg-info'>
-          <h1 className='display-4 font-weight-bold'> Hello {id}</h1>
+          <h1 className='display-4 font-weight-bold'> Hello {name}</h1>
         </header>
         {this.createCourseComponents(courses)}
       </div>
@@ -80,8 +84,7 @@ class InstructorView extends Component {
 }
 
 InstructorView.propTypes = {
-  id: PropTypes.string.isRequired,
-  jwt: PropTypes.string.isRequired,
+  user: PropTypes.object.isRequired,
   match: PropTypes.object.isRequired,
   history: PropTypes.object.isRequired
 }

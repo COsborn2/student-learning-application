@@ -14,7 +14,7 @@ class StudentHome extends PureComponent {
     return (
       <div className='p-4 text-center'>
         <header className='jumbotron bg-info'>
-          <h1 className='display-4 font-weight-bold'>Hello {match.params.id}</h1>
+          <h1 className='display-4 font-weight-bold'>Hello {match.params.username}</h1>
         </header>
 
         <div className='row'>
