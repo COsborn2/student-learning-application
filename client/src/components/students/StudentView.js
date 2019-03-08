@@ -6,12 +6,10 @@ import { DragDropContextProvider } from 'react-dnd'
 import TouchBackend from 'react-dnd-touch-backend'
 import StudentApiCalls from '../../javascript/StudentApiCalls'
 import LoadingScreen from '../loading/LoadingScreen'
-import LoadingGif from '../../assets/images/LoadingScreenGif.gif'
 
 const StudentSpelling = lazy(() => import('./StudentSpelling'))
 const StudentWriting = lazy(() => import('./StudentWriting'))
 const StudentVideo = lazy(() => import('./StudentVideo'))
-const centerStyle = { top: 0, bottom: 0, left: 0, right: 0 }
 
 /* The student view manages all screens and routes for a specific student user
  the login screen creates and authenticates a student object, and passes it
@@ -85,10 +83,10 @@ class StudentView extends Component {
     if (isLoading) return <LoadingScreen triggerFadeAway={this._triggerAnimFade} onStopped={this.onLoadingAnimationStop} />
     return (
       <div style={{ background: '#a9a9a9' }}>
-        <Suspense fallback={<img src={LoadingGif} alt='Loading...' className='img-fluid position-absolute m-auto fade-in' style={centerStyle} />}>
+        <Suspense fallback={<LoadingScreen />}>
           <Switch>
             <Route exact path='/student/:username' render={(props) => <StudentHome {...props} progress={progress} letters={letters} />} />
-            <Route path='/student/:username/writing' render={(props) => <StudentWriting />} />
+            <Route path='/student/:username/writing' render={() => <StudentWriting />} />
             <Route path='/student/:username/spelling' render={() =>
               <DragDropContextProvider backend={TouchBackend}>
                 <StudentSpelling wordsToSpell={currentAssignment.words}

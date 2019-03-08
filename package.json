@@ -12,6 +12,7 @@
     "dev:server": "nodemon server.js",
     "start": "node server.js",
     "test": "npm run test-all-standard && npm run test-server",
+    "test-client": "npm run test-client-standard && cd client && npm test",
     "test-server": "npm run test-server-standard && mocha ./server.tests/*.tests/*.test.js",
     "heroku-postbuild": "npm run setup && cd client && npm run build",
     "setup": "npm install && cd client && npm install",

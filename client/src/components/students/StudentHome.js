@@ -1,6 +1,5 @@
 import React, { PureComponent } from 'react'
 import PropTypes from 'prop-types'
-import Image from 'react-bootstrap/Image'
 import Button from 'react-bootstrap/Button'
 import LetterLine from './utils/LetterLine'
 
@@ -20,7 +19,7 @@ class StudentHome extends PureComponent {
         <div className='row'>
           <div className='col-md-4'>
             <Button className='btn-info mx-auto mb-4 card badge-success' onClick={() => history.push(match.url + '/video')}>
-              <Image className='card-img-top' src={videoImgSrc} alt='Letter Video' />
+              <img className='card-img-top' src={videoImgSrc} alt='Letter Video' />
               <div className='card-body'>
                 <h5 className='card-title'>Letter Video</h5>
                 <p className='card-text'>Learn about the letter you'll be writing and spelling</p>
@@ -30,7 +29,7 @@ class StudentHome extends PureComponent {
 
           <div className='col-md-4'>
             <Button className='btn-info mx-auto mb-4 card badge-success' onClick={() => history.push(match.url + '/writing')}>
-              <Image className='card-img-top' src={writingImgSrc} alt='Hand Writing' />
+              <img className='card-img-top' src={writingImgSrc} alt='Hand Writing' />
               <div className='card-body'>
                 <h5 className='card-title'>Hand Writing</h5>
                 <p className='card-text'>Hand write the name of the object in the picture</p>
@@ -40,7 +39,7 @@ class StudentHome extends PureComponent {
 
           <div className='col-md-4'>
             <Button className='btn-info mx-auto mb-4 auto card badge-success' onClick={() => history.push(match.url + '/spelling')}>
-              <Image className='card-img-top' src={spellingImgSrc} alt='Spelling' />
+              <img className='card-img-top' src={spellingImgSrc} alt='Spelling' />
               <div className='card-body'>
                 <h5 className='card-title'>Spelling</h5>
                 <p className='card-text'>Spell the word using the letter blocks provided</p>

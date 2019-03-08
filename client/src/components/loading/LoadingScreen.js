@@ -18,8 +18,8 @@ function LoadingScreen (props) {
 }
 
 LoadingScreen.propTypes = {
-  triggerFadeAway: PropTypes.bool.isRequired,
-  onStopped: PropTypes.func.isRequired
+  triggerFadeAway: PropTypes.bool,
+  onStopped: PropTypes.func
 }
 
 export default LoadingScreen
