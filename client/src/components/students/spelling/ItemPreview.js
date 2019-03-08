@@ -65,7 +65,7 @@ function ItemPreview ({
 }
 
 ItemPreview.propTypes = {
-  id: PropTypes.string,
+  id: PropTypes.number,
   name: PropTypes.string,
   value: PropTypes.string,
   currentOffset: PropTypes.shape({
