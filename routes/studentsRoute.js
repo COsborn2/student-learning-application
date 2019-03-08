@@ -100,14 +100,14 @@ let getAssignmentAndProgress = async (req, res) => {
     return res.status(400).send({ error: 'Student not found with specified _id' })
   }
 
-  let classroom = await student.getClass()
+  let classroom = await Classroom.findById(student.class).populate('assignments')
 
   if (!classroom) {
     ErrorMessage('Classroom not found')
     return res.status(400).send({ error: 'Classroom not found' })
   }
 
-  res.send({ student, classroom })
+  res.send({ classroom })
 }
 
 let updateStudentProgress = async (req, res) => {
@@ -191,20 +191,21 @@ let updateStudentProgress = async (req, res) => {
   res.send({ updatedStudent })
 }
 
+// /api/students/id
 let deleteStudent = async (req, res) => {
-  let token = req.header('x-auth')
+  let studentId = req.params.id
 
-  let student = await Student.findByToken(token)
+  let student = await Student.findById(studentId)
 
   // remove student from classroom
   await Classroom.findByIdAndUpdate(student.class, {
     $pull: { students: student._id }
   })
 
-  // remove student from DB
+  // Remove student from DB
   await Student.findByIdAndDelete(student._id)
 
-  res.send(student)
+  res.send({ student })
 }
 
 module.exports = { createStudent, loginStudent, validateStudent, getAssignmentAndProgress, updateStudentProgress, deleteStudent }
