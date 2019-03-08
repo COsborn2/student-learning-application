@@ -8,8 +8,32 @@ import InstructorLogin from './components/login/InstructorLogin'
 import StudentSignup from './components/login/StudentSignup'
 import StudentLogin from './components/login/StudentLogin'
 import InstructorSignup from './components/login/InstructorSignup'
+//import LandScape from './components/helpers/LandScape' to up keep standard
 
 class App extends Component {
+  constructor(props) {
+    super(props);
+    this.state = { width: 0, height: 0, isLandScape: true};
+    this.updateWindowDimensions = this.updateWindowDimensions.bind(this);
+  }
+  
+  componentDidMount() {
+    this.updateWindowDimensions();
+    window.addEventListener('resize', this.updateWindowDimensions);
+  }
+  
+  componentWillUnmount() {
+    window.removeEventListener('resize', this.updateWindowDimensions);
+  }
+  
+  updateWindowDimensions() {
+    this.setState({ width: window.innerWidth, height: window.innerHeight, isLandScape: this.checkLandScape()});
+  }
+
+  checkLandScape() {
+    return this.state.height > this.state.width
+  }
+  //<LandScape isLandScape = {this.state.isLandScape} /> Dont know where to put this
   render () {
     return (
       <Browser>
