@@ -14,7 +14,6 @@ const styles = {
   row: {
     margin: 50
   }
-
 }
 
 const Home = () => (

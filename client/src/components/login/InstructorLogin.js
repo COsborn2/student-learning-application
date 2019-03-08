@@ -10,6 +10,7 @@ import Button from 'react-bootstrap/Button'
 import InstructorApiCalls from '../../javascript/InstructorApiCalls.js'
 import Col from 'react-bootstrap/Col'
 import { AuthMessageStyles as messageStyles } from './AuthMessageStyles'
+import LoadingOverlay from '../loading/LoadingOverlay'
 
 class InstructorLogin extends Component {
   constructor (props) {
@@ -17,7 +18,8 @@ class InstructorLogin extends Component {
     this.state = {
       failedMessage: '',
       showMessage: false,
-      validated: false
+      validated: false,
+      isLoading: false
     }
     this.handleLogin = this.handleLogin.bind(this)
     this.handleSkipLogin = this.handleSkipLogin.bind(this) // todo remove dev skip
@@ -36,7 +38,9 @@ class InstructorLogin extends Component {
     const password = form.elements.passField.value
     const email = form.elements.emailField.value
 
+    this.setState({ isLoading: true })
     let res = await InstructorApiCalls.login(email, password)
+    this.setState({ isLoading: false })
 
     if (res.error) this.animateMessage(res.error)
     else if (res.jwt) {
@@ -63,50 +67,52 @@ class InstructorLogin extends Component {
   }
 
   render () {
-    const { validated, showMessage } = this.state
+    const { validated, showMessage, isLoading } = this.state
     let errorMessageStyle = showMessage ? messageStyles.messageShow : messageStyles.messageFading
     return (
-      <Form noValidate validated={validated} onSubmit={e => this.handleLogin(e)}>
-        <ModalDialog>
-          <ModalHeader>
-            <ModalTitle>Instructor Login</ModalTitle>
-            <div className='flex-fill' />
-            <Button className='btn-warning mx-2' onClick={this.handleSkipLogin}>Dev Skip</Button>
-            <Button onClick={() => this.props.history.replace('/signup/instructor')}>Signup</Button>
-          </ModalHeader>
+      <React.Fragment>
+        <LoadingOverlay show={isLoading} />
+        <Form noValidate validated={validated} onSubmit={e => this.handleLogin(e)}>
+          <ModalDialog>
+            <ModalHeader>
+              <ModalTitle>Instructor Login</ModalTitle>
+              <div className='flex-fill' />
+              <Button className='btn-warning mx-2' onClick={this.handleSkipLogin}>Dev Skip</Button>
+              <Button onClick={() => this.props.history.replace('/signup/instructor')}>Signup</Button>
+            </ModalHeader>
 
-          <ModalBody>
-            <Form.Group as={Col}>
-              <Form.Label>Email</Form.Label>
-              <Form.Control
-                required
-                name='emailField'
-                type='email'
-                placeholder='Email' />
-              <Form.Control.Feedback type='invalid'> Please provide a valid email</Form.Control.Feedback>
-            </Form.Group>
+            <ModalBody>
+              <Form.Group as={Col}>
+                <Form.Label>Email</Form.Label>
+                <Form.Control
+                  required
+                  name='emailField'
+                  type='email'
+                  placeholder='Email' />
+                <Form.Control.Feedback type='invalid'> Please provide a valid email</Form.Control.Feedback>
+              </Form.Group>
 
-            <Form.Group as={Col}>
-              <Form.Label>Password</Form.Label>
-              <Form.Control
-                required
-                name='passField'
-                type='password'
-                placeholder='password' />
-              <Form.Control.Feedback type='invalid'> Please provide a valid password</Form.Control.Feedback>
+              <Form.Group as={Col}>
+                <Form.Label>Password</Form.Label>
+                <Form.Control
+                  required
+                  name='passField'
+                  type='password'
+                  placeholder='password' />
+                <Form.Control.Feedback type='invalid'> Please provide a valid password</Form.Control.Feedback>
 
-            </Form.Group>
+              </Form.Group>
+            </ModalBody>
 
-          </ModalBody>
-
-          <ModalFooter>
-            <p style={errorMessageStyle}>{this.state.failedMessage}</p>
-            <div className='flex-fill' />
-            <Button onClick={() => this.props.history.push('/')}>Close</Button>
-            <Button type='submit'>Log in</Button>
-          </ModalFooter>
-        </ModalDialog>
-      </Form>
+            <ModalFooter>
+              <p style={errorMessageStyle}>{this.state.failedMessage}</p>
+              <div className='flex-fill' />
+              <Button onClick={() => this.props.history.push('/')}>Close</Button>
+              <Button type='submit'>Log in</Button>
+            </ModalFooter>
+          </ModalDialog>
+        </Form>
+      </React.Fragment>
     )
   }
 }

@@ -3,8 +3,7 @@ import PropTypes from 'prop-types'
 import InstructorApiCalls from '../../javascript/InstructorApiCalls'
 import Course from './Course'
 import Button from 'react-bootstrap/Button'
-import '../helpers/HelperStyles.css'
-import LoadingSpinner from '../helpers/LoadingSpinner'
+import LoadingScreen from '../loading/LoadingScreen'
 
 /* The instructor view manages all screens and routes for a specific instructor user
  the login screen creates and authenticates an instructor object, and passes it
@@ -31,8 +30,10 @@ class InstructorView extends Component {
     let { jwt } = this.state
     let courses = await InstructorApiCalls.getCourses(jwt)
     if (courses && this._isMounted) {
-      this._triggerAnimFade = true
-      this.setState({ courses })
+      setTimeout(() => {
+        this._triggerAnimFade = true
+        this.setState({ courses })
+      }, 1000)
     }
   }
 
@@ -71,7 +72,7 @@ class InstructorView extends Component {
 
   render () {
     let { courses, name, isLoading } = this.state
-    if (isLoading) return <LoadingSpinner triggerFadeAway={this._triggerAnimFade} onStopped={this.onLoadingAnimationStop} />
+    if (isLoading) return <LoadingScreen triggerFadeAway={this._triggerAnimFade} onStopped={this.onLoadingAnimationStop} />
     return (
       <div className='container text-center'>
         <header className='jumbotron my-3 bg-info'>

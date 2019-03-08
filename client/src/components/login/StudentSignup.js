@@ -10,6 +10,7 @@ import ModalFooter from 'react-bootstrap/ModalFooter'
 import StudentApiCalls from '../../javascript/StudentApiCalls'
 import Col from 'react-bootstrap/Col'
 import { AuthMessageStyles as messageStyles } from './AuthMessageStyles'
+import LoadingOverlay from '../loading/LoadingOverlay'
 
 class StudentSignup extends Component {
   constructor (props) {
@@ -17,7 +18,8 @@ class StudentSignup extends Component {
     this.state = {
       failedMessage: '',
       showMessage: false,
-      validated: false
+      validated: false,
+      isLoading: false
     }
   }
 
@@ -33,7 +35,9 @@ class StudentSignup extends Component {
     const courseCode = form.elements.courseCodeField.value
     const userName = form.elements.userNameField.value
 
+    this.setState({ isLoading: true })
     let res = await StudentApiCalls.signup(courseCode, userName)
+    this.setState({ isLoading: false })
 
     if (res.error) this.animateMessage(res.error)
     else if (res.jwt) {
@@ -51,45 +55,48 @@ class StudentSignup extends Component {
   }
 
   render () {
-    const { validated, showMessage } = this.state
+    const { validated, showMessage, isLoading } = this.state
     let errorMessageStyle = showMessage ? messageStyles.messageShow : messageStyles.messageFading
     return (
-      <Form noValidate validated={validated} onSubmit={e => this.handleSignup(e)}>
-        <ModalDialog>
-          <ModalHeader>
-            <ModalTitle>Student Sign Up</ModalTitle>
-          </ModalHeader>
+      <React.Fragment>
+        <LoadingOverlay show={isLoading} />
+        <Form noValidate validated={validated} onSubmit={e => this.handleSignup(e)}>
+          <ModalDialog>
+            <ModalHeader>
+              <ModalTitle>Student Sign Up</ModalTitle>
+            </ModalHeader>
 
-          <ModalBody>
-            <Form.Group as={Col}>
-              <Form.Label>Course Code</Form.Label>
-              <Form.Control
-                required
-                name='courseCodeField'
-                type='text'
-                placeholder='course code' />
-              <Form.Control.Feedback type='invalid'> Please provide a valid course code</Form.Control.Feedback>
-            </Form.Group>
+            <ModalBody>
+              <Form.Group as={Col}>
+                <Form.Label>Course Code</Form.Label>
+                <Form.Control
+                  required
+                  name='courseCodeField'
+                  type='text'
+                  placeholder='course code' />
+                <Form.Control.Feedback type='invalid'> Please provide a valid course code</Form.Control.Feedback>
+              </Form.Group>
 
-            <Form.Group as={Col}>
-              <Form.Label>Username</Form.Label>
-              <Form.Control
-                required
-                name='userNameField'
-                type='text'
-                placeholder='username' />
-              <Form.Control.Feedback type='invalid'> Please provide a valid username</Form.Control.Feedback>
-            </Form.Group>
-          </ModalBody>
+              <Form.Group as={Col}>
+                <Form.Label>Username</Form.Label>
+                <Form.Control
+                  required
+                  name='userNameField'
+                  type='text'
+                  placeholder='username' />
+                <Form.Control.Feedback type='invalid'> Please provide a valid username</Form.Control.Feedback>
+              </Form.Group>
+            </ModalBody>
 
-          <ModalFooter>
-            <p style={errorMessageStyle}>{this.state.failedMessage}</p>
-            <div style={{ flex: 1 }} />
-            <Button onClick={() => this.props.history.push('/')}>Close</Button>
-            <Button type='submit'>Sign Up</Button>
-          </ModalFooter>
-        </ModalDialog>
-      </Form>
+            <ModalFooter>
+              <p style={errorMessageStyle}>{this.state.failedMessage}</p>
+              <div style={{ flex: 1 }} />
+              <Button onClick={() => this.props.history.push('/')}>Close</Button>
+              <Button type='submit'>Sign Up</Button>
+            </ModalFooter>
+          </ModalDialog>
+        </Form>
+      </React.Fragment>
     )
   }
 }
