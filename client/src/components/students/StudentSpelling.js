@@ -90,7 +90,8 @@ class StudentSpelling extends React.Component {
       curHand: getLetters(firstWordToSpell),
       curDropZone: initializeDropZone(firstWordToSpell.length),
       dropOrder: [],
-      timeEvents: initializeTimeEvents() }
+      timeEvents: initializeTimeEvents(),
+      lockScroll: false }
     this.advanceToNextWord = this.advanceToNextWord.bind(this)
   }
 
@@ -132,12 +133,20 @@ class StudentSpelling extends React.Component {
     this.setState({ curDropZone, curHand, dropOrder, timeEvents })
   }
 
+  lockScroll = () => {
+    this.setState({ lockScroll: true })
+  }
+
+  unlockScroll = () => {
+    this.setState({ lockScroll: false })
+  }
+
   render () {
     const { curHand, curDropZone, curWordToSpell } = this.state
     const isSpelled = isWordSpelled(curDropZone, curWordToSpell)
     const button = this.renderButton(isSpelled)
     const status = getStatus(isSpelled, curWordToSpell)
-    const letterCards = curHand.map((letter, i) => <SpellingCard key={i} id={i} letter={letter} />)
+    const letterCards = curHand.map((letter, i) => <SpellingCard key={i} id={i} letter={letter} lockScroll={this.lockScroll} unlockScroll={this.unlockScroll}/>)
     const dropZoneCards = curWordToSpell.split('').map((letter, index) =>
       <DropZone id={index} key={index} onDrop={this.setDropZone} currentLetter={curDropZone[index]}
         expectedLetter={letter} />)
@@ -156,14 +165,13 @@ class StudentSpelling extends React.Component {
           {dropZoneCards}
         </div>
         <span>Letter Cards</span>
-        <ScrollLock>
           <div className='row'>
             {letterCards}
           </div>
-        </ScrollLock>
         <div className='row'>
           {button}
         </div>
+        <ScrollLock isActive={this.state.lockScroll}/>
       </div>)
   }
 }

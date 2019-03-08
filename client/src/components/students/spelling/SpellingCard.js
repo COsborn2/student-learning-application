@@ -8,10 +8,12 @@ const Types = {
 
 const spellingCardSource = {
   beginDrag (props) {
+    props.lockScroll()
     return { id: props.id, letter: props.letter }
   },
 
   endDrag (props, monitor) {
+    props.unlockScroll()
     if (monitor.didDrop()) {
       monitor.getItem()
       monitor.getDropResult()
