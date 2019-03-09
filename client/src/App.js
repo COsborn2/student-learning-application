@@ -3,6 +3,7 @@ import { BrowserRouter as Browser, Route, Switch } from 'react-router-dom'
 import AuthenticatedRoute from './components/helpers/AuthenticatedRoute'
 import LoadingGif from './assets/images/LoadingScreenGif.gif'
 import './assets/css/LoadingStyles.css'
+import LandScape from './components/helpers/LandScape'
 
 const Home = lazy(() => import('./components/Home'))
 const StudentLogin = lazy(() => import('./components/login/StudentLogin'))
@@ -16,7 +17,7 @@ const centerStyle = { top: 0, bottom: 0, left: 0, right: 0 }
 class App extends Component {
   constructor (props) {
     super(props)
-    this.state = { width: 0, height: 0, isLandScape: true }
+    this.state = { width: 0, height: 0}
     this.updateWindowDimensions = this.updateWindowDimensions.bind(this)
   }
 
@@ -30,17 +31,14 @@ class App extends Component {
   }
 
   updateWindowDimensions () {
-    this.setState({ width: window.innerWidth, height: window.innerHeight, isLandScape: this.checkLandScape() })
+    this.setState({ width: window.innerWidth, height: window.innerHeight})
   }
-
-  checkLandScape () {
-    return this.state.height > this.state.width
-  }
-  // <LandScape isLandScape = {this.state.isLandScape} /> Dont know where to put this
+  
   render () {
     return (
       <Browser>
         <Suspense fallback={<img src={LoadingGif} alt='Loading...' className='img-fluid position-absolute m-auto fade-in' style={centerStyle} />}>
+        <LandScape windowHeight = {this.state.height} windowWidth = {this.state.width}/>
           <Switch>
             <Route exact path='/' render={(props) => <Home {...props} />} />
             <AuthenticatedRoute path='/instructor' lazyComponent={InstructorView} />
