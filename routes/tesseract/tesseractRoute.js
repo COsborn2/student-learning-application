@@ -3,6 +3,11 @@ const fs = require('fs')
 const path = require('path')
 const { InfoMessage, SuccessMessage, ErrorMessage } = require('../../middleware/message')
 
+const tesseractOptions = {
+  lang: 'eng',
+  tessedit_char_blacklist: '1234567890!@#$%^&*()_+{}:"<>?`~,./;-=[];\''
+}
+
 const detectImageText = async (req, res) => {
   InfoMessage('Detecting text in image')
   let imageReceived = req.body.image
@@ -18,11 +23,11 @@ const detectImageText = async (req, res) => {
 
   try {
     await fs.writeFile(imagePath, base64Data, 'base64', () => {
-      SuccessMessage(`Image saved to ${imagePath}`)
-      Tesseract.recognize(imagePath, { 1: 'eng' })
+      SuccessMessage(`Image saved to ${fileName}`)
+      Tesseract.recognize(imagePath, tesseractOptions)
         .then(data => {
           SuccessMessage(`Text detected: ${data.text}`)
-          res.send(data.text)
+          res.send({ textDetected: data.text })
         })
         .catch(err => {
           ErrorMessage(`Text detection error: ${err}`)

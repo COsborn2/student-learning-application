@@ -2,23 +2,13 @@ import React, { Component } from 'react'
 import { SketchField, Tools } from 'react-sketch'
 import { Button } from 'react-bootstrap'
 import StudentApiCalls from '../../javascript/StudentApiCalls'
+import PropTypes from 'prop-types'
 
 class StudentWriting extends Component {
   constructor (props) {
     super(props)
-    this.state = { words: ['pig', 'cat', 'raccoon'] }
     this.clearCanvas = this.clearCanvas.bind(this)
     this.checkWrittenCorrectly = this.checkWrittenCorrectly.bind(this)
-  }
-
-  componentDidMount () {
-    // fetch('/api/getData')
-    //   .then(res => res.json())
-    //   .then(wordItems => {
-    //     let updatedWords = this.state.words
-    //     wordItems.map(wordItem => updatedWords.push(wordItem.word))
-    //     this.setState({ words: updatedWords })
-    //   })
   }
 
   clearCanvas = () => {
@@ -27,9 +17,14 @@ class StudentWriting extends Component {
   };
 
   async checkWrittenCorrectly () {
-    let image64 = this._sketch.toDataURL()
-    console.log(image64)
-    await StudentApiCalls.checkSpelling(1, 1)
+    const base64Image = this._sketch.toDataURL()
+
+    const res = await StudentApiCalls.detectWriting(this.props.jwt, base64Image)
+    if (res.error) {
+      console.log('Some Error Calling Api From Writing')
+    }
+    let textDetected = res.textDetected
+    window.alert(`Text detected: ${textDetected}`)
   }
 
   render () {
@@ -50,6 +45,12 @@ class StudentWriting extends Component {
       </div>
     )
   }
+}
+
+StudentWriting.propTypes = {
+  lettersToSpell: PropTypes.array.isRequired,
+  jwt: PropTypes.string.isRequired,
+  onLetterCompletion: PropTypes.func.isRequired
 }
 
 export default StudentWriting
