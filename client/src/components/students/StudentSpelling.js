@@ -36,7 +36,7 @@ function shuffle (cards) {
 }
 
 function getStatus (isSpelled) {
-  return isSpelled ? 'Congrats!' : 'Spell this image'
+  return isSpelled ? 'Good Job!' : 'What is this?'
 }
 
 function initializeDropZone (numCharsInWord) {
@@ -116,7 +116,6 @@ class StudentSpelling extends React.Component {
     const buttonStyle = 'mx-auto btn btn-' + (isSpelled ? 'success' : 'secondary')
     return <button type='button' className={buttonStyle} onClick={this.advanceToNextWord}
       disabled={!isSpelled}>Continue</button>
-    // return <button type='button' className='btn btn-danger' onClick={this.onResetClick}>Reset</button>
   }
 
   setDropZone = (dropZoneID, letterDropped, cardID) => {
@@ -152,26 +151,18 @@ class StudentSpelling extends React.Component {
         expectedLetter={letter} />)
 
     return (
-
-      <div className='container text-center'>
-        <ItemPreview key='__preview' name='Item' />
-        <h1 color={'red'}>Spelling Cards!</h1>
-        <h2 className='jumbotron bg-info'>
-          {status}
-          <Image className='img-fluid' alt='Responsive image' src={this.state.curImageURL} />
-        </h2>
-        <span>DropZone</span>
-        <div className='row'>
-          {dropZoneCards}
+      <div className='mx-auto text-center' style={{ background: '#b9d5e0', width: '85%' }}>
+        <div className='jumbotron' style={{ background: '#408fbd', boxShadow: '10px 10px 5px 1px #6b6b6b' }}>
+          <div className='bg-white'>
+            <Image className='img-fluid' alt='Responsive image' src={this.state.curImageURL} />
+          </div>
         </div>
-        <span>Letter Cards</span>
-        <div className='row'>
-          {letterCards}
-        </div>
-        <div className='row'>
-          {button}
-        </div>
+        <h1 className='mb-4' style={{ color: 'white' }}>{status}</h1>
+        <div className='row px-5'>{dropZoneCards}</div>
+        <div className='row px-5'>{letterCards}</div>
+        {button}
         <ScrollLock isActive={this.state.lockScroll} />
+        <ItemPreview key='__preview' name='Item' />
       </div>)
   }
 }

@@ -27,7 +27,8 @@ function getItemStyles (currentOffset) {
   return {
     pointerEvents: 'none',
     transform: transform,
-    WebkitTransform: transform
+    WebkitTransform: transform,
+    boxShadow: '5px 5px 5px 1px #6b6b6b'
   }
 }
 

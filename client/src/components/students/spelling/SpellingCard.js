@@ -33,7 +33,7 @@ function SpellingCard (props) {
   const { id, letter, isDragging, connectDragSource } = props
 
   return props.connectDragPreview(connectDragSource(
-    <div key={id} className='col-md-2 mx-auto card badge-success' style={{ display: isDragging ? 'none' : 'block' }}>
+    <div key={id} className='col-md-2 mx-auto card badge-success' style={{ boxShadow: '5px 5px 5px 1px #6b6b6b', display: isDragging ? 'none' : 'block' }}>
       <h5 className='card-title card badge-light'>
         {letter}
       </h5>
