@@ -34,11 +34,11 @@ app.post('/api/student', studentsRoute.createStudent)
 app.delete('/api/student/:id', authenticateInstructor, studentsRoute.deleteStudent)
 app.post('/api/student/login', studentsRoute.loginStudent)
 app.put('/api/student/progress', authenticateStudent, studentsRoute.updateStudentProgress)
+app.get('/api/student', authenticateStudent, studentsRoute.initalizeStudent)
 
 app.get('/api/assignment/:id', assignmentsRoute.getAssignmentById)
 
 app.post('/api/classrooms', authenticateInstructor, classroomsRoute.createClassroom)
-app.get('/api/classrooms/:id', classroomsRoute.getLetters)
 app.get('/api/classrooms', authenticateStudent, classroomsRoute.getClassroom)
 
 if (isProduction) {

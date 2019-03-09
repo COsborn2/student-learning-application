@@ -188,4 +188,22 @@ let deleteStudent = async (req, res) => {
   res.send({ student })
 }
 
-module.exports = { createStudent, loginStudent, validateStudent, updateStudentProgress, deleteStudent }
+let initalizeStudent = async (req, res) => {
+  let token = req.header('x-auth')
+
+  let student = await Student.findByToken(token)
+
+  let classroom = await Classroom.findById(student.class)
+
+  let letters = await classroom.getLetters()
+
+  if (student.finishedCourse) {
+    return res.send({ finishedCourse: student.finishedCourse, letters })
+  }
+
+  let currentAssignment = classroom.assignments[student.currentAssignment]
+
+  res.send({ finishedCourse: student.finishedCourse, letters, currentAssignment })
+}
+
+module.exports = { createStudent, loginStudent, validateStudent, updateStudentProgress, deleteStudent, initalizeStudent }

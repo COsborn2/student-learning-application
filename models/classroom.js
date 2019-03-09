@@ -24,6 +24,19 @@ let ClassroomSchema = new mongoose.Schema({
   }
 })
 
+ClassroomSchema.methods.getLetters = async function () {
+  let classroom = await Classroom.findById(this._id).populate('assignments')
+
+  let assignmentLetters = []
+
+  classroom.assignments.forEach(assignment => {
+    let newIndex = { assignmentId: assignment._id, letters: assignment.letters }
+    assignmentLetters.push(newIndex)
+  })
+
+  return assignmentLetters
+}
+
 let Classroom = mongoose.model('Classroom', ClassroomSchema)
 
 module.exports = { Classroom }
