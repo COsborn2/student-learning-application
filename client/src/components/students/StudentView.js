@@ -82,20 +82,18 @@ class StudentView extends Component {
     const { currentAssignment, progress, letters, isLoading } = this.state
     if (isLoading) return <LoadingScreen triggerFadeAway={this._triggerAnimFade} onStopped={this.onLoadingAnimationStop} />
     return (
-      <div style={{ background: '#a9a9a9' }}>
-        <Suspense fallback={<LoadingScreen />}>
-          <Switch>
-            <Route exact path='/student/:username' render={(props) => <StudentHome {...props} progress={progress} letters={letters} />} />
-            <Route path='/student/:username/writing' render={() => <StudentWriting />} />
-            <Route path='/student/:username/spelling' render={() =>
-              <DragDropContextProvider backend={TouchBackend}>
-                <StudentSpelling wordsToSpell={currentAssignment.words}
-                  onWordCompletion={(wordIndex, allWordsSpelled) => this.onWordCompletion(wordIndex, allWordsSpelled)} />
-              </DragDropContextProvider>} />
-            <Route path='/student/:username/video' render={() => <StudentVideo />} />
-          </Switch>
-        </Suspense>
-      </div>
+      <Suspense fallback={<LoadingScreen />}>
+        <Switch>
+          <Route exact path='/student/:username' render={(props) => <StudentHome {...props} progress={progress} letters={letters} />} />
+          <Route path='/student/:username/writing' render={() => <StudentWriting />} />
+          <Route path='/student/:username/spelling' render={() =>
+            <DragDropContextProvider backend={TouchBackend}>
+              <StudentSpelling wordsToSpell={currentAssignment.words}
+                onWordCompletion={(wordIndex, allWordsSpelled) => this.onWordCompletion(wordIndex, allWordsSpelled)} />
+            </DragDropContextProvider>} />
+          <Route path='/student/:username/video' render={() => <StudentVideo />} />
+        </Switch>
+      </Suspense>
     )
   }
 }
