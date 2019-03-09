@@ -1,8 +1,3 @@
-/**
- * Copyright 2015, Yahoo Inc.
- * Copyrights licensed under the MIT License. See the accompanying LICENSE file for terms.
- */
-
 import React from 'react'
 import PropTypes from 'prop-types'
 import { DragLayer } from 'react-dnd'
@@ -25,7 +20,6 @@ function getItemStyles (currentOffset) {
     }
   }
 
-  // http://www.paulirish.com/2012/why-moving-elements-with-translate-is-better-than-posabs-topleft/
   var x = currentOffset.x
   var y = currentOffset.y
   var transform = `translate(${x}px, ${y}px)`
@@ -71,7 +65,7 @@ function ItemPreview ({
 }
 
 ItemPreview.propTypes = {
-  id: PropTypes.string,
+  id: PropTypes.number,
   name: PropTypes.string,
   value: PropTypes.string,
   currentOffset: PropTypes.shape({
