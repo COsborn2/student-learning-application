@@ -4,6 +4,7 @@ import fetch from 'isomorphic-fetch'
 const signupURL = '/api/student/login'
 const loginURL = '/api/student/login'
 const getAssignmentsAndProgressURL = '/api/student/progress'
+const detectWritingURL = '/api/student/writing'
 
 async function stall (stallTime = 3000) {
   await new Promise(resolve => setTimeout(resolve, stallTime))
@@ -70,6 +71,7 @@ class StudentApiCalls {
     }
 
     const res = await fetch(getAssignmentsAndProgressURL, httpMessage)
+    let body = await res.json()
     if (res.status !== 200) {
       const body = await res.json()
       console.log(httpMessage) // todo remove log statements
@@ -77,12 +79,29 @@ class StudentApiCalls {
       console.log(`Error: ${body.error}`)
       return { error: body.error }
     }
-    let body = await res.json()
     return { student: body.student, classroom: body.classroom }
   }
 
-  static async checkSpelling (jwt, image64) {
-    await stall(1000)
+  static async detectWriting (jwt, image64) {
+    let httpMessage = {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-auth': jwt
+      },
+      body: JSON.stringify({ image: image64 })
+    }
+
+    const res = await fetch(detectWritingURL, httpMessage)
+    const body = await res.json()
+    if (res.status !== 200) {
+      console.log(httpMessage) // todo remove log statements
+      console.log(res)
+      console.log(`Error: ${body.error}`)
+      return { error: body.error }
+    }
+
+    return body
   }
 
   static async getAssignmentByIdMock (id) {

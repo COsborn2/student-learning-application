@@ -25,7 +25,7 @@ class StudentView extends Component {
       assignments: null,
       currentAssignment: null,
       progress: null,
-      letters: null,
+      letterLineArray: null,
       isLoading: true
     }
     this._triggerAnimFade = false
@@ -41,12 +41,12 @@ class StudentView extends Component {
 
     const progress = await StudentApiCalls.getProgressMock(jwt)
     const assignments = await StudentApiCalls.getAssignmentsMock(jwt)
-    const letters = await StudentApiCalls.getLettersMock(jwt)
+    const letterLineArray = await StudentApiCalls.getLettersMock(jwt)
     const currentAssignment = assignments[progress.currentAssignmentIndex]
 
     if (assignments && this._isMounted) {
       this._triggerAnimFade = true
-      this.setState({ assignments, progress, currentAssignment, letters })
+      this.setState({ assignments, progress, currentAssignment, letterLineArray })
     }
   }
 
@@ -79,14 +79,16 @@ class StudentView extends Component {
   }
 
   render () {
-    const { currentAssignment, progress, letters, isLoading } = this.state
+    const { jwt, currentAssignment, progress, letterLineArray, isLoading } = this.state
     if (isLoading) return <LoadingScreen triggerFadeAway={this._triggerAnimFade} onStopped={this.onLoadingAnimationStop} />
     return (
       <div style={{ background: '#a9a9a9' }}>
         <Suspense fallback={<LoadingScreen />}>
           <Switch>
-            <Route exact path='/student/:username' render={(props) => <StudentHome {...props} progress={progress} letters={letters} />} />
-            <Route path='/student/:username/writing' render={() => <StudentWriting />} />
+            <Route exact path='/student/:username' render={(props) => <StudentHome {...props} progress={progress} letters={letterLineArray} />} />
+            <Route path='/student/:username/writing' render={() =>
+              <StudentWriting lettersToSpell={currentAssignment.letters} jwt={jwt} onLetterCompletion={this.onLetterCompletion} />}
+            />
             <Route path='/student/:username/spelling' render={() =>
               <DragDropContextProvider backend={TouchBackend}>
                 <StudentSpelling wordsToSpell={currentAssignment.words}
