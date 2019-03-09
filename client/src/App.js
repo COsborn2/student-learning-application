@@ -17,7 +17,7 @@ const centerStyle = { top: 0, bottom: 0, left: 0, right: 0 }
 class App extends Component {
   constructor (props) {
     super(props)
-    this.state = { width: 0, height: 0}
+    this.state = { width: 0, height: 0 }
     this.updateWindowDimensions = this.updateWindowDimensions.bind(this)
   }
 
@@ -31,14 +31,14 @@ class App extends Component {
   }
 
   updateWindowDimensions () {
-    this.setState({ width: window.innerWidth, height: window.innerHeight})
+    this.setState({ width: window.innerWidth, height: window.innerHeight })
   }
-  
+
   render () {
     return (
       <Browser>
         <Suspense fallback={<img src={LoadingGif} alt='Loading...' className='img-fluid position-absolute m-auto fade-in' style={centerStyle} />}>
-        <LandScape windowHeight = {this.state.height} windowWidth = {this.state.width}/>
+          <LandScape height={this.state.height} width={this.state.width} />
           <Switch>
             <Route exact path='/' render={(props) => <Home {...props} />} />
             <AuthenticatedRoute path='/instructor' lazyComponent={InstructorView} />
