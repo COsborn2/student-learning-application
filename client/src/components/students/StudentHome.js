@@ -15,18 +15,18 @@ class StudentHome extends PureComponent {
     return (
       <div className='mx-auto text-center' style={{ background: '#b9d5e0', width: '85%' }}>
         <div>
-          <header className='jumbotron jumbotron-fluid p-5' style={{ background: '#7eaec5', color: 'white' }}>
+          <header className='jumbotron jumbotron-fluid py-5 px-1' style={{ background: '#7eaec5', color: 'white' }}>
             <div class='container'>
-              <h1 className='display-4 font-weight-bold'>Hello {match.params.username}</h1>
+              <h1 className='display-4 font-weight-bold' style={{ fontSize: '4vh' }}>Hello {match.params.username}</h1>
             </div>
           </header>
         </div>
 
-        <div className='row text-center px-5'>
+        <div className='row'>
           <div className='col-md-4'>
             <Button className='px-5 pt-5 pb-2 btn-info mx-auto mb-4' onClick={() => history.push(match.url + '/video')}
               style={{ background: '#408fbd', boxShadow: '10px 10px 5px 1px #6b6b6b' }}>
-              <img className='mb-3 img-rounded' src={tempSizingImage} alt='Letter Video' />
+              <img className='card-img-top' src={tempSizingImage} alt='Letter Video' />
               <h1 className='mb-4'>Review</h1>
             </Button>
           </div>
@@ -34,7 +34,7 @@ class StudentHome extends PureComponent {
           <div className='col-md-4'>
             <Button className='px-5 pt-5 pb-2 btn-info mx-auto mb-4' onClick={() => history.push(match.url + '/writing')}
               style={{ background: '#408fbd', boxShadow: '10px 10px 5px 1px #6b6b6b' }}>
-              <img className='mb-3 img-rounded' src={tempSizingImage} alt='Letter Video' />
+              <img className='card-img-top' src={tempSizingImage} alt='Letter Video' />
               <h1 className='mb-4'>Writing</h1>
             </Button>
           </div>
@@ -42,7 +42,7 @@ class StudentHome extends PureComponent {
           <div className='col-md-4'>
             <Button className='px-5 pt-5 pb-2 btn-info mx-auto mb-4' onClick={() => history.push(match.url + '/spelling')}
               style={{ background: '#408fbd', boxShadow: '10px 10px 5px 1px #6b6b6b' }}>
-              <img className='mb-3 img-rounded' src={tempSizingImage} alt='Letter Video' />
+              <img className='card-img-top' src={tempSizingImage} alt='Letter Video' />
               <h1 className='mb-4'>Spelling</h1>
             </Button>
           </div>
