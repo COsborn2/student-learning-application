@@ -153,9 +153,12 @@ class StudentSpelling extends React.Component {
 
     return (
 
-      <div className='container text-center'>
+      <div className='mx-auto text-center align-middle' style={{ background: '#b9d5e0', width: '85%', paddingTop: '0', marginTop: '0' }}>
+        <div className='mb-5' style={{ background: '#7eaec5', color: 'white', height: '11vh', margin: '0'}}>
+          <h1 className='display-4 font-weight-bold' style={{ fontSize: '4vh', margin: '0', paddingTop: '3vh' }}>Spelling Cards</h1>
+        </div>
+        
         <ItemPreview key='__preview' name='Item' />
-        <h1 color={'red'}>Spelling Cards!</h1>
         <h2 className='jumbotron bg-info'>
           {status}
           <Image className='img-fluid' alt='Responsive image' src={this.state.curImageURL} />
