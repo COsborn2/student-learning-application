@@ -74,6 +74,7 @@ class StudentView extends Component {
 
   onLoadingAnimationStop () {
     if (this._isMounted) {
+      this._triggerAnimFade = false
       this.setState({ isLoading: false })
       this.props.history.replace(`/student/${this.state.username}`)
     }
@@ -151,10 +152,16 @@ class StudentView extends Component {
    * @returns {Promise<void>}
    */
   async onLetterLineSelection (selectedAssignmentIndex, selectedLetterIndex) {
-    let { currentAssignment, currentAssignmentIndex, currentLetterIndex } = this.state
+    let { assignmentIds, currentAssignment, currentAssignmentIndex, currentLetterIndex } = this.state
 
     if (selectedAssignmentIndex === currentAssignmentIndex && selectedLetterIndex === currentLetterIndex) return null // if its the already selected letter do nothing
-    console.log(`Clicked assignment: ${selectedAssignmentIndex}, letter: ${selectedLetterIndex}`)
+
+    this.setState({ isLoading: true })
+    currentAssignmentIndex = selectedAssignmentIndex
+    currentLetterIndex = selectedLetterIndex
+    currentAssignment = await StudentApiCalls.getAssignmentById(assignmentIds[selectedAssignmentIndex].assignmentId)
+    this._triggerAnimFade = true
+    this.setState({ currentAssignment, currentAssignmentIndex, currentLetterIndex })
   }
 
   /***
