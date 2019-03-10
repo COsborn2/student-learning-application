@@ -24,6 +24,7 @@ class StudentView extends Component {
       jwt: this.props.user.jwt,
       assignments: null,
       currentAssignment: null,
+      currentLetterIndex: null,
       progress: null,
       letterLineArray: null,
       isLoading: true
@@ -44,16 +45,15 @@ class StudentView extends Component {
     const assignments = await StudentApiCalls.getAssignmentsMock(jwt)
     const letterLineArray = await StudentApiCalls.getLettersMock(jwt)
     const currentAssignment = assignments[progress.currentAssignmentIndex]
+    let currentLetterIndex = this.getCurrentLetterIndex(progress, currentAssignment)
 
     if (assignments && this._isMounted) {
       this._triggerAnimFade = true
-      this.setState({ assignments, progress, currentAssignment, letterLineArray })
+      this.setState({ assignments, progress, currentAssignment, letterLineArray, currentLetterIndex })
     }
   }
 
-  componentWillUnmount () {
-    this._isMounted = false
-  }
+  componentWillUnmount () { this._isMounted = false }
 
   onLoadingAnimationStop () {
     if (this._isMounted) {
@@ -75,6 +75,21 @@ class StudentView extends Component {
   }
 
   /***
+   * Determines the current letter index to be used for the letter to be written, and the letter selected in the letter line.
+   * If the student has finished all letters, it returns the last letter index in the assignment.
+   * @param progress The current progress of the student
+   * @param currentAssignment The current populated assignment
+   * @returns {*} The current letter index
+   */
+  getCurrentLetterIndex (progress, currentAssignment) {
+    if (progress.currentLetterIndex >= currentAssignment.letters.length) {
+      return progress.currentLetterIndex - 1
+    } else {
+      return progress.currentLetterIndex
+    }
+  }
+
+  /***
    * Is called every time a letter was successfully written.
    * If it was the last word in the assignment, The user is redirected to the home screen
    * @returns {Promise<boolean>} If the letters have been completed
@@ -86,7 +101,7 @@ class StudentView extends Component {
     const didUpdate = await this.updateStudentProgress(progress)
 
     if (didUpdate) {
-      this.setState({ progress: progress })
+      this.setState({ progress: progress, currentLetterIndex: this.getCurrentLetterIndex(progress, currentAssignment) })
 
       if (progress.currentLetterIndex === currentAssignment.letters.length) {
         console.log('All letters have been written')
@@ -114,16 +129,20 @@ class StudentView extends Component {
     }
   }
 
+  onLetterLineSelection (assignmentIndex, letterIndex) {
+    console.log('No implemented yet')
+  }
+
   render () {
-    const { jwt, currentAssignment, progress, letterLineArray, isLoading } = this.state
+    const { jwt, currentAssignment, progress, letterLineArray, currentLetterIndex, isLoading } = this.state
     if (isLoading) return <LoadingScreen triggerFadeAway={this._triggerAnimFade} onStopped={this.onLoadingAnimationStop} />
     return (
       <div style={{ background: '#a9a9a9' }}>
         <Suspense fallback={<LoadingScreen />}>
           <Switch>
-            <Route exact path='/student/:username' render={(props) => <StudentHome {...props} progress={progress} letters={letterLineArray} />} />
+            <Route exact path='/student/:username' render={(props) => <StudentHome {...props} progress={progress} letters={letterLineArray} onLetterLineSelection={(letter) => this.onLetterLineSelection(letter)} />} />
             <Route path='/student/:username/writing' render={() =>
-              <StudentWriting letterToSpell={currentAssignment.letters[progress.currentLetterIndex]} jwt={jwt} onLetterCompletion={this.onLetterCompletion} />}
+              <StudentWriting letterToSpell={currentAssignment.letters[currentLetterIndex]} jwt={jwt} onLetterCompletion={this.onLetterCompletion} />}
             />
             <Route path='/student/:username/spelling' render={() =>
               <DragDropContextProvider backend={TouchBackend}>

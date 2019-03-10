@@ -18,6 +18,10 @@ class StudentWriting extends Component {
     this.checkWrittenCorrectly = this.checkWrittenCorrectly.bind(this)
   }
 
+  componentDidMount () { this._isMounted = true }
+
+  componentWillUnmount () { this._isMounted = false }
+
   clearCanvas = () => {
     this._sketch.clear()
     this._sketch.setBackgroundFromDataUrl('')
@@ -37,7 +41,7 @@ class StudentWriting extends Component {
     const { currentLetter } = this.state
     const textDetected = currentLetter // res.textDetected
 
-    console.log(`Current letter: ${currentLetter}\nText Detected: ${textDetected}`) // todo remove log
+    console.log(`Current letter: ${currentLetter}\nText Detected: ${res.textDetected}`) // todo remove log
 
     if (textDetected === currentLetter) {
       window.alert(`Congrats, You wrote the letter ${currentLetter}`)
@@ -45,7 +49,7 @@ class StudentWriting extends Component {
         this.setState({ isLowercase: false, currentLetter: currentLetter.toLocaleUpperCase() }) // advance to the same letter, but uppercase
       } else {
         await this.props.onLetterCompletion() // callback to student view signifying the current letter is written
-        this.setState({ isLowercase: true, currentLetter: this.props.letterToSpell })
+        if (this._isMounted === true) this.setState({ isLowercase: true, currentLetter: this.props.letterToSpell })
       }
     } else {
       window.alert('Whoops, That\'s not quite correct')
