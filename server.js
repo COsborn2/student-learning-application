@@ -39,7 +39,8 @@ app.get('/api/student', authenticateStudent, studentsRoute.initalizeStudent)
 app.get('/api/assignment/:id', assignmentsRoute.getAssignmentById)
 
 app.post('/api/classrooms', authenticateInstructor, classroomsRoute.createClassroom)
-app.get('/api/classrooms', authenticateStudent, classroomsRoute.getClassroom)
+app.get('/api/classrooms', authenticateStudent, classroomsRoute.getStudentClassroom)
+app.get('/api/classrooms/:id', authenticateInstructor, classroomsRoute.getInstructorClass)
 
 if (isProduction) {
   InfoMessage('Running in production mode')

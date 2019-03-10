@@ -110,7 +110,7 @@ let seedDatabase = async (index) => {
   return newAssignment._id
 }
 
-let getClassroom = async (req, res) => {
+let getStudentClassroom = async (req, res) => {
   let token = req.header('x-auth')
 
   let student = await Student.findByToken(token)
@@ -130,4 +130,29 @@ let getClassroom = async (req, res) => {
   res.send({ classroom })
 }
 
-module.exports = { createClassroom, getClassroom }
+let getInstructorClass = async (req, res) => {
+  let token = req.header('x-auth')
+
+  let classroomId = req.params.id
+
+  let classroom = await Classroom.findById(classroomId)
+
+  if (!classroom) {
+    const err = 'Classroom with that id could not be found'
+    ErrorMessage(err)
+    return res.status(404).send({ error: err })
+  }
+
+  // Make sure that class is actually one of the instructors classes
+  let instructor = await Instructor.findById(token._mid)
+
+  if (instructor.class.indexOf(classroomId) === -1) {
+    const err = 'You are not the instructor for the requested classroom'
+    ErrorMessage(err)
+    return res.status(401).send({ error: err })
+  }
+
+  res.send({ classroom })
+}
+
+module.exports = { createClassroom, getStudentClassroom, getInstructorClass }
