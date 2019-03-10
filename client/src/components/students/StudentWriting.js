@@ -1,27 +1,31 @@
 import React, { Component } from 'react'
 import { SketchField, Tools } from 'react-sketch'
-import { Button, ListGroupItem, ListGroup } from 'react-bootstrap'
+import { Button } from 'react-bootstrap'
+import StudentApiCalls from '../../javascript/StudentApiCalls'
+import PropTypes from 'prop-types'
 
 class StudentWriting extends Component {
   constructor (props) {
     super(props)
-    this.state = { words: ['pig', 'cat', 'raccoon'] }
-  }
-
-  componentDidMount () {
-    // fetch('/api/getData')
-    //   .then(res => res.json())
-    //   .then(wordItems => {
-    //     let updatedWords = this.state.words
-    //     wordItems.map(wordItem => updatedWords.push(wordItem.word))
-    //     this.setState({ words: updatedWords })
-    //   })
+    this.clearCanvas = this.clearCanvas.bind(this)
+    this.checkWrittenCorrectly = this.checkWrittenCorrectly.bind(this)
   }
 
   clearCanvas = () => {
     this._sketch.clear()
     this._sketch.setBackgroundFromDataUrl('')
   };
+
+  async checkWrittenCorrectly () {
+    const base64Image = this._sketch.toDataURL()
+
+    const res = await StudentApiCalls.detectWriting(this.props.jwt, base64Image)
+    if (res.error) {
+      console.log('Some Error Calling Api From Writing')
+    }
+    let textDetected = res.textDetected
+    window.alert(`Text detected: ${textDetected}`)
+  }
 
   render () {
     return (
@@ -36,21 +40,17 @@ class StudentWriting extends Component {
             lineWidth={10} />
 
           <Button className='btn-primary p-2 m-1' onClick={this.clearCanvas}>Clear</Button>
-        </div>
-
-        <div className='card col-md-4 m-4 shadow-lg text-center'>
-          <div className='card-title'> <h1 className='display-4 font-weight-bold'>Words To Write</h1 ></div>
-          <div className='card-body'>
-            <ListGroup>
-              {this.state.words.map(curWord =>
-                <ListGroupItem key={curWord}>{curWord}</ListGroupItem>
-              )}
-            </ListGroup>
-          </div>
+          <Button className='btn-primary p-2 m-1' onClick={this.checkWrittenCorrectly}>Submit</Button>
         </div>
       </div>
     )
   }
+}
+
+StudentWriting.propTypes = {
+  lettersToSpell: PropTypes.array.isRequired,
+  jwt: PropTypes.string.isRequired,
+  onLetterCompletion: PropTypes.func.isRequired
 }
 
 export default StudentWriting

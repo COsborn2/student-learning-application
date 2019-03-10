@@ -1,6 +1,6 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import Spinner from '../../assets/Spinner.gif'
+import Spinner from '../../assets/images/Spinner.gif'
 
 function LoadingSpinner (props) {
   let loadingStyle = ''

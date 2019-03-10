@@ -1,14 +1,15 @@
-import React, { Component } from 'react'
+import React, { Component, lazy, Suspense } from 'react'
 import PropTypes from 'prop-types'
 import StudentHome from './StudentHome'
 import { Route, Switch } from 'react-router-dom'
-import StudentSpelling from './StudentSpelling'
-import StudentWriting from './StudentWriting'
-import StudentVideo from './StudentVideo'
 import { DragDropContextProvider } from 'react-dnd'
 import TouchBackend from 'react-dnd-touch-backend'
 import StudentApiCalls from '../../javascript/StudentApiCalls'
-import LoadingSpinner from '../helpers/LoadingSpinner'
+import LoadingScreen from '../loading/LoadingScreen'
+
+const StudentSpelling = lazy(() => import('./StudentSpelling'))
+const StudentWriting = lazy(() => import('./StudentWriting'))
+const StudentVideo = lazy(() => import('./StudentVideo'))
 
 /* The student view manages all screens and routes for a specific student user
  the login screen creates and authenticates a student object, and passes it
@@ -21,10 +22,10 @@ class StudentView extends Component {
     this.state = {
       username: this.props.user.username,
       jwt: this.props.user.jwt,
-      classCode: null,
       assignments: null,
       currentAssignment: null,
       progress: null,
+      letterLineArray: null,
       isLoading: true
     }
     this._triggerAnimFade = false
@@ -33,28 +34,19 @@ class StudentView extends Component {
     this.onLoadingAnimationStop = this.onLoadingAnimationStop.bind(this)
   }
 
+  /* At mount loads student assignmentId array, letter list, and progress */
   async componentDidMount () {
     let { jwt } = this.state
-    const res = await StudentApiCalls.getAssignmentsAndProgress(jwt)
-    const student = res.student
-    const progress = {
-      currentAssignmentIndex: 0, // student.currentAssignment, todo remove mock
-      currentLetterIndex: student.currentLetter,
-      currentWordIndex: student.currentWord,
-      finishedCourse: student.finishedCourse
-    }
-    const classroom = res.classroom
-    const classCode = classroom.classcode
-    const classAssignments = classroom.assignments
-    const currentAssignment = await StudentApiCalls.getAssignmentById(progress.currentAssignmentIndex)
-    const assignments = StudentApiCalls.getAssignments(jwt) // todo remove mocked assignments when a route is created for the letter bar
+    // const res = await StudentApiCalls.getAssignmentsAndProgress(jwt) todo implement initStudent
 
-    console.log(student)
-    console.log(classAssignments)
+    const progress = await StudentApiCalls.getProgressMock(jwt)
+    const assignments = await StudentApiCalls.getAssignmentsMock(jwt)
+    const letterLineArray = await StudentApiCalls.getLettersMock(jwt)
+    const currentAssignment = assignments[progress.currentAssignmentIndex]
 
-    if (student && classroom && this._isMounted) {
+    if (assignments && this._isMounted) {
       this._triggerAnimFade = true
-      this.setState({ assignments, progress, classCode, currentAssignment })
+      this.setState({ assignments, progress, currentAssignment, letterLineArray })
     }
   }
 
@@ -78,7 +70,7 @@ class StudentView extends Component {
       this.setState({ progress })
       this.props.history.push(`/student/${username}`)
     }
-    StudentApiCalls.putAssignments(jwt, progress)
+    StudentApiCalls.putAssignmentsMock(jwt, progress)
   }
 
   onLetterCompletion () {
@@ -87,20 +79,24 @@ class StudentView extends Component {
   }
 
   render () {
-    const { currentAssignment, assignments, progress, isLoading } = this.state
-    if (isLoading) return <LoadingSpinner triggerFadeAway={this._triggerAnimFade} onStopped={this.onLoadingAnimationStop} />
+    const { jwt, currentAssignment, progress, letterLineArray, isLoading } = this.state
+    if (isLoading) return <LoadingScreen triggerFadeAway={this._triggerAnimFade} onStopped={this.onLoadingAnimationStop} />
     return (
       <div style={{ background: '#a9a9a9' }}>
-        <Switch>
-          <Route exact path='/student/:username' render={(props) => <StudentHome {...props} assignments={assignments} progress={progress} />} />
-          <Route path='/student/:username/writing' component={StudentWriting} />
-          <Route path='/student/:username/spelling' render={() =>
-            <DragDropContextProvider backend={TouchBackend}>
-              <StudentSpelling wordsToSpell={currentAssignment.words}
-                onWordCompletion={(wordIndex, allWordsSpelled) => this.onWordCompletion(wordIndex, allWordsSpelled)} />
-            </DragDropContextProvider>} />
-          <Route path='/student/:username/video' component={StudentVideo} />
-        </Switch>
+        <Suspense fallback={<LoadingScreen />}>
+          <Switch>
+            <Route exact path='/student/:username' render={(props) => <StudentHome {...props} progress={progress} letters={letterLineArray} />} />
+            <Route path='/student/:username/writing' render={() =>
+              <StudentWriting lettersToSpell={currentAssignment.letters} jwt={jwt} onLetterCompletion={this.onLetterCompletion} />}
+            />
+            <Route path='/student/:username/spelling' render={() =>
+              <DragDropContextProvider backend={TouchBackend}>
+                <StudentSpelling wordsToSpell={currentAssignment.words}
+                  onWordCompletion={(wordIndex, allWordsSpelled) => this.onWordCompletion(wordIndex, allWordsSpelled)} />
+              </DragDropContextProvider>} />
+            <Route path='/student/:username/video' render={() => <StudentVideo />} />
+          </Switch>
+        </Suspense>
       </div>
     )
   }

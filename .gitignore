@@ -18,3 +18,7 @@ yarn.lock
 
 #ignore WebStorm 
 .idea/
+
+#ignore Tesseract training data, and input image
+tesseractInputImage.png
+eng.traineddata

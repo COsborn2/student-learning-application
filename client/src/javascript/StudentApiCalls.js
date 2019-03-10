@@ -4,6 +4,11 @@ import fetch from 'isomorphic-fetch'
 const signupURL = '/api/student/login'
 const loginURL = '/api/student/login'
 const getAssignmentsAndProgressURL = '/api/student/progress'
+const detectWritingURL = '/api/student/writing'
+
+async function stall (stallTime = 3000) {
+  await new Promise(resolve => setTimeout(resolve, stallTime))
+}
 
 class StudentApiCalls {
   static async signup (classCode, username) {
@@ -66,6 +71,7 @@ class StudentApiCalls {
     }
 
     const res = await fetch(getAssignmentsAndProgressURL, httpMessage)
+    let body = await res.json()
     if (res.status !== 200) {
       const body = await res.json()
       console.log(httpMessage) // todo remove log statements
@@ -73,11 +79,32 @@ class StudentApiCalls {
       console.log(`Error: ${body.error}`)
       return { error: body.error }
     }
-    let body = await res.json()
     return { student: body.student, classroom: body.classroom }
   }
 
-  static async getAssignmentById (id) {
+  static async detectWriting (jwt, image64) {
+    let httpMessage = {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-auth': jwt
+      },
+      body: JSON.stringify({ image: image64 })
+    }
+
+    const res = await fetch(detectWritingURL, httpMessage)
+    const body = await res.json()
+    if (res.status !== 200) {
+      console.log(httpMessage) // todo remove log statements
+      console.log(res)
+      console.log(`Error: ${body.error}`)
+      return { error: body.error }
+    }
+
+    return body
+  }
+
+  static async getAssignmentByIdMock (id) {
     return {
       letters: ['a', 'b', 'c'],
       words: [
@@ -90,9 +117,10 @@ class StudentApiCalls {
     }
   }
 
-  static getProgress (jwt) {
+  static async getProgressMock (jwt) {
+    await stall(500)
     let progress = {
-      currentAssignmentIndex: 0,
+      currentAssignmentIndex: 1,
       currentWordIndex: 0, // if word index is equal to the array size, all words have been spelled
       currentLetterIndex: 0
     }
@@ -100,7 +128,8 @@ class StudentApiCalls {
   }
 
   // This is where the api call is made to retrieve the specific student's assignments
-  static getAssignments (jwt) {
+  static async getAssignmentsMock (jwt) {
+    await stall(500)
     let assignments = [
       {
         letters: ['a', 'b', 'c'],
@@ -127,8 +156,15 @@ class StudentApiCalls {
     return assignments
   }
 
+  static async getLettersMock (jwt) {
+    return [
+      ['a', 'b', 'c'],
+      ['d'], ['e'], ['f']
+    ]
+  }
+
   // This is where the api call is made to update the specific students's assignment progress on the server
-  static putAssignments (jwt, progress) {
+  static putAssignmentsMock (jwt, progress) {
     console.log('user wordIndex: ' + progress.curWordIndex)
     console.log('Expected api signup call.')
   }

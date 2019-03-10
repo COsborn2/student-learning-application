@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 import DropDownWithFilter from '../helpers/DropDownWithFilter.js'
-import './instructorStyles.css'
+import '../../assets/css/instructorStyles.css'
 
 class Course extends Component {
   constructor (props) {
