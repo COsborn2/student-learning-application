@@ -3,10 +3,17 @@ import { SketchField, Tools } from 'react-sketch'
 import { Button } from 'react-bootstrap'
 import StudentApiCalls from '../../javascript/StudentApiCalls'
 import PropTypes from 'prop-types'
+import LoadingOverlay from '../loading/LoadingOverlay'
 
 class StudentWriting extends Component {
   constructor (props) {
     super(props)
+    this.state = {
+      isLoading: false,
+      isLowercase: true,
+      currentLetter: this.props.letterToSpell
+    }
+    window.alert('This is mocked for testing right now, so it will log what tesserct detected, but will accept it regardless of correctness')
     this.clearCanvas = this.clearCanvas.bind(this)
     this.checkWrittenCorrectly = this.checkWrittenCorrectly.bind(this)
   }
@@ -19,18 +26,38 @@ class StudentWriting extends Component {
   async checkWrittenCorrectly () {
     const base64Image = this._sketch.toDataURL()
 
+    this.setState({ isLoading: true })
     const res = await StudentApiCalls.detectWriting(this.props.jwt, base64Image)
+    this.setState({ isLoading: false })
+
     if (res.error) {
       console.log('Some Error Calling Api From Writing')
     }
-    let textDetected = res.textDetected
-    window.alert(`Text detected: ${textDetected}`)
+
+    const { currentLetter } = this.state
+    const textDetected = currentLetter // res.textDetected
+
+    console.log(`Current letter: ${currentLetter}\nText Detected: ${textDetected}`) // todo remove log
+
+    if (textDetected === currentLetter) {
+      window.alert(`Congrats, You wrote the letter ${currentLetter}`)
+      if (this.state.isLowercase) { // if they are on the lowercase letter, dont update progress
+        this.setState({ isLowercase: false, currentLetter: currentLetter.toLocaleUpperCase() }) // advance to the same letter, but uppercase
+      } else {
+        await this.props.onLetterCompletion() // callback to student view signifying the current letter is written
+        this.setState({ isLowercase: true, currentLetter: this.props.letterToSpell })
+      }
+    } else {
+      window.alert('Whoops, That\'s not quite correct')
+    }
   }
 
   render () {
+    const { isLoading, currentLetter } = this.state
     return (
       <div className='container p-3'>
-        <h1 className='text-center p-1 shadow'>Writing</h1>
+        <LoadingOverlay show={isLoading} />
+        <h1 className='text-center p-1 shadow'>Write the letter {currentLetter}</h1>
         <div className='bg-dark'>
           <SketchField
             className='badge-info'
@@ -48,7 +75,7 @@ class StudentWriting extends Component {
 }
 
 StudentWriting.propTypes = {
-  lettersToSpell: PropTypes.array.isRequired,
+  letterToSpell: PropTypes.string.isRequired,
   jwt: PropTypes.string.isRequired,
   onLetterCompletion: PropTypes.func.isRequired
 }
