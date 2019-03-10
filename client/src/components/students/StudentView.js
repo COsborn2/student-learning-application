@@ -11,11 +11,12 @@ const StudentSpelling = lazy(() => import('./StudentSpelling'))
 const StudentWriting = lazy(() => import('./StudentWriting'))
 const StudentVideo = lazy(() => import('./StudentVideo'))
 
-/* The student view manages all screens and routes for a specific student user
+/***
+ The student view manages all screens and routes for a specific student user
  the login screen creates and authenticates a student object, and passes it
  to this component. If the user object ever becomes null or not authentic, it redirects
- to the login screen */
-
+ to the login screen
+ */
 class StudentView extends Component {
   constructor (props) {
     super(props)
@@ -38,7 +39,9 @@ class StudentView extends Component {
     this.onLoadingAnimationStop = this.onLoadingAnimationStop.bind(this)
   }
 
-  /* At mount loads student assignmentId array, letter list, and progress */
+  /***
+   * This is called when the component mounts. It loads assignmentIds, populated current assignment, and letters
+   */
   async componentDidMount () {
     let { jwt, progress } = this.state
     let res = await StudentApiCalls.getInitialStudentState(jwt)
@@ -67,6 +70,9 @@ class StudentView extends Component {
 
   componentWillUnmount () { this._isMounted = false }
 
+  /***
+   * This method is called when the loading animation has finished fading out
+   */
   onLoadingAnimationStop () {
     if (this._isMounted) {
       this._triggerAnimFade = false
@@ -75,35 +81,25 @@ class StudentView extends Component {
     }
   }
 
-  onWordCompletion (wordIndex, allWordsSpelled) {
-    let { username, jwt, progress } = this.state
+  /***
+   * Is called every time a word was successfully spelled. Updates user progress
+   * @param wordIndex The word index to update to
+   * @param allWordsSpelled If all the words have been spelled
+   */
+  async onWordCompletion (wordIndex, allWordsSpelled) {
+    let { username, progress } = this.state
     progress.currentWordIndex = wordIndex
     if (allWordsSpelled) {
-      progress.currentWordIndex = 0 // todo this is temporary so it resets, rather than be over
-      console.log('All words have been spelled. For now the words will repeat')
+      console.log('All words have been spelled.')
       this.setState({ progress })
       this.props.history.push(`/student/${username}`)
     }
-    StudentApiCalls.putAssignmentsMock(jwt, progress)
+    await this.updateStudentProgress(progress)
   }
 
   /***
-   * Determines the current letter index to be used for the letter to be written, and the letter selected in the letter line.
-   * If the student has finished all letters, it returns the last letter index in the assignment.
-   * @param progress The current progress of the student
-   * @param currentAssignment The current populated assignment
-   * @returns {*} The current letter index
-   */
-  getSelectedLetterIndex (progress, currentAssignment) {
-    return (progress.currentLetterIndex >= currentAssignment.letters.length)
-      ? progress.currentLetterIndex - 1
-      : progress.currentLetterIndex
-  }
-
-  /***
-   * Is called every time a letter was successfully written.
+   * Is called every time a letter was successfully written. Updates user progress
    * If it was the last word in the assignment, The user is redirected to the home screen
-   * @returns {Promise<boolean>} If the letters have been completed
    */
   async onLetterCompletion () {
     let { username, progress, currentAssignment } = this.state
@@ -121,6 +117,19 @@ class StudentView extends Component {
     } else {
       console.log('Update failed')
     }
+  }
+
+  /***
+   * Determines the current letter index to be used for the letter to be written, and the letter selected in the letter line.
+   * If the student has finished all letters, it returns the last letter index in the assignment.
+   * @param progress The current progress of the student
+   * @param currentAssignment The current populated assignment
+   * @returns {*} The current letter index
+   */
+  getSelectedLetterIndex (progress, currentAssignment) {
+    return (progress.currentLetterIndex >= currentAssignment.letters.length)
+      ? progress.currentLetterIndex - 1
+      : progress.currentLetterIndex
   }
 
   /***

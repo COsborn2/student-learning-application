@@ -200,7 +200,7 @@ let initalizeStudent = async (req, res) => {
 
   let assignmentIndex = (student.finishedCourse)
     ? classroom.assignments.length - 1
-    : student.currentAssignment
+    : student.currentAssignment // gets last assignment if user has completed the course
 
   let currentAssignment = await Assignment.findById(assignmentIds[assignmentIndex].assignmentId).populate('words')
 
