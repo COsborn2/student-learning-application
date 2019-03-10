@@ -13,7 +13,7 @@ let getAssignmentById = async (req, res) => {
     return res.status(404).send({ error: err })
   }
 
-  SuccessMessage(`Assignment with id of ${assignmentId} was found`)
+  SuccessMessage(`Assignment with id of (${assignmentId}) was found`)
   res.send({ assignment })
 }
 

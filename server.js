@@ -35,13 +35,14 @@ app.post('/api/student', studentsRoute.createStudent)
 app.post('/api/student/writing', authenticateStudent, tesseractRoute.detectImageText)
 app.delete('/api/student/:id', authenticateInstructor, studentsRoute.deleteStudent)
 app.post('/api/student/login', studentsRoute.loginStudent)
-app.get('/api/student/progress', authenticateStudent, studentsRoute.getAssignmentAndProgress)
 app.put('/api/student/progress', authenticateStudent, studentsRoute.updateStudentProgress)
+app.get('/api/student', authenticateStudent, studentsRoute.initalizeStudent)
 
 app.get('/api/assignment/:id', assignmentsRoute.getAssignmentById)
 
 app.post('/api/classrooms', authenticateInstructor, classroomsRoute.createClassroom)
-app.get('/api/classrooms/:id', classroomsRoute.getLetters)
+app.get('/api/classrooms', authenticateStudent, classroomsRoute.getStudentClassroom)
+app.get('/api/classrooms/:id', authenticateInstructor, classroomsRoute.getInstructorClass)
 
 if (isProduction) {
   InfoMessage('Running in production mode')
