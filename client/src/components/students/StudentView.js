@@ -31,6 +31,7 @@ class StudentView extends Component {
     this._triggerAnimFade = false
     this._isMounted = true
     this.onWordCompletion = this.onWordCompletion.bind(this)
+    this.onLetterCompletion = this.onLetterCompletion.bind(this)
     this.onLoadingAnimationStop = this.onLoadingAnimationStop.bind(this)
   }
 
@@ -73,9 +74,44 @@ class StudentView extends Component {
     StudentApiCalls.putAssignmentsMock(jwt, progress)
   }
 
-  onLetterCompletion () {
-    console.log('all letters have been written')
-    this.setState({ curLettersCompleted: true })
+  /***
+   * Is called every time a letter was successfully written.
+   * If it was the last word in the assignment, The user is redirected to the home screen
+   * @returns {Promise<boolean>} If the letters have been completed
+   */
+  async onLetterCompletion () {
+    let { username, progress, currentAssignment } = this.state
+
+    progress.currentLetterIndex++
+    const didUpdate = await this.updateStudentProgress(progress)
+
+    if (didUpdate) {
+      this.setState({ progress: progress })
+
+      if (progress.currentLetterIndex === currentAssignment.letters.length) {
+        console.log('All letters have been written')
+        this.props.history.push(`/student/${username}`)
+      }
+    } else {
+      console.log('Update failed')
+    }
+  }
+
+  /***
+   * Calls api to update progress
+   * @param progress Student's progress to update
+   * @returns {Promise<boolean>} If the update was successful
+   */
+  async updateStudentProgress (progress) {
+    let { jwt } = this.state
+    let res = await StudentApiCalls.putAssignmentsMock(jwt, progress)
+
+    if (res.error) {
+      console.log('Some Error Calling Api to update assignment progress')
+      return false
+    } else {
+      return true
+    }
   }
 
   render () {
@@ -87,7 +123,7 @@ class StudentView extends Component {
           <Switch>
             <Route exact path='/student/:username' render={(props) => <StudentHome {...props} progress={progress} letters={letterLineArray} />} />
             <Route path='/student/:username/writing' render={() =>
-              <StudentWriting lettersToSpell={currentAssignment.letters} jwt={jwt} onLetterCompletion={this.onLetterCompletion} />}
+              <StudentWriting letterToSpell={currentAssignment.letters[progress.currentLetterIndex]} jwt={jwt} onLetterCompletion={this.onLetterCompletion} />}
             />
             <Route path='/student/:username/spelling' render={() =>
               <DragDropContextProvider backend={TouchBackend}>
