@@ -48,12 +48,7 @@ class StudentView extends Component {
     }
 
     const assignmentIds = res.assignmentIds
-    res = await StudentApiCalls.getAssignmentById(assignmentIds[progress.currentAssignmentIndex].assignmentId)
-
-    if (res.error) {
-      this.props.history.push('/error', res.error)
-    }
-    const currentAssignment = res
+    const currentAssignment = res.currentAssignment
     const currentAssignmentIndex = progress.currentAssignmentIndex
     const currentLetterIndex = this.getSelectedLetterIndex(progress, currentAssignment)
 
@@ -166,7 +161,7 @@ class StudentView extends Component {
 
   /***
    * Bundles and returns all data necessary to determine the style of the letterLine buttons
-   * @returns {{unlockedLetterIndex: number, letterLineArray, unlockedAssignmentIndex: number, selectedAssignmentIndex, selectedLetterIndex}}
+   * @returns {{unlockedLetterIndex: number, assignmentIds: array, unlockedAssignmentIndex: number, selectedAssignmentIndex: number, selectedLetterIndex: number}}
    */
   getLetterLineInfo () {
     const { progress, assignmentIds, currentAssignmentIndex, currentLetterIndex } = this.state

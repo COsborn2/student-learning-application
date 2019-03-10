@@ -1,6 +1,7 @@
 const _ = require('lodash')
 const { Token } = require('../models/token')
 const { Student } = require('../models/student')
+const { Assignment } = require('../models/assignment')
 const { Classroom } = require('../models/classroom')
 const { ErrorMessage, SuccessMessage } = require('../middleware/message')
 const { ObjectID } = require('mongodb')
@@ -197,11 +198,11 @@ let initalizeStudent = async (req, res) => {
 
   let assignmentIds = await classroom.getLetters()
 
-  if (student.finishedCourse) {
-    return res.send({ assignmentIds })
-  }
+  let assignmentIndex = (student.finishedCourse)
+    ? classroom.assignments.length - 1
+    : student.currentAssignment
 
-  let currentAssignment = classroom.assignments[student.currentAssignment]
+  let currentAssignment = await Assignment.findById(assignmentIds[assignmentIndex].assignmentId).populate('words')
 
   res.send({ assignmentIds, currentAssignment })
 }
