@@ -4,7 +4,7 @@ import fetch from 'isomorphic-fetch'
 const signupURL = '/api/student'
 const loginURL = '/api/student/login'
 const initURL = '/api/student'
-const getAssignmentsAndProgressURL = '/api/student/progress'
+const getAssignmentURL = '/api/assignment/'
 const detectWritingURL = '/api/student/writing'
 
 async function stall (stallTime = 3000) {
@@ -93,8 +93,6 @@ class StudentApiCalls {
 
     const res = await fetch(initURL, httpMessage)
     let body = await res.json()
-    console.log('body')
-    console.log(body)
     if (res.status !== 200) {
       const body = await res.json()
       console.log(httpMessage) // todo remove log statements
@@ -105,16 +103,13 @@ class StudentApiCalls {
     return body
   }
 
-  static async getAssignmentsAndProgress (jwt) {
+  static async getAssignmentById (id) {
     let httpMessage = {
       method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-        'x-auth': jwt
-      }
+      headers: { 'Content-Type': 'application/json' }
     }
 
-    const res = await fetch(getAssignmentsAndProgressURL, httpMessage)
+    const res = await fetch(getAssignmentURL + id, httpMessage)
     let body = await res.json()
     if (res.status !== 200) {
       const body = await res.json()
@@ -123,7 +118,8 @@ class StudentApiCalls {
       console.log(`Error: ${body.error}`)
       return { error: body.error }
     }
-    return { student: body.student, classroom: body.classroom }
+
+    return body.assignment
   }
 
   static async detectWriting (jwt, image64) {

@@ -195,15 +195,15 @@ let initalizeStudent = async (req, res) => {
 
   let classroom = await Classroom.findById(student.class)
 
-  let letters = await classroom.getLetters()
+  let assignmentIds = await classroom.getLetters()
 
   if (student.finishedCourse) {
-    return res.send({ finishedCourse: student.finishedCourse, letters })
+    return res.send({ assignmentIds })
   }
 
   let currentAssignment = classroom.assignments[student.currentAssignment]
 
-  res.send({ finishedCourse: student.finishedCourse, letters, currentAssignment })
+  res.send({ assignmentIds, currentAssignment })
 }
 
 module.exports = { createStudent, loginStudent, validateStudent, updateStudentProgress, deleteStudent, initalizeStudent }

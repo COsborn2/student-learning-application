@@ -23,7 +23,7 @@ class StudentView extends Component {
       username: this.props.user.username,
       jwt: this.props.user.jwt,
       progress: this.props.user.progress,
-      assignments: null,
+      assignmentIds: null,
       currentAssignment: null,
       currentAssignmentIndex: null,
       currentLetterIndex: null,
@@ -32,6 +32,7 @@ class StudentView extends Component {
     }
     this._triggerAnimFade = false
     this._isMounted = true
+    this.getSelectedLetterIndex = this.getSelectedLetterIndex.bind(this)
     this.onWordCompletion = this.onWordCompletion.bind(this)
     this.onLetterCompletion = this.onLetterCompletion.bind(this)
     this.onLetterLineSelection = this.onLetterLineSelection.bind(this)
@@ -41,25 +42,32 @@ class StudentView extends Component {
   /* At mount loads student assignmentId array, letter list, and progress */
   async componentDidMount () {
     let { jwt, progress } = this.state
-    const res = await StudentApiCalls.getInitialStudentState(jwt)
+    let res = await StudentApiCalls.getInitialStudentState(jwt)
 
-    const assignments = await StudentApiCalls.getAssignmentsMock(jwt)
-    const letterLineArray = await StudentApiCalls.getLettersMock(jwt)
-    const currentAssignment = assignments[progress.currentAssignmentIndex]
+    if (res.error) {
+      this.props.history.push('/error', res.error)
+    }
+
+    const assignmentIds = res.assignmentIds
+    res = await StudentApiCalls.getAssignmentById(assignmentIds[progress.currentAssignmentIndex].assignmentId)
+
+    if (res.error) {
+      this.props.history.push('/error', res.error)
+    }
+    const currentAssignment = res
     const currentAssignmentIndex = progress.currentAssignmentIndex
     const currentLetterIndex = this.getSelectedLetterIndex(progress, currentAssignment)
 
-    if (assignments && this._isMounted) {
+    if (assignmentIds && this._isMounted) {
       this._triggerAnimFade = true
       this.setState({
-        assignments,
+        assignmentIds,
         currentAssignment,
         currentAssignmentIndex,
-        currentLetterIndex,
-        letterLineArray
+        currentLetterIndex
       })
     } else {
-      this.props.history.push('/error')
+      this.props.history.push('/error', 'Api failed to return required data')
     }
   }
 
@@ -155,9 +163,9 @@ class StudentView extends Component {
    * @returns {{unlockedLetterIndex: number, letterLineArray, unlockedAssignmentIndex: number, selectedAssignmentIndex, selectedLetterIndex}}
    */
   getLetterLineInfo () {
-    const { progress, letterLineArray, currentAssignmentIndex, currentLetterIndex } = this.state
+    const { progress, assignmentIds, currentAssignmentIndex, currentLetterIndex } = this.state
     return {
-      letterLineArray: letterLineArray,
+      assignmentIds: assignmentIds,
       unlockedAssignmentIndex: progress.currentAssignmentIndex,
       unlockedLetterIndex: progress.currentLetterIndex,
       selectedAssignmentIndex: currentAssignmentIndex,

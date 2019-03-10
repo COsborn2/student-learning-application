@@ -2,15 +2,15 @@ import React from 'react'
 import PropTypes from 'prop-types'
 
 const LetterLine = ({ letterLineInfo, onLetterLineSelection }) => {
-  const { letterLineArray, unlockedAssignmentIndex, unlockedLetterIndex, selectedAssignmentIndex, selectedLetterIndex } = letterLineInfo
+  const { assignmentIds, unlockedAssignmentIndex, unlockedLetterIndex, selectedAssignmentIndex, selectedLetterIndex } = letterLineInfo
 
   let letterLine = []
   let curLetterNum = 1
   let btnStyle = ''
   let isDisabled = false
 
-  for (let i = 0; i < letterLineArray.length; i++) {
-    for (let j = 0; j < letterLineArray[i].length; j++) {
+  for (let i = 0; i < assignmentIds.length; i++) {
+    for (let j = 0; j < assignmentIds[i].letters.length; j++) {
       if (i < unlockedAssignmentIndex) { // this if/else block determines style based on users progress
         btnStyle = 'text-info'
       } else if (i > unlockedAssignmentIndex) {
@@ -29,7 +29,7 @@ const LetterLine = ({ letterLineInfo, onLetterLineSelection }) => {
         btnStyle = 'text-success'
       }
 
-      let curLetter = letterLineArray[i][j]
+      let curLetter = assignmentIds[i].letters[j]
       let curLetterBtn =
         <button key={curLetterNum++} type='button' className='btn btn-link'
           disabled={isDisabled} onClick={() => onLetterLineSelection(i, j)}>
