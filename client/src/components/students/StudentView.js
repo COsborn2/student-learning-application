@@ -6,6 +6,7 @@ import { DragDropContextProvider } from 'react-dnd'
 import TouchBackend from 'react-dnd-touch-backend'
 import StudentApiCalls from '../../javascript/StudentApiCalls'
 import LoadingScreen from '../loading/LoadingScreen'
+import StudentToolbar from '../menu/StudentToolbar'
 
 const StudentSpelling = lazy(() => import('./StudentSpelling'))
 const StudentWriting = lazy(() => import('./StudentWriting'))
@@ -90,8 +91,8 @@ class StudentView extends Component {
     let { username, progress } = this.state
     progress.currentWordIndex = wordIndex
     if (allWordsSpelled) {
-      console.log('All words have been spelled.')
       this.setState({ progress })
+      console.log('All words have been spelled.')
       this.props.history.push(`/student/${username}`)
     }
     await this.updateStudentProgress(progress)
@@ -130,6 +131,19 @@ class StudentView extends Component {
     return (progress.currentLetterIndex >= currentAssignment.letters.length)
       ? progress.currentLetterIndex - 1
       : progress.currentLetterIndex
+  }
+
+  /***
+   * Determines if the current assignment index is greater than the number of assignments.
+   * If the student has finished all assignments, it returns the last assignment index in the assignment.
+   * @param progress The current progress of the student
+   * @param currentAssignment The current populated assignment
+   * @returns {*} The current letter index
+   */
+  getSelectedAssignmentIndex (progress, assignmentIds) {
+    return (progress.currentAssignmentIndex >= assignmentIds.length)
+      ? progress.currentAssignmentIndex - 1
+      : progress.currentAssignmentIndex
   }
 
   /***
@@ -188,6 +202,7 @@ class StudentView extends Component {
     if (isLoading) return <LoadingScreen triggerFadeAway={this._triggerAnimFade} onStopped={this.onLoadingAnimationStop} />
     return (
       <Suspense fallback={<LoadingScreen />}>
+        <StudentToolbar />
         <Switch>
           <Route exact path='/student/:username' render={(props) =>
             <StudentHome {...props} letterLineInfo={this.getLetterLineInfo()}

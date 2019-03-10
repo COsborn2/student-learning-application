@@ -51,7 +51,10 @@ class StudentLogin extends Component {
   }
 
   async handleSkipLogin () { // todo remove dev skip
-    let res = await StudentApiCalls.login('someClasscode', 'someUsername')
+    this.setState({ isLoading: true })
+    let res = await StudentApiCalls.login('someClasscode', 'studentDEV')
+    this.setState({ isLoading: false })
+
     if (res.error) this.animateMessage(res.error)
     else if (res.jwt) {
       window.sessionStorage.setItem('student', JSON.stringify(res))
