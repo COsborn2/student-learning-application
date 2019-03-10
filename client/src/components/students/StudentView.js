@@ -82,11 +82,9 @@ class StudentView extends Component {
    * @returns {*} The current letter index
    */
   getCurrentLetterIndex (progress, currentAssignment) {
-    if (progress.currentLetterIndex >= currentAssignment.letters.length) {
-      return progress.currentLetterIndex - 1
-    } else {
-      return progress.currentLetterIndex
-    }
+    return (progress.currentLetterIndex >= currentAssignment.letters.length)
+      ? progress.currentLetterIndex - 1
+      : progress.currentLetterIndex
   }
 
   /***

@@ -43,7 +43,12 @@ class StudentWriting extends Component {
 
     console.log(`Current letter: ${currentLetter}\nText Detected: ${res.textDetected}`) // todo remove log
 
-    if (textDetected === currentLetter) {
+    // Tesseract is bad at determining case of some letters. So it converts detected text to match case
+    const isMatch = (this.state.isLowercase)
+      ? currentLetter === textDetected.toLocaleLowerCase()
+      : currentLetter === currentLetter.toLocaleUpperCase()
+
+    if (isMatch) {
       window.alert(`Congrats, You wrote the letter ${currentLetter}`)
       if (this.state.isLowercase) { // if they are on the lowercase letter, dont update progress
         this.setState({ isLowercase: false, currentLetter: currentLetter.toLocaleUpperCase() }) // advance to the same letter, but uppercase
