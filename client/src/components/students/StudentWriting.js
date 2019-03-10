@@ -48,6 +48,7 @@ class StudentWriting extends Component {
 
     if (isMatch) {
       window.alert(`Congrats, You wrote ${res.textDetected}`)
+      this._sketch.clear()
       if (this.state.isLowercase) { // if they are on the lowercase letter, dont update progress
         this.setState({ isLowercase: false, currentLetter: currentLetter.toLocaleUpperCase() }) // advance to the same letter, but uppercase
       } else {
@@ -62,7 +63,7 @@ class StudentWriting extends Component {
   render () {
     const { isLoading, currentLetter } = this.state
     return (
-      <div className='container p-3'>
+      <div className='mx-auto text-center' style={{ background: '#b9d5e0', width: '85%' }}>
         <LoadingOverlay show={isLoading} />
         <h1 className='text-center p-1 shadow'>Write the letter {currentLetter}</h1>
         <div className='bg-dark'>

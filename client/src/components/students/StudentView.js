@@ -38,6 +38,8 @@ class StudentView extends Component {
     this.onLetterCompletion = this.onLetterCompletion.bind(this)
     this.onLetterLineSelection = this.onLetterLineSelection.bind(this)
     this.onLoadingAnimationStop = this.onLoadingAnimationStop.bind(this)
+    this.advanceToNextAssignment = this.advanceToNextAssignment.bind(this)
+    this.onCourseCompleted = this.onCourseCompleted.bind(this)
   }
 
   /***
@@ -91,9 +93,10 @@ class StudentView extends Component {
     let { username, progress } = this.state
     progress.currentWordIndex = wordIndex
     if (allWordsSpelled) {
-      this.setState({ progress })
       console.log('All words have been spelled.')
+      this.setState({ progress })
       this.props.history.push(`/student/${username}`)
+      await this.advanceToNextAssignment() // this assumes you cant spell till you have completed writing
     }
     await this.updateStudentProgress(progress)
   }
@@ -105,6 +108,7 @@ class StudentView extends Component {
   async onLetterCompletion () {
     let { username, progress, currentAssignment } = this.state
 
+    // need to check if user is on an old letter, dont change progress if they are
     progress.currentLetterIndex++
     const didUpdate = await this.updateStudentProgress(progress)
 
@@ -118,6 +122,26 @@ class StudentView extends Component {
     } else {
       console.log('Update failed')
     }
+  }
+
+  async advanceToNextAssignment () {
+    let { progress, assignmentIds, currentAssignment, currentAssignmentIndex, currentLetterIndex } = this.state
+    progress.currentAssignmentIndex++
+    progress.currentWordIndex = 0
+    progress.currentLetterIndex = 0
+    if (progress.currentAssignmentIndex === assignmentIds.length) this.onCourseCompleted()
+
+    this.setState({ isLoading: true })
+    currentAssignmentIndex = progress.currentAssignmentIndex
+    currentLetterIndex = 0
+    currentAssignment = await StudentApiCalls.getAssignmentById(assignmentIds[currentAssignmentIndex].assignmentId)
+    this._triggerAnimFade = true
+    this.setState({ progress, assignmentIds, currentAssignment, currentAssignmentIndex, currentLetterIndex })
+    console.log(`Current assignment: ${currentAssignmentIndex}`)
+  }
+
+  onCourseCompleted () {
+    window.alert('Yay you finished the course')
   }
 
   /***
@@ -137,7 +161,7 @@ class StudentView extends Component {
    * Determines if the current assignment index is greater than the number of assignments.
    * If the student has finished all assignments, it returns the last assignment index in the assignment.
    * @param progress The current progress of the student
-   * @param currentAssignment The current populated assignment
+   * @param assignmentIds The current assignments available
    * @returns {*} The current letter index
    */
   getSelectedAssignmentIndex (progress, assignmentIds) {
@@ -170,7 +194,7 @@ class StudentView extends Component {
    * @returns {Promise<void>}
    */
   async onLetterLineSelection (selectedAssignmentIndex, selectedLetterIndex) {
-    let { assignmentIds, currentAssignment, currentAssignmentIndex, currentLetterIndex } = this.state
+    let { progress, assignmentIds, currentAssignment, currentAssignmentIndex, currentLetterIndex } = this.state
 
     if (selectedAssignmentIndex === currentAssignmentIndex && selectedLetterIndex === currentLetterIndex) return null // if its the already selected letter do nothing
 
@@ -179,7 +203,7 @@ class StudentView extends Component {
     currentLetterIndex = selectedLetterIndex
     currentAssignment = await StudentApiCalls.getAssignmentById(assignmentIds[selectedAssignmentIndex].assignmentId)
     this._triggerAnimFade = true
-    this.setState({ currentAssignment, currentAssignmentIndex, currentLetterIndex })
+    this.setState({ progress, currentAssignment, currentAssignmentIndex, currentLetterIndex })
   }
 
   /***

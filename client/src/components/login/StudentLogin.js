@@ -23,7 +23,6 @@ class StudentLogin extends Component {
     }
     this.handleLogin = this.handleLogin.bind(this)
     this.handleSkipLogin = this.handleSkipLogin.bind(this) // todo remove dev skip
-    this.handleSignup = this.handleSignup.bind(this)
   }
 
   // Hit backend for verification
@@ -70,10 +69,6 @@ class StudentLogin extends Component {
     }, 3000)
   }
 
-  handleSignup () {
-    this.props.history.replace('/signup/student') // todo remove dev skip for easy access
-  }
-
   render () {
     const { validated, showMessage, isLoading } = this.state
     let errorMessageStyle = showMessage ? messageStyles.messageShow : messageStyles.messageFading
@@ -86,7 +81,7 @@ class StudentLogin extends Component {
               <ModalTitle>Student Login</ModalTitle>
               <div className='flex-fill' />
               <Button className='btn-warning mx-2' onClick={this.handleSkipLogin}>Dev Skip</Button>
-              <Button onClick={() => this.props.history.replace('/signup/student')}>Signup</Button>
+              <Button onClick={() => this.props.history.push('/signup/student')}>Signup</Button>
             </ModalHeader>
 
             <ModalBody>
