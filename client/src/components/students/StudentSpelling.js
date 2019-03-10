@@ -72,7 +72,7 @@ function debugConvertToMinutes (time) {
 }
 */
 /*
-  We pass an array of wordObjects as a property. Each item in the array consists of a word, and an imageURL
+  We pass an array of wordObjects as a property. Each item in the array consists of a word, and an picture
   You can access them like shown below. When a word is completed move on to the next word.
   When each word is completed, call the `onWordCompletion()` method passed as a property.
  */
@@ -81,12 +81,12 @@ class StudentSpelling extends React.Component {
   constructor (props) {
     super(props)
     let wordsToSpell = props.wordsToSpell
-    let firstWordToSpell = wordsToSpell[0].word
+    let firstWordToSpell = wordsToSpell[0].text
     this.state = {
       wordsToSpell: wordsToSpell,
       wordIndex: 0,
       curWordToSpell: firstWordToSpell,
-      curImageURL: wordsToSpell[0].imageURL,
+      curImageURL: wordsToSpell[0].picture,
       curHand: getLetters(firstWordToSpell),
       curDropZone: initializeDropZone(firstWordToSpell.length),
       dropOrder: [],
@@ -102,7 +102,7 @@ class StudentSpelling extends React.Component {
     if (!allWordsSpelled) {
       const nextWordItem = wordsToSpell[wordIndex]
       curWordToSpell = nextWordItem.word
-      curImageURL = nextWordItem.imageURL
+      curImageURL = nextWordItem.picture
       curHand = getLetters(curWordToSpell)
       curDropZone = initializeDropZone(curWordToSpell.length)
       dropOrder = []

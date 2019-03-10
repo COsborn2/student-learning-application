@@ -27,7 +27,6 @@ class StudentView extends Component {
       currentAssignment: null,
       currentAssignmentIndex: null,
       currentLetterIndex: null,
-      letterLineArray: null,
       isLoading: true
     }
     this._triggerAnimFade = false
