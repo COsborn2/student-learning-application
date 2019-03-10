@@ -22,11 +22,11 @@ class StudentView extends Component {
     this.state = {
       username: this.props.user.username,
       jwt: this.props.user.jwt,
+      progress: this.props.user.progress,
       assignments: null,
       currentAssignment: null,
       currentAssignmentIndex: null,
       currentLetterIndex: null,
-      progress: null,
       letterLineArray: null,
       isLoading: true
     }
@@ -40,10 +40,9 @@ class StudentView extends Component {
 
   /* At mount loads student assignmentId array, letter list, and progress */
   async componentDidMount () {
-    let { jwt } = this.state
+    let { jwt, progress } = this.state
     const res = await StudentApiCalls.getInitialStudentState(jwt)
 
-    const progress = await StudentApiCalls.getProgressMock(jwt)
     const assignments = await StudentApiCalls.getAssignmentsMock(jwt)
     const letterLineArray = await StudentApiCalls.getLettersMock(jwt)
     const currentAssignment = assignments[progress.currentAssignmentIndex]
@@ -54,7 +53,6 @@ class StudentView extends Component {
       this._triggerAnimFade = true
       this.setState({
         assignments,
-        progress,
         currentAssignment,
         currentAssignmentIndex,
         currentLetterIndex,

@@ -34,7 +34,17 @@ class StudentApiCalls {
     }
 
     let jwt = res.headers.get('x-auth')
-    return { jwt, username: body.username }
+    return {
+      username: body.username,
+      jwt,
+      classcode: body.classcode,
+      progress: {
+        currentAssignmentIndex: body.currentAssignment,
+        currentWordIndex: body.currentLetter, // if word index is equal to the array size, all words have been spelled
+        currentLetterIndex: body.currentWord,
+        finishedCourse: body.finishedCourse
+      }
+    }
   }
 
   static async login (classCode, username) {
@@ -59,7 +69,17 @@ class StudentApiCalls {
     }
 
     let jwt = res.headers.get('x-auth')
-    return { jwt, username: body.username }
+    return {
+      username: body.username,
+      jwt,
+      classcode: body.classcode,
+      progress: {
+        currentAssignmentIndex: body.currentAssignment,
+        currentWordIndex: body.currentLetter, // if word index is equal to the array size, all words have been spelled
+        currentLetterIndex: body.currentWord,
+        finishedCourse: body.finishedCourse
+      }
+    }
   }
 
   static async getInitialStudentState (jwt) {
