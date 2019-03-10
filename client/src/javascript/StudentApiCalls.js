@@ -1,8 +1,9 @@
 import fetch from 'isomorphic-fetch'
 
 /* ROUTES */
-const signupURL = '/api/student/login'
+const signupURL = '/api/student'
 const loginURL = '/api/student/login'
+const initURL = '/api/student'
 const getAssignmentsAndProgressURL = '/api/student/progress'
 const detectWritingURL = '/api/student/writing'
 
@@ -59,6 +60,29 @@ class StudentApiCalls {
 
     let jwt = res.headers.get('x-auth')
     return { jwt, username: body.username }
+  }
+
+  static async getInitialStudentState (jwt) {
+    let httpMessage = {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-auth': jwt
+      }
+    }
+
+    const res = await fetch(initURL, httpMessage)
+    let body = await res.json()
+    console.log('body')
+    console.log(body)
+    if (res.status !== 200) {
+      const body = await res.json()
+      console.log(httpMessage) // todo remove log statements
+      console.log(res)
+      console.log(`Error: ${body.error}`)
+      return { error: body.error }
+    }
+    return body
   }
 
   static async getAssignmentsAndProgress (jwt) {

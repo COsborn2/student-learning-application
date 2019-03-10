@@ -41,7 +41,7 @@ class StudentView extends Component {
   /* At mount loads student assignmentId array, letter list, and progress */
   async componentDidMount () {
     let { jwt } = this.state
-    // const res = await StudentApiCalls.getAssignmentsAndProgress(jwt) todo implement initStudent
+    const res = await StudentApiCalls.getInitialStudentState(jwt)
 
     const progress = await StudentApiCalls.getProgressMock(jwt)
     const assignments = await StudentApiCalls.getAssignmentsMock(jwt)
@@ -60,6 +60,8 @@ class StudentView extends Component {
         currentLetterIndex,
         letterLineArray
       })
+    } else {
+      this.props.history.push('/error')
     }
   }
 
