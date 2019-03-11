@@ -9,10 +9,7 @@ class StudentHome extends PureComponent {
   render () {
     const { match, history, letterLineInfo, onLetterLineSelection } = this.props
     return (
-      <div className='mx-auto text-center align-middle' style={{ background: '#b9d5e0', width: '90%', paddingTop: '0', marginTop: '0' }}>
-        <div className='mb-5' style={{ background: '#7eaec5', color: 'white', height: '11vh', margin: '0' }}>
-          <h1 className='display-4 font-weight-bold' style={{ fontSize: '4vh', margin: '0', paddingTop: '3vh' }}>Hello {match.params.username}</h1>
-        </div>
+      <div className='mx-auto text-center align-middle' style={{ background: '#b9d5e0', width: '90%', marginTop: '0', paddingTop: '2%' }}>
 
         <div className='row'>
           <div className='col-md-4' style={{ maxWidth: '25vw', marginLeft: 'auto', marginRight: 'auto', minWidth: '200px', minHeight: '200px' }}>

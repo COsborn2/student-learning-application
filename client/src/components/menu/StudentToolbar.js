@@ -14,10 +14,10 @@ function onMenuBtnHandler () {
 class StudentToolbar extends PureComponent {
   render () {
     return (
-      <header className='mx-auto text-center' style={{ width: '85%' }}>
-        <Navbar style={{ background: 'rgba(155, 176, 204, 0.62)' }}>
+      <header className='mx-auto' style={{ width: '90%', paddingTop: '0', marginTop: '0', marginBottom: '0' }}>
+        <Navbar style={{ background: '#7eaec5', height: '11vh', minHeight: '80px' }}>
           <Nav className='mr-auto'>
-            <Navbar.Brand href='\'>Home</Navbar.Brand>
+            <Navbar.Brand href='\' style={{ color: 'white', fontSize: '400%' }}>Home</Navbar.Brand>
           </Nav>
           <Nav>
             <NavDropdown title='&#9776;'>

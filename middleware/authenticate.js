@@ -11,7 +11,14 @@ let authenticate = async (req, res, next) => {
     return res.send('token not provided')
   }
 
-  let unvalidatedToken = jwt.decode(rawToken)
+  let unvalidatedToken
+
+  try {
+    unvalidatedToken = jwt.decode(rawToken)
+  } catch (error) {
+    ErrorMessage(error)
+    return res.status(401).send({ error: error.message })
+  }
 
   let unvalidatedAccessTypes = unvalidatedToken.access
 
