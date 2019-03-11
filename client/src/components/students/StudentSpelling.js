@@ -1,5 +1,4 @@
 import React from 'react'
-import { Image } from 'react-bootstrap'
 import SpellingCard from './spelling/SpellingCard.js'
 import DropZone from './spelling/DropZone.js'
 import PropTypes from 'prop-types'
@@ -153,11 +152,33 @@ class StudentSpelling extends React.Component {
 
     return (
 
-      <div className='mx-auto text-center align-middle' style={{ background: '#b9d5e0', width: '90%', paddingTop: '0', marginTop: '0' }}>
-        <div className='mb-5' style={{ background: '#7eaec5', color: 'white', height: '11vh', margin: '0' }}>
-          <h1 className='display-4 font-weight-bold' style={{ fontSize: '4vh', margin: '0', paddingTop: '3vh' }}>Student Spelling</h1>
+      <div className='mx-auto text-center align-middle' style={{ background: '#b9d5e0', width: '90%', marginTop: '0', minHeight: '100%', paddingBottom: '5%' }}>
+
+        <div className='mx-auto' style={{ width: '55%', padding: '5%', paddingBottom: '2%' }}>
+          <div style={{ background: '#4085bd', width: '100%', padding: '3%', boxShadow: '10px 10px 5px 1px #6b6b6b' }}>
+            <div className='mx-auto' style={{ background: 'white', margin: 'auto' }}>
+              <img src={imageUrl} alt='Image to Spell' style={{ maxWidth: '80%', maxHeight: '80%', marginTop: '2%', marginBottom: '2%' }} />
+            </div>
+          </div>
         </div>
 
+        <h1 className='mx-auto' style={{ color: '#4085bd' }}>{status}</h1>
+
+        <ItemPreview key='__preview' name='Item' />
+          <span>DropZone</span>
+          <div className='row'>
+            {dropZoneCards}
+         </div>
+         <span>Letter Cards</span>
+         <div className='row'>
+            {letterCards}
+         </div>
+         <div className='row'>
+            {button}
+         </div>
+         <ScrollLock isActive={this.state.lockScroll} />
+
+        
         
       </div> // closing div tag
     )
