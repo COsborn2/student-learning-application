@@ -7,7 +7,7 @@ const tempSizingImage = 'https://via.placeholder.com/270x200'
 
 class StudentHome extends PureComponent {
   render () {
-    const { match, history, progress, letters } = this.props
+    const { match, history, letterLineInfo, onLetterLineSelection } = this.props
     return (
       <div className='mx-auto text-center align-middle' style={{ background: '#b9d5e0', width: '90%', paddingTop: '0', marginTop: '0' }}>
         <div className='mb-5' style={{ background: '#7eaec5', color: 'white', height: '11vh', margin: '0' }}>
@@ -39,9 +39,11 @@ class StudentHome extends PureComponent {
             </Button>
           </div>
         </div>
+
         <div style={{ paddingTop: '2%' }}>
-          <LetterLine letters={letters} progress={progress} />
+          <LetterLine letterLineInfo={letterLineInfo} onLetterLineSelection={onLetterLineSelection} />
         </div>
+
       </div>
     )
   }
@@ -50,8 +52,8 @@ class StudentHome extends PureComponent {
 StudentHome.propTypes = {
   match: PropTypes.object.isRequired,
   history: PropTypes.object.isRequired,
-  progress: PropTypes.object.isRequired,
-  letters: PropTypes.array.isRequired
+  letterLineInfo: PropTypes.object.isRequired,
+  onLetterLineSelection: PropTypes.func.isRequired
 }
 
 export default StudentHome
