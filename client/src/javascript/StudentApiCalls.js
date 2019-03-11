@@ -216,6 +216,48 @@ class StudentApiCalls {
   }
 
   /***
+   * This method is used to call the update student progress route
+   * @param jwt Web token
+   * @param progress Current students progress
+   * @returns {Promise<*>} Returns the updated student
+   */
+  static async devSetStudentProgress (jwt, assignmentIndex, letterIndex, wordIndex) { // todo remove dev api call
+    let httpMessage = {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-auth': jwt
+      },
+      body: JSON.stringify({
+        currentLetter: letterIndex,
+        currentWord: wordIndex,
+        currentAssignment: assignmentIndex }
+      )
+    }
+
+    const res = await fetch(updateProgressURL, httpMessage)
+    const body = await res.json()
+    if (res.status !== 200) {
+      console.log(httpMessage) // todo remove log statements
+      console.log(res)
+      console.log(`Error: ${body.error}`)
+      return { error: body.error }
+    }
+
+    return {
+      username: body.username,
+      jwt,
+      classcode: body.classcode,
+      progress: {
+        currentAssignmentIndex: body.currentAssignment,
+        currentWordIndex: body.currentLetter,
+        currentLetterIndex: body.currentWord,
+        finishedCourse: body.finishedCourse
+      }
+    }
+  }
+
+  /***
    * This method uses local storrage rather than calling the api. Will be removed when api is fixed
    * @param jwt Web token
    * @param progress Current users progress
