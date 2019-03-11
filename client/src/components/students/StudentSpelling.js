@@ -157,7 +157,7 @@ class StudentSpelling extends React.Component {
         <div className='mx-auto' style={{ width: '55%', padding: '5%', paddingBottom: '2%' }}>
           <div style={{ background: '#4085bd', width: '100%', padding: '3%', boxShadow: '10px 10px 5px 1px #6b6b6b' }}>
             <div className='mx-auto' style={{ background: 'white', margin: 'auto' }}>
-              <img src={imageUrl} alt='Image to Spell' style={{ maxWidth: '80%', maxHeight: '80%', marginTop: '2%', marginBottom: '2%' }} />
+              <img src={imageUrl} alt='To Spell' style={{ maxWidth: '80%', maxHeight: '80%', marginTop: '2%', marginBottom: '2%' }} />
             </div>
           </div>
         </div>
