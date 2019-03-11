@@ -1,37 +1,39 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 
-const LetterLine = (props) => {
-  const { progress, letters } = props
-  const curAssignmentIndex = progress.currentAssignmentIndex
-  const curLetterIndex = progress.currentLetterIndex
+const LetterLine = ({ letterLineInfo, onLetterLineSelection }) => {
+  const { assignmentIds, unlockedAssignmentIndex, unlockedLetterIndex, selectedAssignmentIndex, selectedLetterIndex } = letterLineInfo
 
   let letterLine = []
   let curLetterNum = 1
   let btnStyle = ''
   let isDisabled = false
 
-  for (let i = 0; i < letters.length; i++) {
-    for (let j = 0; j < letters[i].length; j++) {
-      if (i < curAssignmentIndex) {
+  for (let i = 0; i < assignmentIds.length; i++) {
+    for (let j = 0; j < assignmentIds[i].letters.length; j++) {
+      if (i < unlockedAssignmentIndex) { // this if/else block determines style based on users progress
         btnStyle = 'text-info'
-      } else if (i > curAssignmentIndex) {
+      } else if (i > unlockedAssignmentIndex) {
         btnStyle = 'text-muted'
         isDisabled = true
-      } else { // else its current assignment
-        if (j < curLetterIndex) {
+      } else { // if it is the unlocked assignment
+        if (j <= unlockedLetterIndex) {
           btnStyle = 'text-info'
-        } else if (j > curLetterIndex) {
+        } else if (j > unlockedLetterIndex) {
           btnStyle = 'text-muted'
           isDisabled = true
-        } else btnStyle = 'text-success'
+        }
       }
 
-      let curLetter = letters[i][j]
+      if (i === selectedAssignmentIndex && j === selectedLetterIndex) { // this assigns success style if its selected
+        btnStyle = 'text-success'
+      }
+
+      let curLetter = assignmentIds[i].letters[j]
       let curLetterBtn =
         <button key={curLetterNum++} type='button' className='btn btn-link'
-          disabled={isDisabled} onClick={() => window.alert(`you clicked ${curLetter}\n which is assignment ${i + 1} letter ${j + 1}`)}>
-          <span className={btnStyle}>{curLetter.toLocaleUpperCase() + curLetter}</span>
+          disabled={isDisabled} onClick={() => onLetterLineSelection(i, j)}>
+          <span className={btnStyle}><h1>{curLetter.toLocaleUpperCase() + curLetter}</h1></span>
         </button>
       letterLine.push(curLetterBtn)
     }
@@ -40,8 +42,7 @@ const LetterLine = (props) => {
 }
 
 LetterLine.propTypes = {
-  progress: PropTypes.object.isRequired,
-  letters: PropTypes.array.isRequired
+  letterLineInfo: PropTypes.object.isRequired
 }
 
 export default LetterLine

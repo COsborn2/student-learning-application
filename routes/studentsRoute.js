@@ -1,6 +1,7 @@
 const _ = require('lodash')
 const { Token } = require('../models/token')
 const { Student } = require('../models/student')
+const { Assignment } = require('../models/assignment')
 const { Classroom } = require('../models/classroom')
 const { ErrorMessage, SuccessMessage } = require('../middleware/message')
 const { ObjectID } = require('mongodb')
@@ -195,15 +196,15 @@ let initalizeStudent = async (req, res) => {
 
   let classroom = await Classroom.findById(student.class)
 
-  let letters = await classroom.getLetters()
+  let assignmentIds = await classroom.getLetters()
 
-  if (student.finishedCourse) {
-    return res.send({ finishedCourse: student.finishedCourse, letters })
-  }
+  let assignmentIndex = (student.finishedCourse)
+    ? classroom.assignments.length - 1
+    : student.currentAssignment // gets last assignment if user has completed the course
 
-  let currentAssignment = classroom.assignments[student.currentAssignment]
+  let currentAssignment = await Assignment.findById(assignmentIds[assignmentIndex].assignmentId).populate('words')
 
-  res.send({ finishedCourse: student.finishedCourse, letters, currentAssignment })
+  res.send({ assignmentIds, currentAssignment })
 }
 
 module.exports = { createStudent, loginStudent, validateStudent, updateStudentProgress, deleteStudent, initalizeStudent }

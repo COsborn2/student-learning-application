@@ -102,7 +102,7 @@ class InstructorSignup extends Component {
             <ModalFooter>
               <p style={errorMessageStyle}>{this.state.failedMessage}</p>
               <div style={{ flex: 1 }} />
-              <Button onClick={() => this.props.history.push('/')}>Close</Button>
+              <Button onClick={() => this.props.history.goBack()}>Back</Button>
               <Button type='submit'>Sign Up</Button>
             </ModalFooter>
           </ModalDialog>
