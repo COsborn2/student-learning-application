@@ -153,9 +153,9 @@ class StudentSpelling extends React.Component {
 
     return (
 
-      <div className='mx-auto text-center align-middle' style={{ background: '#b9d5e0', width: '85%', paddingTop: '0', marginTop: '0' }}>
-        <div className='mb-5' style={{ background: '#7eaec5', color: 'white', height: '11vh', margin: '0'}}>
-          <h1 className='display-4 font-weight-bold' style={{ fontSize: '4vh', margin: '0', paddingTop: '3vh' }}>Spelling Cards</h1>
+      <div className='mx-auto text-center align-middle' style={{ background: '#b9d5e0', width: '90%', paddingTop: '0', marginTop: '0' }}>
+        <div className='mb-5' style={{ background: '#7eaec5', color: 'white', height: '11vh', margin: '0' }}>
+          <h1 className='display-4 font-weight-bold' style={{ fontSize: '4vh', margin: '0', paddingTop: '3vh' }}>Hello {match.params.username}</h1>
         </div>
         
         <ItemPreview key='__preview' name='Item' />
