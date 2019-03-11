@@ -228,7 +228,6 @@ class StudentView extends Component {
 
     const requiresFetch = selectedAssignmentIndex !== currentAssignmentIndex
 
-
     this.setState({ isLoading: true })
     currentAssignmentIndex = selectedAssignmentIndex
     currentLetterIndex = selectedLetterIndex
