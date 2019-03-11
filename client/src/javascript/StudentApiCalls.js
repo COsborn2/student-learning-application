@@ -186,7 +186,11 @@ class StudentApiCalls {
         'Content-Type': 'application/json',
         'x-auth': jwt
       },
-      body: JSON.stringify({ progress })
+      body: JSON.stringify({
+        currentLetter: progress.currentLetterIndex,
+        currentWord: progress.currentWordIndex,
+        currentAssignment: progress.currentAssignmentIndex }
+      )
     }
 
     const res = await fetch(updateProgressURL, httpMessage)

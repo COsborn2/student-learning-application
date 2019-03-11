@@ -109,8 +109,6 @@ class StudentView extends Component {
         await this.advanceToNextAssignment() // this assumes you cant spell till you have completed writing
       }
     }
-
-    await this.updateStudentProgress(progress)
   }
 
   /***
@@ -209,7 +207,7 @@ class StudentView extends Component {
    */
   async updateStudentProgress (progress) {
     let { jwt } = this.state
-    let res = await StudentApiCalls.putAssignmentsMock(jwt, progress)
+    let res = await StudentApiCalls.updateStudentProgress(jwt, progress)
 
     if (res.error) {
       console.log('Some Error Calling Api to update assignment progress')
