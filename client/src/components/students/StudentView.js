@@ -226,13 +226,14 @@ class StudentView extends Component {
   async onLetterLineSelection (selectedAssignmentIndex, selectedLetterIndex) {
     let { progress, assignmentIds, currentAssignment, currentAssignmentIndex, currentWordIndex, currentLetterIndex } = this.state
 
-    if (selectedAssignmentIndex === currentAssignmentIndex && selectedLetterIndex === currentLetterIndex) return null // if its the already selected letter do nothing
+    const requiresFetch = selectedAssignmentIndex !== currentAssignmentIndex
+
 
     this.setState({ isLoading: true })
     currentAssignmentIndex = selectedAssignmentIndex
     currentLetterIndex = selectedLetterIndex
     currentWordIndex = 0
-    currentAssignment = await StudentApiCalls.getAssignmentById(assignmentIds[selectedAssignmentIndex].assignmentId)
+    currentAssignment = (requiresFetch) ? await StudentApiCalls.getAssignmentById(assignmentIds[selectedAssignmentIndex].assignmentId) : currentAssignment
     this._triggerAnimFade = true
     this.setState({ progress, currentAssignment, currentAssignmentIndex, currentWordIndex, currentLetterIndex })
   }
