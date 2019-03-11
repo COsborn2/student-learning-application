@@ -222,14 +222,14 @@ class StudentApiCalls {
     return true
   }
 
-  static async getAssignmentByIdMock (id) {
+  static getAssignmentByIdMock (id) {
     return {
       letters: ['a', 'b', 'c'],
       words: [
-        { word: 'kite', imageURL: 'https://www.shareicon.net/download/2016/07/09/118997_activity.ico' },
+        { text: 'kite', picture: 'https://www.shareicon.net/download/2016/07/09/118997_activity.ico' },
         {
-          word: 'car',
-          imageURL: 'https://images.vexels.com/media/users/3/154391/isolated/lists/430c48555fb4c80d9e77fc83d74fdb85-convertible-car-side-view-silhouette.png'
+          text: 'car',
+          picture: 'https://images.vexels.com/media/users/3/154391/isolated/lists/430c48555fb4c80d9e77fc83d74fdb85-convertible-car-side-view-silhouette.png'
         }
       ]
     }
