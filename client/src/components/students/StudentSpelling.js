@@ -165,21 +165,19 @@ class StudentSpelling extends React.Component {
         <h1 className='mx-auto' style={{ color: '#4085bd' }}>{status}</h1>
 
         <ItemPreview key='__preview' name='Item' />
-          <span>DropZone</span>
-          <div className='row'>
-            {dropZoneCards}
-         </div>
-         <span>Letter Cards</span>
-         <div className='row'>
-            {letterCards}
-         </div>
-         <div className='row'>
-            {button}
-         </div>
-         <ScrollLock isActive={this.state.lockScroll} />
+        <span>DropZone</span>
+        <div className='row'>
+          {dropZoneCards}
+        </div>
+        <span>Letter Cards</span>
+        <div className='row'>
+          {letterCards}
+        </div>
+        <div className='row'>
+          {button}
+        </div>
+        <ScrollLock isActive={this.state.lockScroll} />
 
-        
-        
       </div> // closing div tag
     )
   }
