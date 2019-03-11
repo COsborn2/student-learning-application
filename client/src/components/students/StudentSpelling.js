@@ -158,24 +158,8 @@ class StudentSpelling extends React.Component {
           <h1 className='display-4 font-weight-bold' style={{ fontSize: '4vh', margin: '0', paddingTop: '3vh' }}>Student Spelling</h1>
         </div>
 
-        <ItemPreview key='__preview' name='Item' />
-        <h2 className='jumbotron bg-info'>
-          {status}
-          <Image className='img-fluid' alt='Responsive image' src={imageUrl} />
-        </h2>
-        <span>DropZone</span>
-        <div className='row'>
-          {dropZoneCards}
-        </div>
-        <span>Letter Cards</span>
-        <div className='row'>
-          {letterCards}
-        </div>
-        <div className='row'>
-          {button}
-        </div>
-        <ScrollLock isActive={this.state.lockScroll} />
-      </div>
+        
+      </div> // closing div tag
     )
   }
 }
