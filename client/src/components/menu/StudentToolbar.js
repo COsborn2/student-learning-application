@@ -14,18 +14,17 @@ function onMenuBtnHandler () {
 class StudentToolbar extends PureComponent {
   render () {
     return (
-      <header className='mx-auto' style={{ width: '90%', paddingTop: '0', marginTop: '0', marginBottom: '0' }}>
+      <header className='mx-auto align-middle' style={{ width: '90%', paddingTop: '0', marginTop: '0', marginBottom: '0' }}>
         <Navbar style={{ background: '#7eaec5', height: '11vh', minHeight: '80px' }}>
-          <Nav className='mr-auto'>
+          <Nav className='mr-auto' style={{ paddingRight: '0', marginRight: '0' }}>
             <Navbar.Brand href='\' style={{ color: 'white', fontSize: '400%' }}>Home</Navbar.Brand>
           </Nav>
           <Nav>
-            <NavDropdown title='&#9776;'>
+            <NavDropdown title='&#9776;' style={{ fontSize: '300%' }}>
               <NavDropdown.Item onClick={onMenuBtnHandler}>Menu</NavDropdown.Item>
               <NavDropdown.Item href='/' onClick={onSignoutBtnHandler}>Sign out</NavDropdown.Item>
             </NavDropdown>
           </Nav>
-          <Nav />
         </Navbar>
       </header>
     )
