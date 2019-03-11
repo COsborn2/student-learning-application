@@ -39,7 +39,9 @@ class StudentHome extends PureComponent {
             </Button>
           </div>
         </div>
-        <LetterLine letters={letters} progress={progress} />
+        <div style={{ paddingTop: '2%' }}>
+          <LetterLine letters={letters} progress={progress} />
+        </div>
       </div>
     )
   }
