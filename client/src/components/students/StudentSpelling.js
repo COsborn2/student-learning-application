@@ -155,7 +155,7 @@ class StudentSpelling extends React.Component {
 
       <div className='mx-auto text-center align-middle' style={{ background: '#b9d5e0', width: '90%', paddingTop: '0', marginTop: '0' }}>
         <div className='mb-5' style={{ background: '#7eaec5', color: 'white', height: '11vh', margin: '0' }}>
-          <h1 className='display-4 font-weight-bold' style={{ fontSize: '4vh', margin: '0', paddingTop: '3vh' }}>Hello {match.params.username}</h1>
+          <h1 className='display-4 font-weight-bold' style={{ fontSize: '4vh', margin: '0', paddingTop: '3vh' }}>Student Spelling</h1>
         </div>
         
         <ItemPreview key='__preview' name='Item' />
@@ -175,7 +175,8 @@ class StudentSpelling extends React.Component {
           {button}
         </div>
         <ScrollLock isActive={this.state.lockScroll} />
-      </div>)
+      </div>
+    )
   }
 }
 
