@@ -29,11 +29,11 @@ class StudentView extends Component {
       currentAssignment: null,
       currentAssignmentIndex: null,
       currentLetterIndex: null,
+      currentWordIndex: null,
       isLoading: true
     }
     this._triggerAnimFade = false
     this._isMounted = true
-    this.getSelectedLetterIndex = this.getSelectedLetterIndex.bind(this)
     this.onWordCompletion = this.onWordCompletion.bind(this)
     this.onLetterCompletion = this.onLetterCompletion.bind(this)
     this.onLetterLineSelection = this.onLetterLineSelection.bind(this)
@@ -55,8 +55,9 @@ class StudentView extends Component {
 
     const assignmentIds = res.assignmentIds
     const currentAssignment = res.currentAssignment
-    const currentAssignmentIndex = progress.currentAssignmentIndex
-    const currentLetterIndex = this.getSelectedLetterIndex(progress, currentAssignment)
+    const currentAssignmentIndex = this.clampValue(progress.currentAssignmentIndex, assignmentIds.length)
+    const currentLetterIndex = this.clampValue(progress.currentLetterIndex, currentAssignment.letters.length)
+    const currentWordIndex = this.clampValue(progress.currentWordIndex, currentAssignment.words.length)
 
     if (assignmentIds && this._isMounted) {
       this._triggerAnimFade = true
@@ -64,6 +65,7 @@ class StudentView extends Component {
         assignmentIds,
         currentAssignment,
         currentAssignmentIndex,
+        currentWordIndex,
         currentLetterIndex
       })
     } else {
@@ -86,37 +88,51 @@ class StudentView extends Component {
 
   /***
    * Is called every time a word was successfully spelled. Updates user progress
-   * @param wordIndex The word index to update to
-   * @param allWordsSpelled If all the words have been spelled
    */
-  async onWordCompletion (wordIndex, allWordsSpelled) {
-    let { username, progress } = this.state
-    progress.currentWordIndex = wordIndex
-    if (allWordsSpelled) {
-      console.log('All words have been spelled.')
-      this.setState({ progress })
-      this.props.history.push(`/student/${username}`)
-      await this.advanceToNextAssignment() // this assumes you cant spell till you have completed writing
+  async onWordCompletion () {
+    let { username, progress, currentAssignment, currentAssignmentIndex, currentWordIndex } = this.state
+    let didUpdate = true
+
+    // need to check if user is on an old letter, dont change progress if they are
+    if (currentAssignmentIndex === progress.currentAssignmentIndex && currentWordIndex === progress.currentWordIndex) {
+      progress.currentWordIndex++
+      didUpdate = await this.updateStudentProgress(progress)
     }
+
+    currentWordIndex++
+
+    if (didUpdate) {
+      this.setState({ progress: progress, currentWordIndex: this.clampValue(currentWordIndex, currentAssignment.words.length) })
+      if (currentWordIndex === currentAssignment.words.length) {
+        window.alert('All words in this assignment have been spelled. Advancing to next assignment')
+        this.props.history.push(`/student/${username}`)
+        await this.advanceToNextAssignment() // this assumes you cant spell till you have completed writing
+      }
+    }
+
     await this.updateStudentProgress(progress)
   }
 
   /***
    * Is called every time a letter was successfully written. Updates user progress
-   * If it was the last word in the assignment, The user is redirected to the home screen
+   * If it was the last letter in the assignment, The user is redirected to the home screen
    */
   async onLetterCompletion () {
-    let { username, progress, currentAssignment } = this.state
+    let { username, progress, currentAssignment, currentAssignmentIndex, currentLetterIndex } = this.state
+    let didUpdate = true
 
     // need to check if user is on an old letter, dont change progress if they are
-    progress.currentLetterIndex++
-    const didUpdate = await this.updateStudentProgress(progress)
+    if (currentAssignmentIndex === progress.currentAssignmentIndex && currentLetterIndex === progress.currentLetterIndex) {
+      progress.currentLetterIndex++
+      didUpdate = await this.updateStudentProgress(progress)
+    }
+
+    currentLetterIndex++
 
     if (didUpdate) {
-      this.setState({ progress: progress, currentLetterIndex: this.getSelectedLetterIndex(progress, currentAssignment) })
-
-      if (progress.currentLetterIndex === currentAssignment.letters.length) {
-        console.log('All letters have been written')
+      this.setState({ progress: progress, currentLetterIndex: this.clampValue(currentLetterIndex, currentAssignment.letters.length) })
+      if (currentLetterIndex === currentAssignment.letters.length) {
+        window.alert('All letters in this assignment have been written')
         this.props.history.push(`/student/${username}`)
       }
     } else {
@@ -124,50 +140,66 @@ class StudentView extends Component {
     }
   }
 
+  /***
+   * Is triggered when all the words in an assignment are complete
+   * @returns {Promise<void>}
+   */
   async advanceToNextAssignment () {
-    let { progress, assignmentIds, currentAssignment, currentAssignmentIndex, currentLetterIndex } = this.state
-    progress.currentAssignmentIndex++
-    progress.currentWordIndex = 0
-    progress.currentLetterIndex = 0
+    let { progress, assignmentIds, currentAssignment, currentAssignmentIndex, currentLetterIndex, currentWordIndex } = this.state
+
+    if (currentAssignmentIndex === progress.currentAssignmentIndex) {
+      progress.currentAssignmentIndex++
+      progress.currentWordIndex = 0
+      progress.currentLetterIndex = 0
+    }
+
     if (progress.currentAssignmentIndex === assignmentIds.length) this.onCourseCompleted()
 
+    currentAssignmentIndex++
+
+    // if the new assignment, is the current students assignment, instead of resetting, load progress
+    if (progress.currentAssignmentIndex === currentAssignmentIndex) {
+      currentWordIndex = progress.currentWordIndex
+      currentLetterIndex = progress.currentLetterIndex
+    } else {
+      currentWordIndex = 0
+      currentLetterIndex = 0
+    }
+
     this.setState({ isLoading: true })
-    currentAssignmentIndex = progress.currentAssignmentIndex
-    currentLetterIndex = 0
     currentAssignment = await StudentApiCalls.getAssignmentById(assignmentIds[currentAssignmentIndex].assignmentId)
     this._triggerAnimFade = true
-    this.setState({ progress, assignmentIds, currentAssignment, currentAssignmentIndex, currentLetterIndex })
+    this.setState({ progress,
+      assignmentIds,
+      currentAssignment,
+      currentAssignmentIndex: this.clampValue(currentAssignmentIndex, assignmentIds.length),
+      currentWordIndex: this.clampValue(currentWordIndex, currentAssignment.words.length),
+      currentLetterIndex: this.clampValue(currentLetterIndex, currentAssignment.letters.length)
+    })
     console.log(`Current assignment: ${currentAssignmentIndex}`)
   }
 
+  /**
+   * Triggered when the entire course has been completed
+   */
   onCourseCompleted () {
+    let progress = this.state.progress
+    progress.finishedCourse = true
+
+    this.setState({ progress })
     window.alert('Yay you finished the course')
   }
 
   /***
-   * Determines the current letter index to be used for the letter to be written, and the letter selected in the letter line.
-   * If the student has finished all letters, it returns the last letter index in the assignment.
-   * @param progress The current progress of the student
-   * @param currentAssignment The current populated assignment
-   * @returns {*} The current letter index
+   * This is used to ensure the current assignment index, current word index, current letter index are all valid
+   * @param valueToClamp The letter to ensure is never to large
+   * @param maximum The ceiling of the number, It cannot be equal to this
+   * @returns {number} The clamped number
    */
-  getSelectedLetterIndex (progress, currentAssignment) {
-    return (progress.currentLetterIndex >= currentAssignment.letters.length)
-      ? progress.currentLetterIndex - 1
-      : progress.currentLetterIndex
-  }
-
-  /***
-   * Determines if the current assignment index is greater than the number of assignments.
-   * If the student has finished all assignments, it returns the last assignment index in the assignment.
-   * @param progress The current progress of the student
-   * @param assignmentIds The current assignments available
-   * @returns {*} The current letter index
-   */
-  getSelectedAssignmentIndex (progress, assignmentIds) {
-    return (progress.currentAssignmentIndex >= assignmentIds.length)
-      ? progress.currentAssignmentIndex - 1
-      : progress.currentAssignmentIndex
+  clampValue (valueToClamp, maximum) {
+    return (valueToClamp >= maximum)
+      ? valueToClamp - 1
+      : valueToClamp
   }
 
   /***
@@ -194,16 +226,17 @@ class StudentView extends Component {
    * @returns {Promise<void>}
    */
   async onLetterLineSelection (selectedAssignmentIndex, selectedLetterIndex) {
-    let { progress, assignmentIds, currentAssignment, currentAssignmentIndex, currentLetterIndex } = this.state
+    let { progress, assignmentIds, currentAssignment, currentAssignmentIndex, currentWordIndex, currentLetterIndex } = this.state
 
     if (selectedAssignmentIndex === currentAssignmentIndex && selectedLetterIndex === currentLetterIndex) return null // if its the already selected letter do nothing
 
     this.setState({ isLoading: true })
     currentAssignmentIndex = selectedAssignmentIndex
     currentLetterIndex = selectedLetterIndex
+    currentWordIndex = 0
     currentAssignment = await StudentApiCalls.getAssignmentById(assignmentIds[selectedAssignmentIndex].assignmentId)
     this._triggerAnimFade = true
-    this.setState({ progress, currentAssignment, currentAssignmentIndex, currentLetterIndex })
+    this.setState({ progress, currentAssignment, currentAssignmentIndex, currentWordIndex, currentLetterIndex })
   }
 
   /***
@@ -222,7 +255,7 @@ class StudentView extends Component {
   }
 
   render () {
-    const { jwt, currentAssignment, currentLetterIndex, isLoading } = this.state
+    const { jwt, currentAssignment, currentLetterIndex, currentWordIndex, isLoading } = this.state
     if (isLoading) return <LoadingScreen triggerFadeAway={this._triggerAnimFade} onStopped={this.onLoadingAnimationStop} />
     return (
       <Suspense fallback={<LoadingScreen />}>
@@ -238,8 +271,8 @@ class StudentView extends Component {
           />
           <Route path='/student/:username/spelling' render={() =>
             <DragDropContextProvider backend={TouchBackend}>
-              <StudentSpelling wordsToSpell={currentAssignment.words}
-                onWordCompletion={(wordIndex, allWordsSpelled) => this.onWordCompletion(wordIndex, allWordsSpelled)} />
+              <StudentSpelling wordToSpell={currentAssignment.words[currentWordIndex]}
+                onWordCompletion={() => this.onWordCompletion()} />
             </DragDropContextProvider>}
           />
           <Route path='/student/:username/video' render={() => <StudentVideo />} />
