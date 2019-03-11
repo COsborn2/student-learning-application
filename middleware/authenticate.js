@@ -20,7 +20,14 @@ let authenticate = async (req, res, next) => {
     return res.status(401).send({ error: error.message })
   }
 
-  let unvalidatedAccessTypes = unvalidatedToken.access
+  let unvalidatedAccessTypes
+
+  try {
+    unvalidatedAccessTypes = unvalidatedToken.access
+  } catch (error) {
+    ErrorMessage(error.message)
+    return res.send(401).send({ error: 'No token provided' })
+  }
 
   if (!(unvalidatedAccessTypes.indexOf(req.userType) > -1)) {
     ErrorMessage('invalid permissions')
@@ -28,8 +35,7 @@ let authenticate = async (req, res, next) => {
   }
 
   if (req.userType !== unvalidatedToken.userType) {
-    const err = `Requested authentication of user type (${req.userType}) 
-    is not equal to token user type (${unvalidatedToken.userType})`
+    const err = `Requested authentication of user type (${req.userType}) is not equal to token user type (${unvalidatedToken.userType})`
     ErrorMessage(err)
     return res.status(401).send({ error: err })
   }
