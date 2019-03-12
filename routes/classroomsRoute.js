@@ -4,6 +4,7 @@ const { SuccessMessage, WarningMessage, ErrorMessage } = require('../middleware/
 const { Assignment } = require('../models/assignment')
 const { Classroom } = require('../models/classroom')
 const { Word } = require('../models/word')
+const { Student } = require('../models/student')
 
 const { DefaultAssignments } = require('../AlphaEd/staticAssignments')
 
@@ -109,30 +110,49 @@ let seedDatabase = async (index) => {
   return newAssignment._id
 }
 
-// /api/classrooms/id
-let getLetters = async (req, res) => {
-  let classroomId = req.params.id
+let getStudentClassroom = async (req, res) => {
+  let token = req.header('x-auth')
 
-  let letters = []
+  let student = await Student.findByToken(token)
 
-  let classroom = await Classroom.findById(classroomId)
-    .populate('assignments')
-    .populate('students')
-
-  if (!classroom) {
-    const err = `Classroom with id of ${classroomId} could not be found`
-    WarningMessage(err)
-    return res.send(404).send({ error: err })
+  if (!student) {
+    ErrorMessage('Student not found with specified _id')
+    return res.status(400).send({ error: 'Student not found with specified _id' })
   }
 
-  classroom.assignments.forEach(assignment => {
-    assignment.letters.forEach(letter => {
-      letters.push(letter)
-    })
-  })
+  let classroom = await Classroom.findById(student.class)
 
-  SuccessMessage(`Letters (${letters}) found with classroom id of (${classroomId})`)
-  res.send({ letters })
+  if (!classroom) {
+    ErrorMessage('Classroom not found')
+    return res.status(400).send({ error: 'Classroom not found' })
+  }
+
+  res.send({ classroom })
 }
 
-module.exports = { createClassroom, getLetters }
+let getInstructorClass = async (req, res) => {
+  let token = req.header('x-auth')
+
+  let classroomId = req.params.id
+
+  let classroom = await Classroom.findById(classroomId)
+
+  if (!classroom) {
+    const err = 'Classroom with that id could not be found'
+    ErrorMessage(err)
+    return res.status(404).send({ error: err })
+  }
+
+  // Make sure that class is actually one of the instructors classes
+  let instructor = await Instructor.findById(token._mid)
+
+  if (instructor.class.indexOf(classroomId) === -1) {
+    const err = 'You are not the instructor for the requested classroom'
+    ErrorMessage(err)
+    return res.status(401).send({ error: err })
+  }
+
+  res.send({ classroom })
+}
+
+module.exports = { createClassroom, getStudentClassroom, getInstructorClass }

@@ -12,6 +12,7 @@ const InstructorView = lazy(() => import('./components/instructor/InstructorView
 const InstructorLogin = lazy(() => import('./components/login/InstructorLogin'))
 const StudentSignup = lazy(() => import('./components/login/StudentSignup'))
 const InstructorSignup = lazy(() => import('./components/login/InstructorSignup'))
+const ErrorScreen = lazy(() => import('./components/helpers/ErrorScreen'))
 const centerStyle = { top: 0, bottom: 0, left: 0, right: 0 }
 
 class App extends Component {
@@ -47,6 +48,7 @@ class App extends Component {
             <Route path='/login/student' render={(props) => <StudentLogin {...props} />} />
             <Route path='/signup/instructor' render={(props) => <InstructorSignup {...props} />} />
             <Route path='/signup/student' render={(props) => <StudentSignup {...props} />} />
+            <Route path='/error' render={(props) => <ErrorScreen {...props} />} />
           </Switch>
         </Suspense>
       </Browser>

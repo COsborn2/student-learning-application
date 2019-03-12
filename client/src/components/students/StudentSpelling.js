@@ -1,5 +1,4 @@
 import React from 'react'
-import { Image } from 'react-bootstrap'
 import SpellingCard from './spelling/SpellingCard.js'
 import DropZone from './spelling/DropZone.js'
 import PropTypes from 'prop-types'
@@ -12,8 +11,8 @@ function isWordSpelled (curWordArray, wordToSpell) {
   return curWordArray.join('') === wordToSpell
 }
 
-function getLetters (wordToSpell, extraLetters) {
-  let letters = wordToSpell.split('')
+function getLetters (word, extraLetters) {
+  let letters = word.split('')
 
   if (extraLetters) {
     for (let i = 0; i < extraLetters.length; i++) {
@@ -72,7 +71,7 @@ function debugConvertToMinutes (time) {
 }
 */
 /*
-  We pass an array of wordObjects as a property. Each item in the array consists of a word, and an imageURL
+  We pass an array of wordObjects as a property. Each item in the array consists of a word, and an picture
   You can access them like shown below. When a word is completed move on to the next word.
   When each word is completed, call the `onWordCompletion()` method passed as a property.
  */
@@ -80,47 +79,47 @@ function debugConvertToMinutes (time) {
 class StudentSpelling extends React.Component {
   constructor (props) {
     super(props)
-    let wordsToSpell = props.wordsToSpell
-    let firstWordToSpell = wordsToSpell[0].word
+    const wordToSpell = this.props.wordToSpell.text
+    const imageUrl = this.props.wordToSpell.picture
     this.state = {
-      wordsToSpell: wordsToSpell,
-      wordIndex: 0,
-      curWordToSpell: firstWordToSpell,
-      curImageURL: wordsToSpell[0].imageURL,
-      curHand: getLetters(firstWordToSpell),
-      curDropZone: initializeDropZone(firstWordToSpell.length),
+      wordToSpell: wordToSpell,
+      imageUrl: imageUrl,
+      curHand: getLetters(wordToSpell),
+      curDropZone: initializeDropZone(wordToSpell.length),
       dropOrder: [],
       timeEvents: initializeTimeEvents(),
       lockScroll: false }
-    this.advanceToNextWord = this.advanceToNextWord.bind(this)
+    this.resetToNextWord = this.resetToNextWord.bind(this)
   }
 
-  advanceToNextWord () {
-    let { wordsToSpell, wordIndex, curWordToSpell, curImageURL, curHand, curDropZone, dropOrder, timeEvents } = this.state
-    const allWordsSpelled = wordIndex >= wordsToSpell.length - 1
-    wordIndex++
-    if (!allWordsSpelled) {
-      const nextWordItem = wordsToSpell[wordIndex]
-      curWordToSpell = nextWordItem.word
-      curImageURL = nextWordItem.imageURL
-      curHand = getLetters(curWordToSpell)
-      curDropZone = initializeDropZone(curWordToSpell.length)
+  componentWillMount () { this._isMounted = true }
+
+  componentWillUnmount () { this._isMounted = false }
+
+  async resetToNextWord () {
+    await this.props.onWordCompletion()
+
+    if (this._isMounted) {
+      let { wordToSpell, imageUrl, curHand, curDropZone, dropOrder, timeEvents } = this.state
+      wordToSpell = this.props.wordToSpell.text
+      imageUrl = this.props.wordToSpell.picture
+      curHand = getLetters(wordToSpell)
+      curDropZone = initializeDropZone(wordToSpell.length)
       dropOrder = []
       timeEvents = initializeTimeEvents()
-      this.setState({ wordsToSpell, wordIndex, curWordToSpell, curImageURL, curHand, curDropZone, dropOrder, timeEvents })
+      this.setState({ wordToSpell, imageUrl, curHand, curDropZone, dropOrder, timeEvents })
     }
-    this.props.onWordCompletion(wordIndex, allWordsSpelled)
   }
 
   renderButton (isSpelled) {
     const buttonStyle = 'mx-auto btn btn-' + (isSpelled ? 'success' : 'secondary')
-    return <button type='button' className={buttonStyle} onClick={this.advanceToNextWord}
+    return <button type='button' className={buttonStyle} onClick={this.resetToNextWord}
       disabled={!isSpelled}>Continue</button>
   }
 
   setDropZone = (dropZoneID, letterDropped, cardID) => {
-    let { curDropZone, curHand, curWordToSpell, dropOrder, timeEvents } = this.state
-    const expectedLetter = curWordToSpell[dropZoneID]
+    let { curDropZone, curHand, wordToSpell, dropOrder, timeEvents } = this.state
+    const expectedLetter = wordToSpell[dropZoneID]
 
     dropOrder.push(dropZoneID)
     dropOrder.push(letterDropped)
@@ -141,34 +140,50 @@ class StudentSpelling extends React.Component {
   }
 
   render () {
-    const { curHand, curDropZone, curWordToSpell } = this.state
-    const isSpelled = isWordSpelled(curDropZone, curWordToSpell)
+    const { curHand, curDropZone, wordToSpell, imageUrl } = this.state
+    const isSpelled = isWordSpelled(curDropZone, wordToSpell)
     const button = this.renderButton(isSpelled)
-    const status = getStatus(isSpelled, curWordToSpell)
+    const status = getStatus(isSpelled, wordToSpell)
     const letterCards = curHand.map((letter, i) => <SpellingCard key={i} id={i} letter={letter} lockScroll={this.lockScroll} unlockScroll={this.unlockScroll} />)
-    const dropZoneCards = curWordToSpell.split('').map((letter, index) =>
+    const dropZoneCards = wordToSpell.split('').map((letter, index) =>
       <DropZone id={index} key={index} onDrop={this.setDropZone} currentLetter={curDropZone[index]}
         expectedLetter={letter} />)
 
     return (
-      <div className='mx-auto text-center' style={{ background: '#b9d5e0', width: '85%' }}>
-        <div className='jumbotron' style={{ background: '#408fbd', boxShadow: '10px 10px 5px 1px #6b6b6b' }}>
-          <div className='bg-white'>
-            <Image className='img-fluid' alt='Responsive image' src={this.state.curImageURL} />
+
+      <div className='mx-auto text-center align-middle' style={{ background: '#b9d5e0', width: '90%', marginTop: '0', minHeight: '100%', paddingBottom: '5%' }}>
+
+        <div className='mx-auto' style={{ width: '55%', padding: '5%', paddingBottom: '2%' }}>
+          <div style={{ background: '#4085bd', width: '100%', padding: '3%', boxShadow: '10px 10px 5px 1px #6b6b6b' }}>
+            <div className='mx-auto' style={{ background: 'white', margin: 'auto' }}>
+              <img src={imageUrl} alt='To Spell' style={{ maxWidth: '80%', maxHeight: '80%', marginTop: '2%', marginBottom: '2%' }} />
+            </div>
           </div>
         </div>
-        <h1 className='mb-4' style={{ color: 'white' }}>{status}</h1>
-        <div className='row px-5'>{dropZoneCards}</div>
-        <div className='row px-5'>{letterCards}</div>
-        {button}
-        <ScrollLock isActive={this.state.lockScroll} />
+
+        <h1 className='mx-auto' style={{ color: '#4085bd' }}>{status}</h1>
+
         <ItemPreview key='__preview' name='Item' />
-      </div>)
+        <span>DropZone</span>
+        <div className='row'>
+          {dropZoneCards}
+        </div>
+        <span>Letter Cards</span>
+        <div className='row'>
+          {letterCards}
+        </div>
+        <div className='row'>
+          {button}
+        </div>
+        <ScrollLock isActive={this.state.lockScroll} />
+
+      </div> // closing div tag
+    )
   }
 }
 
 StudentSpelling.propTypes = {
-  wordsToSpell: PropTypes.array.isRequired,
+  wordToSpell: PropTypes.object.isRequired,
   onWordCompletion: PropTypes.func.isRequired
 }
 

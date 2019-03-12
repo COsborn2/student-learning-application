@@ -1,7 +1,7 @@
 const mongoose = require('mongoose')
 const bcrypt = require('bcrypt')
 const jwt = require('jsonwebtoken')
-const { SuccessMessage } = require('../middleware/message')
+const { SuccessMessage, ErrorMessage } = require('../middleware/message')
 
 let TokenSchema = new mongoose.Schema({
   _mid: { // id of associated model
@@ -64,7 +64,12 @@ TokenSchema.statics.validateToken = function (rawToken, unvalidatedToken) {
       return reject(new TypeError('That user could not be found'))
     }
 
-    await jwt.verify(rawToken, user.token.salt)
+    try {
+      await jwt.verify(rawToken, user.token.salt)
+    } catch (error) {
+      ErrorMessage(error.message)
+      return reject(error)
+    }
 
     SuccessMessage('Token validated')
     return resolve(user)

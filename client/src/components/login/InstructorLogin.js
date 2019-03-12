@@ -50,7 +50,9 @@ class InstructorLogin extends Component {
   }
 
   async handleSkipLogin () { // todo remove dev skip
+    this.setState({ isLoading: true })
     let res = await InstructorApiCalls.login('instructor-dev@gmail.com', 'Password')
+    this.setState({ isLoading: false })
     if (res.error) this.animateMessage(res.error)
     else if (res.jwt) {
       window.sessionStorage.setItem('instructor', JSON.stringify(res))
@@ -78,7 +80,7 @@ class InstructorLogin extends Component {
               <ModalTitle>Instructor Login</ModalTitle>
               <div className='flex-fill' />
               <Button className='btn-warning mx-2' onClick={this.handleSkipLogin}>Dev Skip</Button>
-              <Button onClick={() => this.props.history.replace('/signup/instructor')}>Signup</Button>
+              <Button onClick={() => this.props.history.push('/signup/instructor')}>Signup</Button>
             </ModalHeader>
 
             <ModalBody>
