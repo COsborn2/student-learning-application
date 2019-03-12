@@ -40,7 +40,7 @@ const layerStyles = {
   zIndex: 100,
   left: 0,
   top: 0,
-  width: '5%',
+  width: '5%'
 }
 
 function ItemPreview ({

@@ -29,7 +29,7 @@ function DropZone (props) {
   cardColor = (currentLetter === '_') ? 'white' : cardColor
 
   return connectDropTarget(
-    <div key={'dropzone' + id} className='mx-auto' style={{ background: cardColor, width: '8%', padding: '1%'}}>
+    <div key={'dropzone' + id} className='mx-auto' style={{ background: cardColor, width: '8%', padding: '1%' }}>
       <h5 className='mx-auto'>
         {currentLetter}
       </h5>
