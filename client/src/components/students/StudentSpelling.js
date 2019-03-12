@@ -35,7 +35,7 @@ function shuffle (cards) {
 }
 
 function getStatus (isSpelled) {
-  return isSpelled ? 'Congrats!' : 'Spell this image'
+  return isSpelled ? 'Good Job!' : 'What is this?'
 }
 
 function initializeDropZone (numCharsInWord) {
@@ -115,7 +115,6 @@ class StudentSpelling extends React.Component {
     const buttonStyle = 'mx-auto btn btn-' + (isSpelled ? 'success' : 'secondary')
     return <button type='button' className={buttonStyle} onClick={this.resetToNextWord}
       disabled={!isSpelled}>Continue</button>
-    // return <button type='button' className='btn btn-danger' onClick={this.onResetClick}>Reset</button>
   }
 
   setDropZone = (dropZoneID, letterDropped, cardID) => {
