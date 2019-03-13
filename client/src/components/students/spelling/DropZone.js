@@ -25,12 +25,12 @@ function collect (connect, monitor) {
 function DropZone (props) {
   const { id, expectedLetter, currentLetter, connectDropTarget } = props
   dropZoneID = id
-  let cardStyle = (currentLetter === expectedLetter) ? 'badge-success' : 'badge-danger'
-  cardStyle = (currentLetter === '_') ? 'badge-warning' : cardStyle
+  let cardColor = (currentLetter === expectedLetter) ? 'green' : 'red'
+  cardColor = (currentLetter === '_') ? 'white' : cardColor
 
   return connectDropTarget(
-    <div key={'dropzone' + id} className={'col-md-2 mx-auto card ' + cardStyle}>
-      <h5 className='card-title card badge-light '>
+    <div key={'dropzone' + id} className='mx-auto' style={{ background: cardColor, width: '8%', padding: '1%' }}>
+      <h5 className='mx-auto'>
         {currentLetter}
       </h5>
     </div>

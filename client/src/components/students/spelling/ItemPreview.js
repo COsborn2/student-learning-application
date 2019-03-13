@@ -28,7 +28,9 @@ function getItemStyles (currentOffset) {
     pointerEvents: 'none',
     transform: transform,
     WebkitTransform: transform,
-    boxShadow: '5px 5px 5px 1px #6b6b6b'
+    boxShadow: '5px 5px 5px 1px #6b6b6b',
+    background: '#4085bd',
+    padding: '20%'
   }
 }
 
@@ -38,8 +40,7 @@ const layerStyles = {
   zIndex: 100,
   left: 0,
   top: 0,
-  width: '100%',
-  height: '100%'
+  width: '5%'
 }
 
 function ItemPreview ({
@@ -56,8 +57,8 @@ function ItemPreview ({
     <div style={layerStyles}>
       <div key={id}
         style={getItemStyles(currentOffset)}
-        className='mx-1 col-md-1 card badge-success'>
-        <h5 className='card-title card badge-light'>
+        className='mx-auto'>
+        <h5 className='mx-auto'>
           {value}
         </h5>
       </div>
