@@ -4,6 +4,7 @@ import InstructorApiCalls from '../../javascript/InstructorApiCalls'
 import Course from './Course'
 import Button from 'react-bootstrap/Button'
 import LoadingScreen from '../loading/LoadingScreen'
+import Toolbar from '../menu/Toolbar'
 
 /* The instructor view manages all screens and routes for a specific instructor user
  the login screen creates and authenticates an instructor object, and passes it
@@ -15,9 +16,10 @@ class InstructorView extends Component {
     super(props)
     this.state = {
       name: this.props.user.name,
+      courseIds: this.props.courses,
       jwt: this.props.user.jwt,
       courses: null,
-      selectedCourse: -1,
+      courseIndex: -1,
       isLoading: true
     }
     this._triggerAnimFade = false
@@ -26,15 +28,12 @@ class InstructorView extends Component {
     this.onLoadingAnimationStop = this.onLoadingAnimationStop.bind(this)
   }
 
-  async componentDidMount () {
-    let { jwt } = this.state
-    let courses = await InstructorApiCalls.getCourses(jwt)
-    if (courses && this._isMounted) {
-      setTimeout(() => {
-        this._triggerAnimFade = true
-        this.setState({ courses })
-      }, 1000)
-    }
+  /***
+   * This method is called when the component is mounted to the DOM.
+   */
+  componentDidMount () {
+    this._triggerAnimFade = true
+    this._isMounted = true
   }
 
   componentWillUnmount () {
@@ -48,21 +47,40 @@ class InstructorView extends Component {
     }
   }
 
-  onCourseClick (index) {
-    let { selectedCourse } = this.state
-    selectedCourse = index === selectedCourse ? -1 : index
-    this.setState({ selectedCourse })
-    console.log('courseClicked: ' + selectedCourse)
+  /**
+   * This method is called when a user clicks to expand a course.
+   * It fetches the selected course from the api
+   * @param index The index of the course to select.
+   * @returns {Promise<void>} Nothing. It is async to await fetch call
+   */
+  async onCourseClick (index) {
+    let { courseIndex, course, courseIds } = this.state
+    if (index === courseIndex) { // if they selected a new course, load it from the api
+      courseIndex = index
+      course = await InstructorApiCalls.getCourseById(courseIds[index])
+    } else { // else close the course
+      courseIndex = -1
+    }
+
+    this.setState({ courseIndex, course })
+    console.log('courseClicked: ' + courseIndex)
   }
 
+  /**
+   * This method is called each time this component renders. It constructs the list of
+   * Courses that can be expanded. If there are no courses, it is displayed
+   * @param courses
+   * @returns {*}
+   */
   createCourseComponents (courses) {
+    if (!courses) return null
     return (
       <div>
         {courses.map((course, index) =>
           <div key={index}>
             <Button onClick={() => this.onCourseClick(index)}
               className='test btn-lg btn-primary rounded-pill'>{course.className}</Button>
-            <Course {...this.props} show={index === this.state.selectedCourse} course={course} />
+            <Course {...this.props} show={index === this.state.courseIndex} course={course} />
             <hr />
           </div>
         )}
@@ -71,14 +89,18 @@ class InstructorView extends Component {
   }
 
   render () {
-    let { courses, name, isLoading } = this.state
+    let { courses, name, courseIds, isLoading } = this.state
     if (isLoading) return <LoadingScreen triggerFadeAway={this._triggerAnimFade} onStopped={this.onLoadingAnimationStop} />
+    console.log(courseIds)
     return (
-      <div className='container text-center'>
-        <header className='jumbotron my-3 bg-info'>
-          <h1 className='display-4 font-weight-bold'> Hello {name}</h1>
-        </header>
-        {this.createCourseComponents(courses)}
+      <div>
+        <Toolbar />
+        <div className='container text-center'>
+          <header className='jumbotron my-3 bg-info'>
+            <h1 className='display-4 font-weight-bold'> Hello {name}</h1>
+          </header>
+          {this.createCourseComponents(courses)}
+        </div>
       </div>
     )
   }

@@ -18,7 +18,7 @@ async function resetStudentProgress () {
   await StudentApiCalls.devSetStudentProgress(user.jwt, 0, 0, 0)
 }
 
-class StudentToolbar extends PureComponent {
+class Toolbar extends PureComponent {
   render () {
     return (
       <header className='mx-auto align-middle' style={{ width: '90%', paddingTop: '0', marginTop: '0', marginBottom: '0' }}>
@@ -40,4 +40,4 @@ class StudentToolbar extends PureComponent {
   }
 }
 
-export default StudentToolbar
+export default Toolbar

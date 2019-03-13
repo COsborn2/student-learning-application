@@ -3,12 +3,20 @@ import fetch from 'isomorphic-fetch'
 /* ROUTES */
 const signupURL = '/api/instructor'
 const loginURL = '/api/instructor/login'
+const getCourseById = '/api/classrooms/'
 
 async function stall (stallTime = 3000) {
   await new Promise(resolve => setTimeout(resolve, stallTime))
 }
 
 class InstructorApiCalls {
+  /***
+   * This method calls the api to create a new Instructor
+   * @param name The name of the new Instructor
+   * @param email The email of the new Instructor
+   * @param password The password of the new Instructor
+   * @returns {Promise<*>} Returns the Instructor's name, email, and jwt. Or error if sign up failed
+   */
   static async signup (name, email, password) {
     let httpMessage = {
       method: 'POST',
@@ -32,9 +40,15 @@ class InstructorApiCalls {
     }
 
     let jwt = res.headers.get('x-auth')
-    return { jwt, name: body.name }
+    return { name: body.name, jwt, email: body.email, courses: body.class }
   }
 
+  /***
+   * This method calls the api to create a new Instructor
+   * @param email The email to attempt authentication with
+   * @param password The password to attempt authentication
+   * @returns {Promise<*>} Returns the Instructor's name, email, and jwt. Or error if login failed
+   */
   static async login (email, password) {
     let httpMessage = {
       method: 'POST',
@@ -55,8 +69,36 @@ class InstructorApiCalls {
       console.log(`Error: ${body.error}`)
       return { error: body.error }
     }
+    console.log(body)
     let jwt = res.headers.get('x-auth')
-    return { jwt, name: body.name }
+    return { name: body.name, jwt, email: body.email, courses: body.class }
+  }
+
+  /**
+   * This method calls the api to create a new Instructor
+   * @param jwt
+   * @param id
+   * @returns {Promise<*>}
+   */
+  static async getCourseById (jwt, id) {
+    let httpMessage = {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-auth': jwt
+      }
+    }
+
+    const res = await fetch(getCourseById + id, httpMessage)
+    const body = await res.json()
+    if (res.status !== 200) {
+      console.log(httpMessage) // todo remove log statements
+      console.log(res)
+      console.log(`Error: ${body.error}`)
+      return { error: body.error }
+    }
+    console.log(body)
+    return body
   }
 
   // This is where the api call is made to retrieve the specific instructor's classes

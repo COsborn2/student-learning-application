@@ -6,7 +6,7 @@ import { DragDropContextProvider } from 'react-dnd'
 import TouchBackend from 'react-dnd-touch-backend'
 import StudentApiCalls from '../../javascript/StudentApiCalls'
 import LoadingScreen from '../loading/LoadingScreen'
-import StudentToolbar from '../menu/StudentToolbar'
+import Toolbar from '../menu/Toolbar'
 
 const StudentSpelling = lazy(() => import('./StudentSpelling'))
 const StudentWriting = lazy(() => import('./StudentWriting'))
@@ -257,7 +257,7 @@ class StudentView extends Component {
     if (isLoading) return <LoadingScreen triggerFadeAway={this._triggerAnimFade} onStopped={this.onLoadingAnimationStop} />
     return (
       <Suspense fallback={<LoadingScreen />}>
-        <StudentToolbar />
+        <Toolbar />
         <Switch>
           <Route exact path='/student/:username' render={(props) =>
             <StudentHome {...props} letterLineInfo={this.getLetterLineInfo()}
