@@ -273,7 +273,7 @@ class StudentView extends Component {
                 onWordCompletion={() => this.onWordCompletion()} />
             </DragDropContextProvider>}
           />
-          <Route path='/student/:username/video' render={() => <StudentVideo />} />
+          <Route path='/student/:username/video' render={() => <StudentVideo video='https://www.youtube.com/embed/36IBDpTRVNE' />} />
         </Switch>
       </Suspense>
     )

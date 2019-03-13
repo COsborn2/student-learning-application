@@ -1,5 +1,4 @@
 import React from 'react'
-import { Image } from 'react-bootstrap'
 import SpellingCard from './spelling/SpellingCard.js'
 import DropZone from './spelling/DropZone.js'
 import PropTypes from 'prop-types'
@@ -36,7 +35,7 @@ function shuffle (cards) {
 }
 
 function getStatus (isSpelled) {
-  return isSpelled ? 'Congrats!' : 'Spell this image'
+  return isSpelled ? 'Good Job!' : 'What is this?'
 }
 
 function initializeDropZone (numCharsInWord) {
@@ -116,7 +115,6 @@ class StudentSpelling extends React.Component {
     const buttonStyle = 'mx-auto btn btn-' + (isSpelled ? 'success' : 'secondary')
     return <button type='button' className={buttonStyle} onClick={this.resetToNextWord}
       disabled={!isSpelled}>Continue</button>
-    // return <button type='button' className='btn btn-danger' onClick={this.onResetClick}>Reset</button>
   }
 
   setDropZone = (dropZoneID, letterDropped, cardID) => {
@@ -153,16 +151,19 @@ class StudentSpelling extends React.Component {
 
     return (
 
-      <div className='mx-auto text-center align-middle' style={{ background: '#b9d5e0', width: '85%', paddingTop: '0', marginTop: '0' }}>
-        <div className='mb-5' style={{ background: '#7eaec5', color: 'white', height: '11vh', margin: '0' }}>
-          <h1 className='display-4 font-weight-bold' style={{ fontSize: '4vh', margin: '0', paddingTop: '3vh' }}>Spelling Cards</h1>
+      <div className='mx-auto text-center align-middle' style={{ background: '#b9d5e0', width: '90%', marginTop: '0', minHeight: '100%', paddingBottom: '5%' }}>
+
+        <div className='mx-auto' style={{ width: '55%', padding: '5%', paddingBottom: '2%' }}>
+          <div style={{ background: '#4085bd', width: '100%', padding: '3%', boxShadow: '10px 10px 5px 1px #6b6b6b' }}>
+            <div className='mx-auto' style={{ background: 'white', margin: 'auto' }}>
+              <img src={imageUrl} alt='To Spell' style={{ maxWidth: '80%', maxHeight: '80%', marginTop: '2%', marginBottom: '2%' }} />
+            </div>
+          </div>
         </div>
 
+        <h1 className='mx-auto' style={{ color: '#4085bd' }}>{status}</h1>
+
         <ItemPreview key='__preview' name='Item' />
-        <h2 className='jumbotron bg-info'>
-          {status}
-          <Image className='img-fluid' alt='Responsive image' src={imageUrl} />
-        </h2>
         <span>DropZone</span>
         <div className='row'>
           {dropZoneCards}
@@ -175,7 +176,9 @@ class StudentSpelling extends React.Component {
           {button}
         </div>
         <ScrollLock isActive={this.state.lockScroll} />
-      </div>)
+
+      </div> // closing div tag
+    )
   }
 }
 
