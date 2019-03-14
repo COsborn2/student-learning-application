@@ -73,26 +73,19 @@ class InstructorView extends Component {
   /**
    * This method is called when a user clicks to expand a course.
    * It fetches the selected course from the api
-   * @param index The index of the course to select.
+   * @param courseIndexSelected The index of the course the user selected.
    * @returns {Promise<void>} Nothing. It is async to await fetch call
    */
-  async onCourseClick (index) {
-    let { courseIndex, course, courseIds } = this.state
-    if (index === courseIndex) { // if they selected a new course, load it from the api
-      courseIndex = index
-      let res = await InstructorApiCalls.getCourseById(courseIds[index])
-      if (res.error) {
-        const errMsg = `Error retrieving course from api: ${res.error}`
-        console.error('Error retrieving ')
-        this.props.history.push('/error', errMsg)
-        return
-      }
+  onCourseClick (courseIndexSelected) {
+    let { courseIndex } = this.state
+    if (courseIndexSelected !== courseIndex) { // if they selected a new course, expand it
+      console.log(`expand ${courseIndexSelected}`)
+      courseIndex = courseIndexSelected
     } else { // else close the course
       courseIndex = -1
     }
 
-    this.setState({ courseIndex, course })
-    console.log('courseClicked: ' + courseIndex)
+    this.setState({ courseIndex })
   }
 
   /**
@@ -108,7 +101,7 @@ class InstructorView extends Component {
         {courses.map((course, index) =>
           <div key={index}>
             <Button onClick={() => this.onCourseClick(index)}
-              className='test btn-lg btn-primary rounded-pill'>course {index + 1}</Button>
+              className='test btn-lg btn-primary rounded-pill'>{course.classcode}</Button>
             <Course {...this.props} show={index === this.state.courseIndex} course={course} />
             <hr />
           </div>
@@ -124,16 +117,19 @@ class InstructorView extends Component {
    */
   async createCourse (courseCode) {
     const res = await InstructorApiCalls.createCourse(this.state.jwt, courseCode)
+
     if (!res.error && res.courseIds) {
-      this.setState({ courseIds: res.courseIds })
+      let courses = this.state.courses
+      courses.push(res.course)
+      this.setState({ courseIds: res.courseIds, courses })
     }
     return res
   }
 
   render () {
-    let { name, courses, isLoading } = this.state
+    let { name, courses, courseIndex, isLoading } = this.state
     if (isLoading) return <LoadingScreen triggerFadeAway={this._triggerAnimFade} onStopped={this.onLoadingAnimationStop} />
-    console.log('courses')
+    console.log(`selected course ${courseIndex}`)
     console.log(courses)
     return (
       <div>

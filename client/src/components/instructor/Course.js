@@ -9,7 +9,7 @@ class Course extends React.PureComponent {
     let course = this.props.course
     this.state = {
       course: course,
-      code: course.classCode,
+      code: course.classcode,
       name: course.className,
       students: course.students,
       assignments: course.assignments
