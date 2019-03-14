@@ -3,6 +3,7 @@ import fetch from 'isomorphic-fetch'
 /* ROUTES */
 const signupURL = '/api/instructor'
 const loginURL = '/api/instructor/login'
+const getCoursesURL = '/api/instructor'
 const createCourseURL = '/api/classrooms'
 const getCourseByIdURL = '/api/classrooms/'
 
@@ -75,6 +76,37 @@ class InstructorApiCalls {
     return { name: body.name, jwt, email: body.email, courseIds: body.class }
   }
 
+  /***
+   * This method calls the api to retrieve the instructors courses
+   * @param jwt Web Token
+   * @returns {Promise<*>} Returns the Instructor's courses. Or error if failed
+   */
+  static async getCourses (jwt) {
+    let httpMessage = {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-auth': jwt
+      }
+    }
+
+    const res = await fetch(getCoursesURL, httpMessage)
+    const body = await res.json()
+    if (res.status !== 200) {
+      console.log(httpMessage) // todo remove log statements
+      console.log(res)
+      console.log(`Error: ${body.error}`)
+      return { error: body.error }
+    }
+    return { courses: body.class }
+  }
+
+  /**
+   * This method calls the api to create a new course with the given courseCode
+   * @param jwt Web token
+   * @param courseCode Course code to be used to create a new course
+   * @returns {Promise<*>} Returns the course created. Or error if failed
+   */
   static async createCourse (jwt, courseCode) {
     let httpMessage = {
       method: 'POST',
@@ -86,7 +118,6 @@ class InstructorApiCalls {
     }
 
     const res = await fetch(createCourseURL, httpMessage)
-    console.log(res)
     const body = await res.json()
     if (res.status !== 200) {
       console.log(httpMessage) // todo remove log statements
@@ -94,15 +125,14 @@ class InstructorApiCalls {
       console.log(`Error: ${body.error}`)
       return { error: body.error }
     }
-    console.log(body)
     return { course: body.classroom, courseIds: body.updatedInstructor.class }
   }
 
   /**
-   * This method calls the api to create a new Instructor
-   * @param jwt
-   * @param id
-   * @returns {Promise<*>}
+   * This method calls the api to retrieve a course by its id
+   * @param jwt Web token
+   * @param id The id of the course to get
+   * @returns {Promise<*>} Returns the course. Or error if failed
    */
   static async getCourseById (jwt, id) {
     let httpMessage = {
@@ -123,38 +153,6 @@ class InstructorApiCalls {
     }
     console.log(body)
     return body
-  }
-
-  // This is where the api call is made to retrieve the specific instructor's classes
-  static async getCourses () {
-    let courses = [
-      {
-        classCode: 1,
-        className: 'Classroom 1',
-        students: [{ userName: 'Rickey' }],
-        assignments: [{
-          id: 1,
-          letters: [],
-          words: [
-            { word: 'kite', imageURL: 'kiteURL.PNG' },
-            { word: 'car', imageURL: 'carURL.PNG' }]
-        }]
-      },
-      {
-        classCode: 2,
-        className: 'Classroom 2',
-        students: [{ userName: 'Clark' }, { userName: 'Timmy' }],
-        assignments: [{
-          id: 1,
-          letters: [],
-          words: [
-            { word: 'book', imageURL: 'bookURL.PNG' },
-            { word: 'plane', imageURL: 'planeURL.PNG' }]
-        }]
-      }
-    ]
-    await stall(1500)
-    return courses
   }
 }
 
