@@ -67,7 +67,6 @@ class CreateCourse extends Component {
     const { validated, show, isLoading, errorMessage, errorMessageStyle } = this.state
     const outerCss = show ? 'course expand ' : 'course '
     const innerCss = show ? 'course-content expand ' : 'course-content '
-    console.log(errorMessage)
     return (
       <div>
         <LoadingOverlay show={isLoading} />

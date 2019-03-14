@@ -71,7 +71,6 @@ class InstructorApiCalls {
       console.log(`Error: ${body.error}`)
       return { error: body.error }
     }
-    console.log(body)
     let jwt = res.headers.get('x-auth')
     return { name: body.name, jwt, email: body.email, courseIds: body.class }
   }

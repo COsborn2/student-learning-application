@@ -79,7 +79,6 @@ class InstructorView extends Component {
   onCourseClick (courseIndexSelected) {
     let { courseIndex } = this.state
     if (courseIndexSelected !== courseIndex) { // if they selected a new course, expand it
-      console.log(`expand ${courseIndexSelected}`)
       courseIndex = courseIndexSelected
     } else { // else close the course
       courseIndex = -1
@@ -95,7 +94,7 @@ class InstructorView extends Component {
    * @returns {*}
    */
   createCourseComponents (courses) {
-    if (!courses || courses.length === 0) return <p>You have no courses yet</p>
+    if (!courses || courses.length === 0) return <p className='badge-light'>You have no courses yet</p>
     return (
       <div>
         {courses.map((course, index) =>
@@ -127,10 +126,8 @@ class InstructorView extends Component {
   }
 
   render () {
-    let { name, courses, courseIndex, isLoading } = this.state
+    let { name, courses, isLoading } = this.state
     if (isLoading) return <LoadingScreen triggerFadeAway={this._triggerAnimFade} onStopped={this.onLoadingAnimationStop} />
-    console.log(`selected course ${courseIndex}`)
-    console.log(courses)
     return (
       <div>
         <Toolbar />

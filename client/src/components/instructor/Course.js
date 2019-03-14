@@ -7,10 +7,11 @@ class Course extends React.PureComponent {
   constructor (props) {
     super(props)
     let course = this.props.course
+    console.log('course')
+    console.log(this.props.course)
     this.state = {
       course: course,
-      code: course.classcode,
-      name: course.className,
+      classcode: course.classcode,
       students: course.students,
       assignments: course.assignments
     }
@@ -35,9 +36,10 @@ class Course extends React.PureComponent {
       <div className={outerCss + `container badge-light rounded my-4 py-1`}>
         <div className={innerCss}>
           <h1 className='card-header rounded'>
-            {this.state.name}
+            {this.state.classcode}
           </h1>
           <h2> Students </h2>
+          These are not populated yet because there is only student and assignment ids.
           <DropDownWithFilter category='Students' values={students} onSelected={this.onStudentSelected} />
           <h2>Assignments </h2>
           <DropDownWithFilter category='Assignments' values={assignments} onSelected={this.onAssignmentSelected} />
