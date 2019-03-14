@@ -3,21 +3,19 @@ import PropTypes from 'prop-types'
 import Form from 'react-bootstrap/Form'
 import Col from 'react-bootstrap/Col'
 import '../../assets/css/instructorStyles.css'
-import { FormGroup, InputGroup, Row } from 'react-bootstrap'
+import { FormGroup, Row } from 'react-bootstrap'
 import Button from 'react-bootstrap/Button'
 import LoadingOverlay from '../loading/LoadingOverlay'
-import InstructorApiCalls from '../../javascript/InstructorApiCalls'
 
-const styles = {
-  course: {
-    maxHeight: 0,
-    visibility: 'hidden',
-    transition: 'maxHeight .5s ease-out, visibility .5s'
+const MessageStyles = {
+  messageFading: {
+    color: 'red',
+    transition: 'opacity 1.0s',
+    opacity: 0
   },
-  courseExpanded: {
-    maxHeight: '500px',
-    visibility: 'visible',
-    transition: 'maxHeight .5s ease-in, visibility .5s'
+  messageShow: {
+    color: 'red',
+    opacity: 1
   }
 }
 
@@ -28,10 +26,15 @@ class CreateCourse extends Component {
       show: false,
       validated: false,
       isLoading: false,
-      errorMessage: ''
+      errorMessage: null,
+      errorMessageStyle: MessageStyles.messageShow
     }
     this.submitBtnHandler = this.submitBtnHandler.bind(this)
   }
+
+  componentWillMount () { this._isMounted = true }
+
+  componentWillUnmount () { this._isMounted = false }
 
   async submitBtnHandler (event) {
     const form = event.currentTarget
@@ -46,21 +49,25 @@ class CreateCourse extends Component {
     const courseCode = form.elements.courseCodeField.value
 
     this.setState({ isLoading: true })
-    const res = await InstructorApiCalls.createCourse(this.props.jwt, courseCode)
+    const res = await this.props.createCourse(courseCode)
     this.setState({ isLoading: false })
 
     if (res.error) {
-      this.setState({ errorMessage: res.error })
+      this.setState({ errorMessage: res.error, errorMessageStyle: MessageStyles.messageShow })
+      setTimeout(() => {
+        if (this._isMounted) { this.setState({ errorMessageStyle: MessageStyles.messageFading }) }
+      }, 3000)
+    } else {
+      this.setState({ show: false, validated: false })
+      form.elements.courseCodeField.value = ''
     }
-
-    const updatedCourseIds = res.courseIds
-    this.props.onCourseCreated(updatedCourseIds)
   }
 
   render () {
-    const { validated, show, isLoading } = this.state
-    let outerCss = show ? 'course expand ' : 'course '
-    let innerCss = show ? 'course-content expand ' : 'course-content '
+    const { validated, show, isLoading, errorMessage, errorMessageStyle } = this.state
+    const outerCss = show ? 'course expand ' : 'course '
+    const innerCss = show ? 'course-content expand ' : 'course-content '
+    console.log(errorMessage)
     return (
       <div>
         <LoadingOverlay show={isLoading} />
@@ -74,28 +81,25 @@ class CreateCourse extends Component {
                 required
                 name='courseCodeField'
                 type='text'
-                placeholder='course code'
-              />
+                placeholder='course code' />
               <Form.Control.Feedback type='invalid'>Please provide a valid course name with no spaces</Form.Control.Feedback>
             </Form.Group>
 
-            <FormGroup className='text-right'>
+            <FormGroup className='text-right px-4' as={Row}>
+              <p style={errorMessageStyle}>{errorMessage}</p>
+              <div className='flex-fill' />
               <Button type='submit'>Submit</Button>
-
             </FormGroup>
-
           </Form>
         </div>
         <hr />
-
       </div>
     )
   }
 }
 
 CreateCourse.propTypes = {
-  jwt: PropTypes.string.isRequired,
-  onCourseCreated: PropTypes.func.isRequired
+  createCourse: PropTypes.func.isRequired
 }
 
 export default CreateCourse
