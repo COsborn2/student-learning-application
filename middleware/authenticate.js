@@ -8,7 +8,7 @@ let authenticate = async (req, res, next) => {
 
   if (_.isUndefined(rawToken)) {
     ErrorMessage('No token provided')
-    return res.send('token not provided')
+    return res.status(401).send({ error: 'No token provided' })
   }
 
   let unvalidatedToken
@@ -26,7 +26,7 @@ let authenticate = async (req, res, next) => {
     unvalidatedAccessTypes = unvalidatedToken.access
   } catch (error) {
     ErrorMessage(error.message)
-    return res.send(401).send({ error: 'No token provided' })
+    return res.status(401).send({ error: 'No token provided' })
   }
 
   if (!(unvalidatedAccessTypes.indexOf(req.userType) > -1)) {
