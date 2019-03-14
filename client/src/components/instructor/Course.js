@@ -1,9 +1,9 @@
-import React, { Component } from 'react'
+import React from 'react'
 import PropTypes from 'prop-types'
 import DropDownWithFilter from '../helpers/DropDownWithFilter.js'
 import '../../assets/css/instructorStyles.css'
 
-class Course extends Component {
+class Course extends React.PureComponent {
   constructor (props) {
     super(props)
     let course = this.props.course

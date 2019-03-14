@@ -3,7 +3,8 @@ import fetch from 'isomorphic-fetch'
 /* ROUTES */
 const signupURL = '/api/instructor'
 const loginURL = '/api/instructor/login'
-const getCourseById = '/api/classrooms/'
+const createCourseURL = '/api/classrooms'
+const getCourseByIdURL = '/api/classrooms/'
 
 async function stall (stallTime = 3000) {
   await new Promise(resolve => setTimeout(resolve, stallTime))
@@ -40,7 +41,7 @@ class InstructorApiCalls {
     }
 
     let jwt = res.headers.get('x-auth')
-    return { name: body.name, jwt, email: body.email, courses: body.class }
+    return { name: body.name, jwt, email: body.email, courseIds: body.class }
   }
 
   /***
@@ -71,7 +72,30 @@ class InstructorApiCalls {
     }
     console.log(body)
     let jwt = res.headers.get('x-auth')
-    return { name: body.name, jwt, email: body.email, courses: body.class }
+    return { name: body.name, jwt, email: body.email, courseIds: body.class }
+  }
+
+  static async createCourse (jwt, courseCode) {
+    let httpMessage = {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-auth': jwt
+      },
+      body: JSON.stringify({ classcode: courseCode })
+    }
+
+    const res = await fetch(createCourseURL, httpMessage)
+    console.log(res)
+    const body = await res.json()
+    if (res.status !== 200) {
+      console.log(httpMessage) // todo remove log statements
+      console.log(res)
+      console.log(`Error: ${body.error}`)
+      return { error: body.error }
+    }
+    console.log(body)
+    return { course: body.classroom, courseIds: body.updatedInstructor.class }
   }
 
   /**
@@ -89,7 +113,7 @@ class InstructorApiCalls {
       }
     }
 
-    const res = await fetch(getCourseById + id, httpMessage)
+    const res = await fetch(getCourseByIdURL + id, httpMessage)
     const body = await res.json()
     if (res.status !== 200) {
       console.log(httpMessage) // todo remove log statements

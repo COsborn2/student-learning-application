@@ -5,6 +5,8 @@ import Course from './Course'
 import Button from 'react-bootstrap/Button'
 import LoadingScreen from '../loading/LoadingScreen'
 import Toolbar from '../menu/Toolbar'
+import { Route, Switch } from 'react-router-dom'
+import CreateCourse from './CreateCourse'
 
 /* The instructor view manages all screens and routes for a specific instructor user
  the login screen creates and authenticates an instructor object, and passes it
@@ -16,32 +18,37 @@ class InstructorView extends Component {
     super(props)
     this.state = {
       name: this.props.user.name,
-      courseIds: this.props.courses,
+      courseIds: this.props.user.courseIds,
       jwt: this.props.user.jwt,
       courses: null,
       courseIndex: -1,
       isLoading: true
     }
-    this._triggerAnimFade = false
+    this._triggerAnimFade = true
     this._isMounted = true
     this.onCourseClick = this.onCourseClick.bind(this)
     this.onLoadingAnimationStop = this.onLoadingAnimationStop.bind(this)
+    this.onCourseCreated = this.onCourseCreated.bind(this)
   }
 
   /***
    * This method is called when the component is mounted to the DOM.
    */
-  componentDidMount () {
-    this._triggerAnimFade = true
-    this._isMounted = true
-  }
+  componentDidMount () { }
 
+  /**
+   * This method is called when the component is unmounted
+   */
   componentWillUnmount () {
     this._isMounted = false
   }
 
+  /**
+   * This is triggered when the loading animation is completely faded away
+   */
   onLoadingAnimationStop () {
     if (this._isMounted) {
+      this._triggerAnimFade = false
       this.setState({ isLoading: false })
       this.props.history.replace(`/instructor/${this.state.name}`)
     }
@@ -57,7 +64,13 @@ class InstructorView extends Component {
     let { courseIndex, course, courseIds } = this.state
     if (index === courseIndex) { // if they selected a new course, load it from the api
       courseIndex = index
-      course = await InstructorApiCalls.getCourseById(courseIds[index])
+      let res = await InstructorApiCalls.getCourseById(courseIds[index])
+      if (res.error) {
+        const errMsg = `Error retrieving course from api: ${res.error}`
+        console.error('Error retrieving ')
+        this.props.history.push('/error', errMsg)
+        return
+      }
     } else { // else close the course
       courseIndex = -1
     }
@@ -88,20 +101,28 @@ class InstructorView extends Component {
     )
   }
 
+  onCourseCreated (updatedCourseIds) {
+    this.setState({ courseIds: updatedCourseIds })
+  }
+
   render () {
-    let { courses, name, courseIds, isLoading } = this.state
+    let { courses, name, jwt, courseIds, isLoading } = this.state
     if (isLoading) return <LoadingScreen triggerFadeAway={this._triggerAnimFade} onStopped={this.onLoadingAnimationStop} />
     console.log(courseIds)
     return (
       <div>
         <Toolbar />
-        <div className='container text-center'>
-          <header className='jumbotron my-3 bg-info'>
+        <div className='container'>
+          <header className='jumbotron my-3 bg-info text-center'>
             <h1 className='display-4 font-weight-bold'> Hello {name}</h1>
           </header>
-          {this.createCourseComponents(courses)}
+          <CreateCourse jwt={jwt} onCourseCreated={(updatedCourseIds) => this.onCourseCreated(updatedCourseIds)} />
+          <div className='container-fluid'>
+            {this.createCourseComponents(courses)}
+          </div>
         </div>
       </div>
+
     )
   }
 }
