@@ -7,10 +7,6 @@ const getCoursesURL = '/api/instructor'
 const createCourseURL = '/api/classrooms'
 const getCourseByIdURL = '/api/classrooms/'
 
-async function stall (stallTime = 3000) {
-  await new Promise(resolve => setTimeout(resolve, stallTime))
-}
-
 class InstructorApiCalls {
   /***
    * This method calls the api to create a new Instructor

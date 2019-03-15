@@ -1,8 +1,8 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import DropDownWithFilter from '../helpers/DropDownWithFilter.js'
 import '../../assets/css/instructorStyles.css'
 import ExpandingSection from '../helpers/ExpandingSection'
+import FilteredList from '../helpers/FilteredList'
 
 class Course extends React.PureComponent {
   constructor (props) {
@@ -13,8 +13,8 @@ class Course extends React.PureComponent {
     this.state = {
       course: course,
       classcode: course.classcode,
-      students: course.students,
-      assignments: course.assignments
+      studentIds: course.students,
+      assignmentIds: course.assignments
     }
     this.onStudentSelected = this.onStudentSelected.bind(this)
     this.onAssignmentSelected = this.onAssignmentSelected.bind(this)
@@ -29,18 +29,31 @@ class Course extends React.PureComponent {
   }
 
   render () {
-    const students = this.state.students.map((student) => student.userName)
-    const assignments = this.state.assignments.map(assignment => 'Assignment' + assignment.id)
+    const { studentIds, assignmentIds, classcode } = this.state
+    const studentFilter = studentIds.length === 0
+      ? <header className='bg-white rounded-lg w-75 text-center'>There are no students in this course yet</header>
+      : <FilteredList items={studentIds.map((studentId, index) => `Student ${index + 1}`)} onItemClick={index => this.onStudentSelected(index)} />
+
+    const assignmentsFilter = assignmentIds.length === 0
+      ? <header className='bg-white rounded-lg w-75 text-center'>There are no assignments in this course yet</header>
+      : <FilteredList items={assignmentIds.map((assignmentId, index) => `Assignment ${index + 1}`)} onItemClick={index => this.onAssignmentSelected(index)} />
+
     return (
       <ExpandingSection show={this.props.show} >
         <h1 className='card-header rounded'>
-          {this.state.classcode}
+          {classcode}
         </h1>
-        <h2> Students </h2>
-          These are not populated yet because there is only student and assignment ids
-        <DropDownWithFilter category='Students' values={students} onSelected={this.onStudentSelected} />
-        <h2>Assignments </h2>
-        <DropDownWithFilter category='Assignments' values={assignments} onSelected={this.onAssignmentSelected} />
+        Api routes to get the names of students and assignments are not done. These are just hardcoded values
+        <div className='row'>
+          <div className='col-6'>
+            <h2> Students </h2>
+            {studentFilter}
+          </div>
+          <div className='col-6'>
+            <h2>Assignments </h2>
+            {assignmentsFilter}
+          </div>
+        </div>
       </ExpandingSection>
     )
   }

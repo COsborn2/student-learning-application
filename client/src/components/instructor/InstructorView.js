@@ -94,7 +94,7 @@ class InstructorView extends Component {
    * @returns {*}
    */
   createCourseComponents (courses) {
-    if (!courses || courses.length === 0) return <p className='badge-light'>You have no courses yet</p>
+    if (!courses || courses.length === 0) return <h1 className='rounded-lg w-75 text-center badge-light p-1'>You have no courses yet</h1>
     return (
       <div>
         {courses.map((course, index) =>
