@@ -112,7 +112,7 @@ class StudentSpelling extends React.Component {
   }
 
   renderButton (isSpelled) {
-    const buttonStyle = 'mx-auto btn btn-' + (isSpelled ? 'success' : 'secondary')
+    const buttonStyle = 'mx-auto rounded btn-lg btn-' + (isSpelled ? 'success' : 'secondary')
     return <button type='button' className={buttonStyle} onClick={this.resetToNextWord}
       disabled={!isSpelled}>Continue</button>
   }
@@ -165,14 +165,14 @@ class StudentSpelling extends React.Component {
 
         <ItemPreview key='__preview' name='Item' />
         <span>DropZone</span>
-        <div className='row'>
+        <div className='row py-3'>
           {dropZoneCards}
         </div>
         <span>Letter Cards</span>
-        <div className='row'>
+        <div className='row py-3'>
           {letterCards}
         </div>
-        <div className='row'>
+        <div className='row py-3'>
           {button}
         </div>
         <ScrollLock isActive={this.state.lockScroll} />
