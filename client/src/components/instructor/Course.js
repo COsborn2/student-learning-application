@@ -2,6 +2,7 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import DropDownWithFilter from '../helpers/DropDownWithFilter.js'
 import '../../assets/css/instructorStyles.css'
+import ExpandingSection from '../helpers/ExpandingSection'
 
 class Course extends React.PureComponent {
   constructor (props) {
@@ -30,21 +31,17 @@ class Course extends React.PureComponent {
   render () {
     const students = this.state.students.map((student) => student.userName)
     const assignments = this.state.assignments.map(assignment => 'Assignment' + assignment.id)
-    let outerCss = this.props.show ? 'course expand ' : 'course '
-    let innerCss = this.props.show ? 'course-content expand ' : 'course-content '
     return (
-      <div className={outerCss + `container badge-light rounded my-4 py-1`}>
-        <div className={innerCss}>
-          <h1 className='card-header rounded'>
-            {this.state.classcode}
-          </h1>
-          <h2> Students </h2>
-          These are not populated yet because there is only student and assignment ids.
-          <DropDownWithFilter category='Students' values={students} onSelected={this.onStudentSelected} />
-          <h2>Assignments </h2>
-          <DropDownWithFilter category='Assignments' values={assignments} onSelected={this.onAssignmentSelected} />
-        </div>
-      </div>
+      <ExpandingSection show={this.props.show} >
+        <h1 className='card-header rounded'>
+          {this.state.classcode}
+        </h1>
+        <h2> Students </h2>
+          These are not populated yet because there is only student and assignment ids
+        <DropDownWithFilter category='Students' values={students} onSelected={this.onStudentSelected} />
+        <h2>Assignments </h2>
+        <DropDownWithFilter category='Assignments' values={assignments} onSelected={this.onAssignmentSelected} />
+      </ExpandingSection>
     )
   }
 }

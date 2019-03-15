@@ -5,7 +5,7 @@
 }
 
 .course.expand {
-    max-height: 500px;
+    max-height: 1500px;
     visibility: visible;
     transition: max-height .5s ease-in, visibility .5s;
 }
@@ -19,4 +19,43 @@
     opacity: 100;
     transition: opacity .2s ease;
     transition-delay: .3s;
+}
+
+.section.expand{
+    max-height: 1500px;
+    visibility: visible;
+    transition: max-height .5s ease-in, visibility .5s;
+}
+
+.section {
+    max-height: 0;
+    visibility: hidden;
+    transition: max-height .5s ease-out, visibility .5s;
+}
+
+.section-content {
+    opacity: 0;
+    transition: opacity .2s ease-in;
+}
+
+.section-content.expand {
+    opacity: 100;
+    transition: opacity .2s ease;
+    transition-delay: .3s;
+}
+
+.filteredlist-search {
+    line-height: 2;
+    font-size: 18px;
+    height: auto;
+    padding-left: 20px;
+}
+
+.filteredlist-item {
+    list-style: none;
+    border: 1px solid #ccc;
+    margin-top: -1px;
+    line-height: 2;
+    padding: 5px 20px;
+    background: white;
 }

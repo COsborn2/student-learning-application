@@ -6,6 +6,7 @@ import '../../assets/css/instructorStyles.css'
 import { FormGroup, Row } from 'react-bootstrap'
 import Button from 'react-bootstrap/Button'
 import LoadingOverlay from '../loading/LoadingOverlay'
+import ExpandingSection from '../helpers/ExpandingSection'
 
 const MessageStyles = {
   messageFading: {
@@ -65,14 +66,13 @@ class CreateCourse extends Component {
 
   render () {
     const { validated, show, isLoading, errorMessage, errorMessageStyle } = this.state
-    const outerCss = show ? 'course expand ' : 'course '
-    const innerCss = show ? 'course-content expand ' : 'course-content '
     return (
       <div>
         <LoadingOverlay show={isLoading} />
         <Button className='test btn-lg btn-primary rounded-pill' onClick={() => this.setState({ show: !this.state.show })}>New Course</Button>
-        <div className={outerCss + `container badge-light rounded my-4 py-1`}>
-          <Form className={innerCss} validated={validated} onSubmit={e => this.submitBtnHandler(e)}>
+        <ExpandingSection show={show}>
+
+          <Form validated={validated} onSubmit={e => this.submitBtnHandler(e)}>
             <h1 className='text-center'>Create New Course</h1>
             <Form.Group as={Col}>
               <Form.Label>Course Code</Form.Label>
@@ -90,7 +90,7 @@ class CreateCourse extends Component {
               <Button type='submit'>Submit</Button>
             </FormGroup>
           </Form>
-        </div>
+        </ExpandingSection>
         <hr />
       </div>
     )
