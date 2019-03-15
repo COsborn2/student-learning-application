@@ -6,24 +6,20 @@ class LandScape extends PureComponent {
   constructor (props) {
     super(props)
     this.state = { isPortrait: false }
-    this.updateWindowDimensions = this.updateWindowDimensions.bind(this)
-  }
-
-  static isPortrait (height, width) {
-    return height > width
+    this.onWindowResize = this.onWindowResize.bind(this)
   }
 
   componentDidMount () {
-    this.updateWindowDimensions()
-    window.addEventListener('resize', this.updateWindowDimensions)
+    this.onWindowResize()
+    window.addEventListener('resize', this.onWindowResize)
   }
 
   componentWillUnmount () {
-    window.removeEventListener('resize', this.updateWindowDimensions)
+    window.removeEventListener('resize', this.onWindowResize)
   }
 
-  updateWindowDimensions () {
-    this.setState({ isPortrait: LandScape.isPortrait(window.innerHeight, window.innerWidth) })
+  onWindowResize () {
+    this.setState({ isPortrait: window.innerHeight > window.innerWidth })
   }
 
   render () {
