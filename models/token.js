@@ -76,6 +76,10 @@ TokenSchema.statics.validateToken = function (rawToken, unvalidatedToken) {
   })
 }
 
+TokenSchema.statics.convertRawToken = function (rawToken) {
+  return jwt.decode(rawToken)
+}
+
 let Token = mongoose.model('Token', TokenSchema)
 
 module.exports = { Token, TokenSchema }

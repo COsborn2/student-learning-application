@@ -5,6 +5,7 @@ const { Assignment } = require('../models/assignment')
 const { Classroom } = require('../models/classroom')
 const { Word } = require('../models/word')
 const { Student } = require('../models/student')
+const { Token } = require('../models/token')
 
 const { DefaultAssignments } = require('../AlphaEd/staticAssignments')
 
@@ -131,17 +132,19 @@ let getStudentClassroom = async (req, res) => {
 }
 
 let getInstructorClass = async (req, res) => {
-  let token = req.header('x-auth')
+  let rawToken = req.header('x-auth')
 
   let classroomId = req.params.id
 
-  let classroom = await Classroom.findById(classroomId)
+  let classroom = await Classroom.findById(classroomId).populate('class')
 
   if (!classroom) {
-    const err = 'Classroom with that id could not be found'
+    const err = `Classroom with id of (${classroomId}) could not be found`
     ErrorMessage(err)
     return res.status(404).send({ error: err })
   }
+
+  let token = Token.convertRawToken(rawToken)
 
   // Make sure that class is actually one of the instructors classes
   let instructor = await Instructor.findById(token._mid)
@@ -152,6 +155,7 @@ let getInstructorClass = async (req, res) => {
     return res.status(401).send({ error: err })
   }
 
+  SuccessMessage(`Classroom with id of (${classroomId}) found`)
   res.send({ classroom })
 }
 
