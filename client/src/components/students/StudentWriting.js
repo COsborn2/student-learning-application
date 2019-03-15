@@ -65,18 +65,27 @@ class StudentWriting extends Component {
     return (
       <div className='mx-auto text-center' style={{ background: '#b9d5e0', width: '85%' }}>
         <LoadingOverlay show={isLoading} />
-        <h1 className='text-center p-1 shadow'>Write the letter {currentLetter}</h1>
-        <div className='bg-dark'>
-          <SketchField
-            className='badge-info'
-            ref={ref => (this._sketch = ref)}
-            tool={Tools.Pencil}
-            lineColor='black'
-            lineWidth={10} />
 
-          <Button className='btn-primary p-2 m-1' onClick={this.clearCanvas}>Clear</Button>
-          <Button className='btn-primary p-2 m-1' onClick={this.checkWrittenCorrectly}>Submit</Button>
+        <h1 className='text-center p-1' style={{ color: '#4085bd' }}>
+        Write the letter {currentLetter}!
+        </h1>
+
+        <div className='mx-auto' style={{ width: '90%', padding: '1%', paddingBottom: '2%' }}>
+          <div style={{ background: '#4085bd', width: '100%', padding: '3%', boxShadow: '10px 10px 5px 1px #6b6b6b' }}>
+            <div className='mx-auto' style={{ background: 'white', margin: 'auto' }}>
+              <SketchField
+                style={{ background: 'white' }}
+                ref={ref => (this._sketch = ref)}
+                tool={Tools.Pencil}
+                lineColor='black'
+                lineWidth={10} />
+            </div>
+          </div>
         </div>
+
+        <Button className='btn-primary p-2 m-1' onClick={this.clearCanvas}>Clear</Button>
+        <Button className='btn-primary p-2 m-1' onClick={this.checkWrittenCorrectly}>Submit</Button>
+
       </div>
     )
   }
