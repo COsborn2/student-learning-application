@@ -155,4 +155,20 @@ let getInstructorClass = async (req, res) => {
   res.send({ classroom })
 }
 
-module.exports = { createClassroom, getStudentClassroom, getInstructorClass }
+// /api/classrooms/students/:id
+let getClassroom = async (req, res) => {
+  let classroomId = req.params.id
+
+  let classroom = await Classroom.findById(classroomId).populate('students')
+
+  if (!classroom) {
+    const err = `Classroom with id of (${classroomId}) could not be found`
+    ErrorMessage(err)
+    return res.status(404).send({ error: err })
+  }
+
+  SuccessMessage(`Classroom with id of (${classroomId}) was found`)
+  res.send({ classroom })
+}
+
+module.exports = { createClassroom, getStudentClassroom, getInstructorClass, getClassroom }
