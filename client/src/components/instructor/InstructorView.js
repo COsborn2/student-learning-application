@@ -93,9 +93,6 @@ class InstructorView extends Component {
         console.log('error: ' + res.error)
       }
 
-      console.log('courseReturned')
-      console.log(res)
-
       const indexOfUpdatedCourse = this.findCourseWithId(courses, res._id)
 
       if (indexOfUpdatedCourse === -1) { // the course is not in the courses array, add it
