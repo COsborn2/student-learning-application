@@ -2,6 +2,8 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import '../../assets/css/instructorStyles.css'
 import FilteredList from '../helpers/FilteredList'
+import Button from 'react-bootstrap/Button'
+import ExpandingSection from '../helpers/ExpandingSection'
 
 class Course extends React.PureComponent {
   constructor (props) {
@@ -12,7 +14,8 @@ class Course extends React.PureComponent {
       classcode: course.classcode,
       students: course.students,
       assignmentIds: course.assignments,
-      show: false
+      assignmentsDropdownSelected: false,
+      studentsDropdownSelected: false
     }
     this.onStudentSelected = this.onStudentSelected.bind(this)
     this.onAssignmentSelected = this.onAssignmentSelected.bind(this)
@@ -35,7 +38,7 @@ class Course extends React.PureComponent {
   }
 
   render () {
-    const { students, assignmentIds, classcode } = this.state
+    const { students, assignmentIds, classcode, studentsDropdownSelected, assignmentsDropdownSelected } = this.state
     const studentNames = students.map(student => student.username)
     const assignmentNames = assignmentIds.map((assignmentId, index) => `Assignment ${index + 1}`)
 
@@ -47,19 +50,33 @@ class Course extends React.PureComponent {
       ? <header className='bg-white rounded-lg w-75 text-center'>There are no assignments in this course yet</header>
       : <FilteredList items={assignmentNames} onItemClick={index => this.onAssignmentSelected(index)} />
 
+    let studentDropdownArrow = studentsDropdownSelected ? '↑' : '↓'
+    let assignmentDropdownArrow = assignmentsDropdownSelected ? '↑' : '↓'
+
     return (
       <div>
         <h1 className='card-header rounded'>
           {classcode}
         </h1>
-        <div className='row'>
-          <div className='col-6'>
-            <h2> Students </h2>
-            {studentFilter}
+        <div className='row p-2 m-2 text-center'>
+
+          <div className='col'>
+            <Button className='btn-lg btn-primary rounded-pill m-2' onClick={() => this.setState({ studentsDropdownSelected: !studentsDropdownSelected })}>
+            Students {studentDropdownArrow}
+            </Button>
+            <hr />
+            <ExpandingSection show={studentsDropdownSelected}>
+              {studentFilter}
+            </ExpandingSection>
           </div>
-          <div className='col-6'>
-            <h2>Assignments </h2>
-            {assignmentsFilter}
+          <div className='col'>
+            <Button className='btn-lg btn-primary rounded-pill m-2' onClick={() => this.setState({ assignmentsDropdownSelected: !assignmentsDropdownSelected })}>
+            Assignments {assignmentDropdownArrow}
+            </Button>
+            <hr />
+            <ExpandingSection show={assignmentsDropdownSelected}>
+              {assignmentsFilter}
+            </ExpandingSection>
           </div>
         </div>
       </div>
