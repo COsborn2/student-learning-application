@@ -2,20 +2,24 @@ import React, { PureComponent } from 'react'
 import PropTypes from 'prop-types'
 import '../../assets/css/instructorStyles.css'
 
-class List extends PureComponent {
-  render () {
-    return (
-      <ul>
-        {
-          this.props.items.map((item, index) => {
-            return <li className='filteredlist-item' key={index} onClick={() => this.props.onItemClick(item)}>{item}</li>
-          })
-        }
-      </ul>
-    )
-  }
+/**
+ * This serves as a simple list that is displayed
+ */
+const List = (props) => {
+  return (
+    <ul>
+      {
+        props.items.map((item, index) => {
+          return <li className='filteredlist-item' key={index} onClick={() => props.onItemClick(item)}>{item}</li>
+        })
+      }
+    </ul>
+  )
 }
 
+/**
+ * This class serves as a filterable list of items.
+ */
 class FilteredList extends PureComponent {
   constructor (props) {
     super(props)
@@ -27,6 +31,10 @@ class FilteredList extends PureComponent {
     this.onItemClick = this.onItemClick.bind(this)
   }
 
+  /**
+   * This is triggered every time the filter is changed
+   * @param event The onChange event
+   */
   handleFilterChange (event) {
     let updatedList = this.state.initialItems
     updatedList = updatedList.filter(item => {
@@ -36,25 +44,13 @@ class FilteredList extends PureComponent {
     this.setState({ currentItems: updatedList })
   }
 
+  /**
+   * This is triggered every time a list item is clicked. It calls the callback passed as a prop, passing the index of the item clicked
+   * @param itemName The name of the item clicked
+   */
   onItemClick (itemName) {
     const itemIndex = this.state.initialItems.indexOf(itemName)
     this.props.onItemClick(itemIndex)
-  }
-
-  /**
-   * This method forces the state to be updated when the props change
-   * @param props The props passed
-   * @param state The current state
-   * @returns {*} The state items to update
-   */
-  static getDerivedStateFromProps (props, state) {
-    if (props.items !== state.initialItems) {
-      return {
-        currentItems: props.items,
-        initialItems: props.items
-      }
-    }
-    return null
   }
 
   render () {

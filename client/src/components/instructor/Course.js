@@ -1,7 +1,6 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import '../../assets/css/instructorStyles.css'
-import ExpandingSection from '../helpers/ExpandingSection'
 import FilteredList from '../helpers/FilteredList'
 
 class Course extends React.PureComponent {
@@ -19,44 +18,24 @@ class Course extends React.PureComponent {
     this.onAssignmentSelected = this.onAssignmentSelected.bind(this)
   }
 
+  /**
+   * This is triggered when the user selects a student from the students list
+   * @param index The index of the student clicked
+   */
   onStudentSelected (index) {
     console.log('student selected: ' + index)
   }
 
+  /**
+   * This is triggered when the user selects an assignment from the assignments list
+   * @param index The index of the assignment clicked
+   */
   onAssignmentSelected (index) {
     console.log('assignment selected: ' + index)
   }
 
-  /**
-   * This method forces the state to update of the course is set to show
-   * and the course passed by props has changed from the course saved in state
-   * @param props Props passed to Course
-   * @param state The current state of Course
-   * @returns {*} The state items to update
-   */
-  static getDerivedStateFromProps (props, state) {
-    if (!props.show) { // dont update when its not shown
-      return { show: false }
-    }
-    // update if its shown, and its props have changed
-    if (props.show && state.course !== props.course) {
-      let course = props.course
-      console.log('props show, state not')
-      return {
-        course: course,
-        classcode: course.classcode,
-        students: course.students,
-        assignmentIds: course.assignments,
-        show: true
-      }
-    } else if (!props.show) {
-      return { show: false }
-    }
-    return null
-  }
-
   render () {
-    const { students, assignmentIds, classcode, show } = this.state
+    const { students, assignmentIds, classcode } = this.state
     const studentNames = students.map(student => student.username)
     const assignmentNames = assignmentIds.map((assignmentId, index) => `Assignment ${index + 1}`)
 
@@ -69,7 +48,7 @@ class Course extends React.PureComponent {
       : <FilteredList items={assignmentNames} onItemClick={index => this.onAssignmentSelected(index)} />
 
     return (
-      <ExpandingSection show={show} >
+      <div>
         <h1 className='card-header rounded'>
           {classcode}
         </h1>
@@ -83,7 +62,7 @@ class Course extends React.PureComponent {
             {assignmentsFilter}
           </div>
         </div>
-      </ExpandingSection>
+      </div>
     )
   }
 }

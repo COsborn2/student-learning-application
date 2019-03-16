@@ -24,6 +24,7 @@ class InstructorView extends Component {
       jwt: this.props.user.jwt,
       courseSelected: null,
       courseSelectedIndex: -1,
+      courseCollapsingIndex: -1,
       isLoading: true,
       isLoadingCourse: false
     }
@@ -75,14 +76,16 @@ class InstructorView extends Component {
   }
 
   /**
-   * This method is called when a user clicks to expand a course.
-   * It fetches the selected course from the api
+   * This method is called when a user clicks to expand, or collapse a course.
+   * If clicked to expand, it fetches the selected course from the api
    * @param newCourseSelected The index of the course the user selected.
    * @returns {Promise<void>} Nothing. It is async to await fetch call
    */
   async onCourseClick (newCourseSelected) {
-    let { courseSelectedIndex, courseIds, jwt, courses } = this.state
+    let { courseSelectedIndex, courseIds, jwt, courses, courseCollapsingIndex } = this.state
     this.setState({ isLoadingCourse: true })
+
+    courseCollapsingIndex = courseSelectedIndex
 
     if (newCourseSelected !== courseSelectedIndex) { // if they selected a new course, expand it
       let res = await InstructorApiCalls.getCourseById(jwt, courseIds[newCourseSelected])
@@ -95,17 +98,17 @@ class InstructorView extends Component {
 
       const indexOfUpdatedCourse = this.findCourseWithId(courses, res._id)
 
-      if (indexOfUpdatedCourse === -1) { // the course is in the courses array, add it
+      if (indexOfUpdatedCourse === -1) { // the course is not in the courses array, add it
         courses.push(res)
-      } else { // course found, update it
+      } else { // course found, update it in the courses array
         courses[indexOfUpdatedCourse] = res
       }
-      courseSelectedIndex = newCourseSelected
+      courseSelectedIndex = newCourseSelected // set the selected course index
     } else { // else close the course
-      courseSelectedIndex = -1
+      courseSelectedIndex = -1 // reset the selected course index
     }
 
-    this.setState({ isLoadingCourse: false, courses, courseSelectedIndex })
+    this.setState({ isLoadingCourse: false, courses, courseSelectedIndex, courseCollapsingIndex })
   }
 
   /**
@@ -124,8 +127,8 @@ class InstructorView extends Component {
 
   /**
    * This method is called each time this component renders. It constructs the list of
-   * Courses that can be expanded. If there are no courses, it is displayed. This forces the courses
-   * To be re-mounted when expanded, which updates the course components state.
+   * Courses that can be expanded. If there are no courses, it is displayed. If a course is not
+   * selected, a div is rendered
    * @param courses The courses to render
    * @returns {*} The buttons to expand/collapse the courses, and the currently selected course
    */
@@ -135,13 +138,22 @@ class InstructorView extends Component {
       <div>
         {
           courses.map((course, index) => {
-            const shouldRenderCourse = index === this.state.courseSelectedIndex
+            const isSelectedCourse = index === this.state.courseSelectedIndex
+            const isCollapsingCourse = index === this.state.courseCollapsingIndex
+            let courseToRender = <div />
+
+            if (isSelectedCourse || isCollapsingCourse) {
+              courseToRender = <Course {...this.props} course={course} />
+            }
 
             return (
               <div key={index}>
                 <Button onClick={() => this.onCourseClick(index)}
                   className='test btn-lg btn-primary rounded-pill'>{course.classcode}</Button>
-                <Course {...this.props} show={shouldRenderCourse} course={course} />
+                <ExpandingSection show={isSelectedCourse} onCollapsed={() => this.setState({ courseCollapsingIndex: -1 })}>
+                  {courseToRender}
+                </ExpandingSection>
+
                 <hr />
               </div>
             )
