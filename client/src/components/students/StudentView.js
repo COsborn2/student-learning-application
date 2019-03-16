@@ -6,7 +6,7 @@ import { DragDropContextProvider } from 'react-dnd'
 import TouchBackend from 'react-dnd-touch-backend'
 import StudentApiCalls from '../../javascript/StudentApiCalls'
 import LoadingScreen from '../loading/LoadingScreen'
-import StudentToolbar from '../menu/StudentToolbar'
+import Toolbar from '../menu/Toolbar'
 
 const StudentSpelling = lazy(() => import('./StudentSpelling'))
 const StudentWriting = lazy(() => import('./StudentWriting'))
@@ -109,8 +109,6 @@ class StudentView extends Component {
         await this.advanceToNextAssignment() // this assumes you cant spell till you have completed writing
       }
     }
-
-    await this.updateStudentProgress(progress)
   }
 
   /***
@@ -209,7 +207,7 @@ class StudentView extends Component {
    */
   async updateStudentProgress (progress) {
     let { jwt } = this.state
-    let res = await StudentApiCalls.putAssignmentsMock(jwt, progress)
+    let res = await StudentApiCalls.updateStudentProgress(jwt, progress)
 
     if (res.error) {
       console.log('Some Error Calling Api to update assignment progress')
@@ -228,13 +226,13 @@ class StudentView extends Component {
   async onLetterLineSelection (selectedAssignmentIndex, selectedLetterIndex) {
     let { progress, assignmentIds, currentAssignment, currentAssignmentIndex, currentWordIndex, currentLetterIndex } = this.state
 
-    if (selectedAssignmentIndex === currentAssignmentIndex && selectedLetterIndex === currentLetterIndex) return null // if its the already selected letter do nothing
+    const requiresFetch = selectedAssignmentIndex !== currentAssignmentIndex
 
     this.setState({ isLoading: true })
     currentAssignmentIndex = selectedAssignmentIndex
     currentLetterIndex = selectedLetterIndex
     currentWordIndex = 0
-    currentAssignment = await StudentApiCalls.getAssignmentById(assignmentIds[selectedAssignmentIndex].assignmentId)
+    currentAssignment = (requiresFetch) ? await StudentApiCalls.getAssignmentById(assignmentIds[selectedAssignmentIndex].assignmentId) : currentAssignment
     this._triggerAnimFade = true
     this.setState({ progress, currentAssignment, currentAssignmentIndex, currentWordIndex, currentLetterIndex })
   }
@@ -259,7 +257,7 @@ class StudentView extends Component {
     if (isLoading) return <LoadingScreen triggerFadeAway={this._triggerAnimFade} onStopped={this.onLoadingAnimationStop} />
     return (
       <Suspense fallback={<LoadingScreen />}>
-        <StudentToolbar />
+        <Toolbar />
         <Switch>
           <Route exact path='/student/:username' render={(props) =>
             <StudentHome {...props} letterLineInfo={this.getLetterLineInfo()}

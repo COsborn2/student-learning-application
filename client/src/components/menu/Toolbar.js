@@ -11,16 +11,16 @@ function onMenuBtnHandler () {
   window.alert('IDK what this would do')
 }
 
-class StudentToolbar extends PureComponent {
+class Toolbar extends PureComponent {
   render () {
     return (
-      <header className='mx-auto align-middle' style={{ width: '90%', paddingTop: '0', marginTop: '0', marginBottom: '0' }}>
-        <Navbar style={{ background: '#7eaec5', height: '11vh', minHeight: '80px' }}>
-          <Nav className='mr-auto' style={{ paddingRight: '0', marginRight: '0' }}>
-            <Navbar.Brand href='\' style={{ color: 'white', fontSize: '400%' }}>Home</Navbar.Brand>
+      <header className='mx-auto align-middle' style={{ width: '90%' }}>
+        <Navbar style={{ background: '#7eaec5' }}>
+          <Nav className='mr-auto'>
+            <Navbar.Brand href='\' style={{ color: 'white', fontSize: '250%' }}>Home</Navbar.Brand>
           </Nav>
-          <Nav>
-            <NavDropdown title='&#9776;' style={{ fontSize: '300%' }}>
+          <Nav style={{ fontSize: '150%' }}>
+            <NavDropdown alignRight title='&#9776;' >
               <NavDropdown.Item onClick={onMenuBtnHandler}>Menu</NavDropdown.Item>
               <NavDropdown.Item href='/' onClick={onSignoutBtnHandler}>Sign out</NavDropdown.Item>
             </NavDropdown>
@@ -31,4 +31,4 @@ class StudentToolbar extends PureComponent {
   }
 }
 
-export default StudentToolbar
+export default Toolbar

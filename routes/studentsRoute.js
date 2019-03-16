@@ -86,22 +86,17 @@ let loginStudent = async (req, res) => {
   }
 }
 
-let validateStudent = (req, res) => {
-  SuccessMessage('student validated')
-  res.send(req.user)
-}
-
 let updateStudentProgress = async (req, res) => {
   let token = req.header('x-auth')
 
   let body = _.pick(req.body, ['currentLetter', 'currentWord', 'currentAssignment'])
 
   // values passed in through body
-  let newCurrentLetter = _.toInteger(body.currentLetter)
-  let newCurrentWord = _.toInteger(body.currentWord)
-  let newCurrentAssignment = _.toInteger(body.currentAssignment)
+  let newLetterIndex = _.toInteger(body.currentLetter)
+  let newWordIndex = _.toInteger(body.currentWord)
+  let newAssignmentIndex = _.toInteger(body.currentAssignment)
 
-  if (!_.isInteger(newCurrentAssignment) || !_.isInteger(newCurrentWord) || !_.isInteger(newCurrentLetter)) {
+  if (!_.isInteger(newAssignmentIndex) || !_.isInteger(newWordIndex) || !_.isInteger(newLetterIndex)) {
     const errorMessage = 'currentLetter, currentWord, and currentAssignment must be specified'
     ErrorMessage(errorMessage)
     return res.status(400).send({ error: errorMessage })
@@ -110,47 +105,45 @@ let updateStudentProgress = async (req, res) => {
   let student = await Student.findByToken(token)
 
   // values from student in database
-  let studentCurrentAssignment = student.currentAssignment
-  let studentCurrentLetter = student.currentLetter
-  let studentCurrentWord = student.currentWord
-
-  let assignments = await student.getAssignments()
-  let numberAssignments = assignments.length
-
-  let numberOfLetters = assignments[studentCurrentAssignment].letters.length
-  let numberOfWords = assignments[studentCurrentAssignment].words.length
-
+  const currentAssignmentIndex = student.currentAssignment
+  const currentLetterIndex = student.currentLetter
+  const currentWordIndex = student.currentWord
   let finishedCourse = false
+  let errorMessage = null
 
-  // ensure that letters are not being skipped
-  if (studentCurrentLetter > newCurrentLetter) {
-    const errorMessage = `Skipping detected: new currentLetter value of ${newCurrentLetter} is more than 1 greater than new currentLetter value of ${studentCurrentLetter}`
+  if (newAssignmentIndex < currentAssignmentIndex) {
+    errorMessage = `Update Assignment Progress Error: The new assignment index ${newAssignmentIndex} cannot be less than the current assignment index ${currentAssignmentIndex}`
+  } else if (newAssignmentIndex > currentAssignmentIndex) {
+    if (newAssignmentIndex > currentAssignmentIndex + 1) {
+      errorMessage = `Update Assignment Progress Error: The new assignment index ${newAssignmentIndex} cannot be greater than the current assignment index ${currentAssignmentIndex} plus one`
+    } else {
+      // valid assignment progression, reset letter and word index to beginning of assignment
+      newLetterIndex = 0
+      newWordIndex = 0
+    }
+  } else { // the current assignment didn't change
+    if (newLetterIndex !== currentLetterIndex && newWordIndex !== currentWordIndex) {
+      errorMessage = 'Update Assignment Progress Error: The new word index and the new letter index cannot be updated at the same time'
+    } else {
+      // only letter index or word index has been updated
+      if (newWordIndex > currentWordIndex + 1) {
+        errorMessage = `Update Word Progress Error: The new word index ${newWordIndex} cannot be greater than the current word index ${currentWordIndex} plus one`
+      } else if (newLetterIndex > currentLetterIndex + 1) {
+        errorMessage = `Update Letter Progress Error: The new letter index ${newLetterIndex} cannot be greater than the current letter index ${currentLetterIndex} plus one`
+      }
+    }
+  }
+
+  if (errorMessage) {
+    // if an progress error was detected
     ErrorMessage(errorMessage)
     return res.status(400).send({ error: errorMessage })
   }
 
-  // ensure that words are not being skipped
-  if (studentCurrentWord > newCurrentWord) {
-    const errorMessage = `Skipping detected: new currentWord value of ${newCurrentWord} is more than 1 greater than new currentLetter value of ${studentCurrentWord}`
-    ErrorMessage(errorMessage)
-    return res.status(400).send({ error: errorMessage })
-  }
+  let numberAssignments = await student.getAssignments().length
 
-  // ensure assignment is not being skipped
-  if (studentCurrentAssignment > newCurrentAssignment) {
-    const errorMessage = `Skipping detected: new currentAssignment value of ${newCurrentAssignment} is more than 1 greater than new currentLetter value of ${studentCurrentAssignment}`
-    ErrorMessage(errorMessage)
-    return res.status(400).send({ error: errorMessage })
-  }
-
-  // if student has completed all the letters and words in an assignment, reset letter and word indexes
-  if ((newCurrentLetter > numberOfLetters) && (newCurrentWord > numberOfWords)) {
-    newCurrentLetter = 0
-    newCurrentWord = 0
-    SuccessMessage('Student has completed assignment')
-  }
-
-  if (newCurrentAssignment >= numberAssignments) { // if currentAssignment incremented is higher than all assignments then return finshedCourse = true
+  if (newAssignmentIndex >= numberAssignments) {
+    // all assignments in course are completed
     finishedCourse = true
     SuccessMessage('Student has completed all assignments in the course')
   }
@@ -160,14 +153,41 @@ let updateStudentProgress = async (req, res) => {
     _id: new ObjectID(student._id)
   }, {
     $set: {
-      currentLetter: newCurrentLetter,
-      currentWord: newCurrentWord,
-      currentAssignment: newCurrentAssignment,
+      currentLetter: newLetterIndex,
+      currentWord: newWordIndex,
+      currentAssignment: newAssignmentIndex,
       finishedCourse
     }
   }, {
     new: true
   })
+
+  SuccessMessage(`Student progress successfully updated\n\tAssignment: ${newAssignmentIndex}\n\tLetter: ${newLetterIndex}\n\tWord: ${newWordIndex}`)
+  res.send({ updatedStudent })
+}
+
+let devSetStudentProgress = async (req, res) => { // todo remove dev functionality
+  let token = req.header('x-auth')
+  let student = await Student.findByToken(token)
+  let body = _.pick(req.body, ['currentLetter', 'currentWord', 'currentAssignment'])
+  let newLetterIndex = _.toInteger(body.currentLetter)
+  let newWordIndex = _.toInteger(body.currentWord)
+  let newAssignmentIndex = _.toInteger(body.currentAssignment)
+
+  let updatedStudent = await Student.findOneAndUpdate({
+    _id: new ObjectID(student._id)
+  }, {
+    $set: {
+      currentLetter: newLetterIndex,
+      currentWord: newWordIndex,
+      currentAssignment: newAssignmentIndex,
+      finishedCourse: false
+    }
+  }, {
+    new: true
+  })
+
+  SuccessMessage(`Student progress successfully set by developer\n\tAssignment: ${newAssignmentIndex}\n\tLetter: ${newLetterIndex}\n\tWord: ${newWordIndex}`)
 
   res.send({ updatedStudent })
 }
@@ -207,4 +227,11 @@ let initalizeStudent = async (req, res) => {
   res.send({ assignmentIds, currentAssignment })
 }
 
-module.exports = { createStudent, loginStudent, validateStudent, updateStudentProgress, deleteStudent, initalizeStudent }
+module.exports = {
+  createStudent,
+  loginStudent,
+  updateStudentProgress,
+  devSetStudentProgress,
+  deleteStudent,
+  initalizeStudent
+}
