@@ -15,6 +15,8 @@ class StudentInfo extends PureComponent {
   }
 }
 
-StudentInfo.propTypes = {}
+StudentInfo.propTypes = {
+  student: PropTypes.object.isRequired
+}
 
 export default StudentInfo

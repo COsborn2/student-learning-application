@@ -70,13 +70,13 @@ class Course extends React.PureComponent {
             Students {studentDropdownArrow}
             </Button>
             <hr />
-              <ExpandingSection show={studentsDropdownSelected}>
-                {studentFilter}
-              </ExpandingSection>
+            <ExpandingSection show={studentsDropdownSelected}>
+              {studentFilter}
+            </ExpandingSection>
             <HorozontalExpandingSection className='bg-white' show={showStudentIndex !== -1}>
               {studentToShow}
             </HorozontalExpandingSection>
-            </div>
+          </div>
           <div className='col text-center'>
             <Button className='btn-lg btn-primary rounded-pill m-2' onClick={() => this.setState({ assignmentsDropdownSelected: !assignmentsDropdownSelected })}>
             Assignments {assignmentDropdownArrow}
