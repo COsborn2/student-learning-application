@@ -146,8 +146,8 @@ class InstructorApiCalls {
       console.log(`Error: ${body.error}`)
       return { error: body.error }
     }
-    console.log(body)
-    return body
+
+    return body.classroom
   }
 }
 

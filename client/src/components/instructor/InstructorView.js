@@ -6,6 +6,8 @@ import Button from 'react-bootstrap/Button'
 import LoadingScreen from '../loading/LoadingScreen'
 import Toolbar from '../menu/Toolbar'
 import CreateCourse from './CreateCourse'
+import LoadingOverlay from '../loading/LoadingOverlay'
+import ExpandingSection from '../helpers/ExpandingSection'
 
 /* The instructor view manages all screens and routes for a specific instructor user
  the login screen creates and authenticates an instructor object, and passes it
@@ -20,8 +22,10 @@ class InstructorView extends Component {
       courseIds: this.props.user.courseIds,
       courses: null,
       jwt: this.props.user.jwt,
-      courseIndex: -1,
-      isLoading: true
+      courseSelected: null,
+      courseSelectedIndex: -1,
+      isLoading: true,
+      isLoadingCourse: false
     }
     this._triggerAnimFade = false
     this._isMounted = true
@@ -73,38 +77,77 @@ class InstructorView extends Component {
   /**
    * This method is called when a user clicks to expand a course.
    * It fetches the selected course from the api
-   * @param courseIndexSelected The index of the course the user selected.
+   * @param newCourseSelected The index of the course the user selected.
    * @returns {Promise<void>} Nothing. It is async to await fetch call
    */
-  onCourseClick (courseIndexSelected) {
-    let { courseIndex } = this.state
-    if (courseIndexSelected !== courseIndex) { // if they selected a new course, expand it
-      courseIndex = courseIndexSelected
+  async onCourseClick (newCourseSelected) {
+    let { courseSelectedIndex, courseIds, jwt, courses } = this.state
+    this.setState({ isLoadingCourse: true })
+
+    if (newCourseSelected !== courseSelectedIndex) { // if they selected a new course, expand it
+      let res = await InstructorApiCalls.getCourseById(jwt, courseIds[newCourseSelected])
+      if (res.error) {
+        console.log('error: ' + res.error)
+      }
+
+      console.log('courseReturned')
+      console.log(res)
+
+      const indexOfUpdatedCourse = this.findCourseWithId(courses, res._id)
+
+      if (indexOfUpdatedCourse === -1) { // the course is in the courses array, add it
+        courses.push(res)
+      } else { // course found, update it
+        courses[indexOfUpdatedCourse] = res
+      }
+      courseSelectedIndex = newCourseSelected
     } else { // else close the course
-      courseIndex = -1
+      courseSelectedIndex = -1
     }
 
-    this.setState({ courseIndex })
+    this.setState({ isLoadingCourse: false, courses, courseSelectedIndex })
+  }
+
+  /**
+   * This method finds the index of the course that has the id specified
+   * @param courses An array of courses to search
+   * @param idToFind The id to find in the array of courses
+   * @returns {number} The index of the course with id specified, or -1 if not found
+   */
+  findCourseWithId (courses, idToFind) {
+    if (!courses) return -1
+    for (let i = 0; i < courses.length; i++) {
+      if (courses[i]._id === idToFind) return i
+    }
+    return -1
   }
 
   /**
    * This method is called each time this component renders. It constructs the list of
-   * Courses that can be expanded. If there are no courses, it is displayed
-   * @param courses
-   * @returns {*}
+   * Courses that can be expanded. If there are no courses, it is displayed. This forces the courses
+   * To be re-mounted when expanded, which updates the course components state.
+   * @param courses The courses to render
+   * @returns {*} The buttons to expand/collapse the courses, and the currently selected course
    */
   createCourseComponents (courses) {
     if (!courses || courses.length === 0) return <h1 className='rounded-lg w-75 text-center badge-light p-1'>You have no courses yet</h1>
     return (
       <div>
-        {courses.map((course, index) =>
-          <div key={index}>
-            <Button onClick={() => this.onCourseClick(index)}
-              className='test btn-lg btn-primary rounded-pill'>{course.classcode}</Button>
-            <Course {...this.props} show={index === this.state.courseIndex} course={course} />
-            <hr />
-          </div>
-        )}
+        {
+          courses.map((course, index) => {
+            const shouldRenderCourse = index === this.state.courseSelectedIndex
+
+            return (
+              <div key={index}>
+                <Button onClick={() => this.onCourseClick(index)}
+                  className='test btn-lg btn-primary rounded-pill'>{course.classcode}</Button>
+                <Course {...this.props} show={shouldRenderCourse} course={course} />
+                <hr />
+              </div>
+            )
+          }
+          )
+        }
       </div>
     )
   }
@@ -130,6 +173,7 @@ class InstructorView extends Component {
     if (isLoading) return <LoadingScreen triggerFadeAway={this._triggerAnimFade} onStopped={this.onLoadingAnimationStop} />
     return (
       <div>
+        <LoadingOverlay show={this.state.isLoadingCourse} />
         <Toolbar />
         <div className='container'>
           <header className='jumbotron my-3 bg-info text-center'>

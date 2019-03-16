@@ -41,6 +41,22 @@ class FilteredList extends PureComponent {
     this.props.onItemClick(itemIndex)
   }
 
+  /**
+   * This method forces the state to be updated when the props change
+   * @param props The props passed
+   * @param state The current state
+   * @returns {*} The state items to update
+   */
+  static getDerivedStateFromProps (props, state) {
+    if (props.items !== state.initialItems) {
+      return {
+        currentItems: props.items,
+        initialItems: props.items
+      }
+    }
+    return null
+  }
+
   render () {
     const { currentItems } = this.state
     return (

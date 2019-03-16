@@ -8,13 +8,12 @@ class Course extends React.PureComponent {
   constructor (props) {
     super(props)
     let course = this.props.course
-    console.log('course')
-    console.log(this.props.course)
     this.state = {
       course: course,
       classcode: course.classcode,
-      studentIds: course.students,
-      assignmentIds: course.assignments
+      students: course.students,
+      assignmentIds: course.assignments,
+      show: false
     }
     this.onStudentSelected = this.onStudentSelected.bind(this)
     this.onAssignmentSelected = this.onAssignmentSelected.bind(this)
@@ -28,22 +27,52 @@ class Course extends React.PureComponent {
     console.log('assignment selected: ' + index)
   }
 
+  /**
+   * This method forces the state to update of the course is set to show
+   * and the course passed by props has changed from the course saved in state
+   * @param props Props passed to Course
+   * @param state The current state of Course
+   * @returns {*} The state items to update
+   */
+  static getDerivedStateFromProps (props, state) {
+    if (!props.show) { // dont update when its not shown
+      return { show: false }
+    }
+    // update if its shown, and its props have changed
+    if (props.show && state.course !== props.course) {
+      let course = props.course
+      console.log('props show, state not')
+      return {
+        course: course,
+        classcode: course.classcode,
+        students: course.students,
+        assignmentIds: course.assignments,
+        show: true
+      }
+    } else if (!props.show) {
+      return { show: false }
+    }
+    return null
+  }
+
   render () {
-    const { studentIds, assignmentIds, classcode } = this.state
-    const studentFilter = studentIds.length === 0
+    const { students, assignmentIds, classcode, show } = this.state
+    const studentNames = students.map(student => student.username)
+    const assignmentNames = assignmentIds.map((assignmentId, index) => `Assignment ${index + 1}`)
+
+    const studentFilter = students.length === 0
       ? <header className='bg-white rounded-lg w-75 text-center'>There are no students in this course yet</header>
-      : <FilteredList items={studentIds.map((studentId, index) => `Student ${index + 1}`)} onItemClick={index => this.onStudentSelected(index)} />
+      : <FilteredList items={studentNames} onItemClick={index => this.onStudentSelected(index)} />
 
     const assignmentsFilter = assignmentIds.length === 0
       ? <header className='bg-white rounded-lg w-75 text-center'>There are no assignments in this course yet</header>
-      : <FilteredList items={assignmentIds.map((assignmentId, index) => `Assignment ${index + 1}`)} onItemClick={index => this.onAssignmentSelected(index)} />
+      : <FilteredList items={assignmentNames} onItemClick={index => this.onAssignmentSelected(index)} />
 
     return (
-      <ExpandingSection show={this.props.show} >
+      <ExpandingSection show={show} >
         <h1 className='card-header rounded'>
           {classcode}
         </h1>
-        Api routes to get the names of students and assignments are not done. These are just hardcoded values
         <div className='row'>
           <div className='col-6'>
             <h2> Students </h2>

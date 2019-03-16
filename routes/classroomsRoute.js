@@ -136,7 +136,7 @@ let getInstructorClass = async (req, res) => {
 
   let classroomId = req.params.id
 
-  let classroom = await Classroom.findById(classroomId).populate('class')
+  let classroom = await Classroom.findById(classroomId).populate('class').populate('students')
 
   if (!classroom) {
     const err = `Classroom with id of (${classroomId}) could not be found`
