@@ -33,9 +33,10 @@ If they are currently logged in, they will need to sign back in`)
     if (shouldEdit) { this.setState({ showEdit: true }) }
   }
 
-  onEditSubmit (username) {
-    window.alert(`The API does not support this operation yet.\nThe changes will only persist until the student section is closed`)
-    this.props.student.username = username
+  onEditSubmit (username, password) {
+    window.alert(`The API does not support this operation yet.\nThe changes will only persist until the course is closed`)
+    console.log(password)
+    this.props.onEditStudent(username, password)
     this.setState({ showEdit: false })
   }
 
@@ -109,7 +110,7 @@ All of their progress will be deleted. This action cannot be undone`)
           Spelling word: {currentWord}
 
           <ExpandingSection className='text-center border border-light' show={showEdit}>
-            <EditStudent onEditSubmit={(username) => this.onEditSubmit(username)} onEditCancel={() => this.setState({ showEdit: false })} student={this.props.student} />
+            <EditStudent onEditSubmit={(username, password) => this.onEditSubmit(username, password)} onEditCancel={() => this.setState({ showEdit: false })} student={this.props.student} />
           </ExpandingSection>
 
         </div>
@@ -122,6 +123,7 @@ StudentInfo.propTypes = {
   student: PropTypes.object.isRequired,
   assignments: PropTypes.array.isRequired,
   onDeleteStudent: PropTypes.func.isRequired,
+  onEditStudent: PropTypes.func.isRequired,
   onCloseStudent: PropTypes.func.isRequired
 }
 

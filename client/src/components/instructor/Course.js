@@ -29,6 +29,7 @@ class Course extends React.PureComponent {
     }
     this.onStudentSelected = this.onStudentSelected.bind(this)
     this.onAssignmentSelected = this.onAssignmentSelected.bind(this)
+    this.onEditStudent = this.onEditStudent.bind(this)
   }
 
   /***
@@ -59,6 +60,19 @@ class Course extends React.PureComponent {
   }
 
   /**
+   * This is called every time a student is updated by the instructor, It simply mocks it until the course is refreshed
+   * @param username The username to update to
+   * @param password The password to update to
+   */
+  onEditStudent (username, password) {
+    let { students, showStudentIndex } = this.state
+    let studentToUpdate = students[showStudentIndex]
+    studentToUpdate.username = username
+    students[showStudentIndex] = studentToUpdate
+    this.setState({ students })
+  }
+
+  /**
    * This is triggered when the user selects an assignment from the assignments list
    * @param index The index of the assignment clicked
    */
@@ -85,7 +99,6 @@ All of the students will be deleted as well. This action cannot be undone`)
     const { students, assignments, isLoading,
       classcode, studentsDropdownSelected, assignmentsDropdownSelected,
       showStudentIndex, showStudent, showAssignmentIndex, showAssignment } = this.state
-
     console.log(students)
 
     const studentFilter = students.length === 0
@@ -96,7 +109,7 @@ All of the students will be deleted as well. This action cannot be undone`)
       ? <h3>There are no assignments in this course yet</h3>
       : <FilteredList items={assignments.map((assignment) => assignment.name)} onItemClick={index => this.onAssignmentSelected(index)} />
 
-    const studentToShow = showStudentIndex !== -1 ? <StudentInfo onCloseStudent={() => this.setState({ showStudent: false })} onDeleteStudent={(id) => this.props.onDeleteStudent(id)} student={students[showStudentIndex]} assignments={assignments} /> : <div />
+    const studentToShow = showStudentIndex !== -1 ? <StudentInfo onCloseStudent={() => this.setState({ showStudent: false })} onEditStudent={(username, student) => this.onEditStudent(username, student)} onDeleteStudent={(id) => this.props.onDeleteStudent(id)} student={students[showStudentIndex]} assignments={assignments} /> : <div />
     const assignmentToShow = showAssignmentIndex !== -1 ? <AssignmentInfo onCloseAssignment={() => this.setState({ showAssignment: false })} assignment={assignments[showAssignmentIndex]} /> : <div />
     const studentDropdownArrow = studentsDropdownSelected ? '↑' : '↓'
     const assignmentDropdownArrow = assignmentsDropdownSelected ? '↑' : '↓'
