@@ -32,7 +32,7 @@ class StudentHome extends PureComponent {
           </div>
 
           <div className='col-md-4' style={{ maxWidth: '25vw', marginLeft: 'auto', marginRight: 'auto', minWidth: '200px', minHeight: '200px' }}>
-            <Button className='btn-info' onClick={() => history.push(match.url + '/spelling')}
+            <Button className='btn-info' disabled={this.props.disableSpellingButton} onClick={() => history.push(match.url + '/spelling')}
               style={{ background: '#408fbd', boxShadow: '10px 10px 5px 1px #6b6b6b', paddingLeft: '5%', paddingRight: '5%' }}>
               <img src={tempSizingImage} alt='Letter Video' style={{ maxWidth: '80%', maxHeight: '80%', marginTop: '10%', marginBottom: '2%' }} />
               <h1 className='mb-4' style={{ fontSize: '200%' }}>Spelling</h1>
@@ -53,7 +53,8 @@ StudentHome.propTypes = {
   match: PropTypes.object.isRequired,
   history: PropTypes.object.isRequired,
   letterLineInfo: PropTypes.object.isRequired,
-  onLetterLineSelection: PropTypes.func.isRequired
+  onLetterLineSelection: PropTypes.func.isRequired,
+  disableSpellingButton: PropTypes.bool.isRequired
 }
 
 export default StudentHome
