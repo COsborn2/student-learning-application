@@ -4,6 +4,7 @@ import fetch from 'isomorphic-fetch'
 const signupURL = '/api/instructor'
 const loginURL = '/api/instructor/login'
 const getCoursesURL = '/api/instructor'
+const getAssignmentByIdURL = '/api/assignment/'
 const createCourseURL = '/api/classrooms'
 const getCourseByIdURL = '/api/classrooms/'
 
@@ -148,6 +149,30 @@ class InstructorApiCalls {
     }
 
     return body.classroom
+  }
+
+  /***
+   * This method calls the get assignment api
+   * @param id Id to get
+   * @returns {Promise<*>} Populated assignment
+   */
+  static async getAssignmentById (id) {
+    let httpMessage = {
+      method: 'GET',
+      headers: { 'Content-Type': 'application/json' }
+    }
+
+    const res = await fetch(getAssignmentByIdURL + id, httpMessage)
+    let body = await res.json()
+    if (res.status !== 200) {
+      const body = await res.json()
+      console.log(httpMessage) // todo remove log statements
+      console.log(res)
+      console.log(`Error: ${body.error}`)
+      return { error: body.error }
+    }
+
+    return body.assignment
   }
 }
 

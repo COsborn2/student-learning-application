@@ -28,7 +28,6 @@ class HorizontalExpandingSection extends PureComponent {
       return { show: true }
     } else if (!props.show && state.show) {
       if (props.onCollapsed) {
-        console.log('collapse')
         setTimeout(() => props.onCollapsed(), 500)
       }
       return { show: false }
