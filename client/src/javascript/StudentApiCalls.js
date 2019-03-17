@@ -8,10 +8,6 @@ const getAssignmentURL = '/api/assignment/'
 const updateProgressURL = '/api/student/progress'
 const detectWritingURL = '/api/student/writing'
 
-async function stall (stallTime = 3000) {
-  await new Promise(resolve => setTimeout(resolve, stallTime))
-}
-
 class StudentApiCalls {
   /***
    * This method calls the signup api.
@@ -213,126 +209,6 @@ class StudentApiCalls {
         finishedCourse: body.finishedCourse
       }
     }
-  }
-
-  /***
-   * This method is used to call the update student progress route
-   * @param jwt Web token
-   * @param progress Current students progress
-   * @returns {Promise<*>} Returns the updated student
-   */
-  static async devSetStudentProgress (jwt, assignmentIndex, letterIndex, wordIndex) { // todo remove dev api call
-    let httpMessage = {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'x-auth': jwt
-      },
-      body: JSON.stringify({
-        currentLetter: letterIndex,
-        currentWord: wordIndex,
-        currentAssignment: assignmentIndex }
-      )
-    }
-
-    const res = await fetch(updateProgressURL, httpMessage)
-    const body = await res.json()
-    if (res.status !== 200) {
-      console.log(httpMessage) // todo remove log statements
-      console.log(res)
-      console.log(`Error: ${body.error}`)
-      return { error: body.error }
-    }
-
-    return {
-      username: body.username,
-      jwt,
-      classcode: body.classcode,
-      progress: {
-        currentAssignmentIndex: body.currentAssignment,
-        currentWordIndex: body.currentLetter,
-        currentLetterIndex: body.currentWord,
-        finishedCourse: body.finishedCourse
-      }
-    }
-  }
-
-  /***
-   * This method uses local storrage rather than calling the api. Will be removed when api is fixed
-   * @param jwt Web token
-   * @param progress Current users progress
-   * @returns {Promise<boolean>} returns true if successful
-   */
-  static async updateStudentProgressMock (jwt, progress) {
-    window.localStorage.setItem('progress', JSON.stringify(progress))
-    return true
-  }
-
-  static getAssignmentByIdMock (id) {
-    return {
-      letters: ['a', 'b', 'c'],
-      words: [
-        { text: 'kite', picture: 'https://www.shareicon.net/download/2016/07/09/118997_activity.ico' },
-        {
-          text: 'car',
-          picture: 'https://images.vexels.com/media/users/3/154391/isolated/lists/430c48555fb4c80d9e77fc83d74fdb85-convertible-car-side-view-silhouette.png'
-        }
-      ]
-    }
-  }
-
-  static async getProgressMock (jwt) {
-    await stall(500)
-    let progress = {
-      currentAssignmentIndex: 0,
-      currentWordIndex: 0, // if word index is equal to the array size, all words have been spelled
-      currentLetterIndex: 0
-    }
-    return progress
-  }
-
-  // This is where the api call is made to retrieve the specific student's assignments
-  static async getAssignmentsMock (jwt) {
-    await stall(500)
-    let assignments = [
-      {
-        letters: ['a', 'b', 'c'],
-        words: [
-          { word: 'kite', imageURL: 'https://www.shareicon.net/download/2016/07/09/118997_activity.ico' },
-          {
-            word: 'car',
-            imageURL: 'https://images.vexels.com/media/users/3/154391/isolated/lists/430c48555fb4c80d9e77fc83d74fdb85-convertible-car-side-view-silhouette.png'
-          }
-        ]
-      },
-      {
-        letters: ['d'],
-        words: [
-          { word: 'kite', imageURL: 'https://www.shareicon.net/download/2016/07/09/118997_activity.ico' },
-          {
-            word: 'car',
-            imageURL: 'https://images.vexels.com/media/users/3/154391/isolated/lists/430c48555fb4c80d9e77fc83d74fdb85-convertible-car-side-view-silhouette.png'
-          }
-        ]
-      }
-    ]
-
-    return assignments
-  }
-
-  static async getLettersMock (jwt) {
-    return [
-      ['a', 'b', 'c'],
-      ['d'], ['e'], ['f']
-    ]
-  }
-
-  // This is where the api call is made to update the specific students's assignment progress on the server
-  static async putAssignmentsMock (jwt, progress) {
-    await stall(1000)
-    console.log('user progress in update api call: ')
-    console.log(progress)
-    return {}
   }
 }
 
