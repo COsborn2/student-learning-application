@@ -2,6 +2,10 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import Spinner from '../../assets/images/Spinner.gif'
 
+/**
+ * This function is a loading animation that can be displayed
+ * @returns {*} The loading animation to render
+ */
 function LoadingSpinner (props) {
   let loadingStyle = ''
   if (props.triggerFadeAway) {

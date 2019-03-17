@@ -12,6 +12,9 @@ import InstructorApiCalls from '../../javascript/InstructorApiCalls'
 import { AuthMessageStyles as messageStyles } from './AuthMessageStyles'
 import LoadingOverlay from '../loading/LoadingOverlay'
 
+/**
+ * This component manages instructor signup
+ */
 class InstructorSignup extends Component {
   constructor (props) {
     super(props)
@@ -23,6 +26,11 @@ class InstructorSignup extends Component {
     }
   }
 
+  /**
+   * This method is called when the signup button is clicked
+   * @param event The onSubmit event created by the form
+   * @returns {Promise<void>}
+   */
   async handleSignup (event) {
     const form = event.currentTarget
     event.preventDefault()
@@ -47,6 +55,10 @@ class InstructorSignup extends Component {
     } else this.animateMessage('Whoops... An error occurred, Try again')
   }
 
+  /**
+   * This is called when an error message needs to be displayed. It fades out after 3 seconds
+   * @param msg The message to display to the user
+   */
   animateMessage (msg) {
     this.setState({ failedMessage: msg, showMessage: true })
 

@@ -3,12 +3,11 @@ import Navbar from 'react-bootstrap/Navbar'
 import Nav from 'react-bootstrap/Nav'
 import NavDropdown from 'react-bootstrap/NavDropdown'
 
+/**
+ * This is called when the signout button is pressed
+ */
 function onSignoutBtnHandler () {
   window.sessionStorage.clear()
-}
-
-function onMenuBtnHandler () {
-  window.alert('IDK what this would do')
 }
 
 class Toolbar extends PureComponent {
@@ -21,7 +20,6 @@ class Toolbar extends PureComponent {
           </Nav>
           <Nav style={{ fontSize: '150%' }}>
             <NavDropdown alignRight title='&#9776;' >
-              <NavDropdown.Item onClick={onMenuBtnHandler}>Menu</NavDropdown.Item>
               <NavDropdown.Item href='/' onClick={onSignoutBtnHandler}>Sign out</NavDropdown.Item>
             </NavDropdown>
           </Nav>

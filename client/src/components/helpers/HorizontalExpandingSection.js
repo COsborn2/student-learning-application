@@ -7,7 +7,7 @@ import '../../assets/css/instructorStyles.css'
  * If the onExpanded or onCollapsed props are defined, they
  * are called when that animation is completed
  */
-class HorozontalExpandingSection extends PureComponent {
+class HorizontalExpandingSection extends PureComponent {
   state = {
     show: this.props.show
   }
@@ -37,11 +37,13 @@ class HorozontalExpandingSection extends PureComponent {
 
   render () {
     const { show } = this.state
+    let additionalStyles = ''
+    if (this.props.className) { additionalStyles = this.props.className }
     let outerCss = show ? 'section-horizontal expand ' : 'section-horizontal '
     let innerCss = show ? 'section-content expand ' : 'section-content '
 
     return (
-      <div className={outerCss + `badge-secondary rounded my-4 py-1 `}>
+      <div className={outerCss + additionalStyles + ` container rounded my-4 py-1`}>
         <div className={innerCss}>
           {this.props.children}
         </div>
@@ -51,10 +53,11 @@ class HorozontalExpandingSection extends PureComponent {
   }
 }
 
-HorozontalExpandingSection.propTypes = {
+HorizontalExpandingSection.propTypes = {
   show: PropTypes.bool.isRequired,
+  className: PropTypes.string,
   onCollapsed: PropTypes.func,
   onExpanded: PropTypes.func
 }
 
-export default HorozontalExpandingSection
+export default HorizontalExpandingSection

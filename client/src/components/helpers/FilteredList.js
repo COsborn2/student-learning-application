@@ -18,7 +18,9 @@ const List = (props) => {
 }
 
 /**
- * This class serves as a filterable list of items.
+ * This serves as a simple list that displays the string items passed to it as a prop,
+ * and calls the onItemClick prop and passes it the index of the item clicked. The filter
+ * can be used to show less items and make selecting from a large list easier
  */
 class FilteredList extends PureComponent {
   constructor (props) {
@@ -42,6 +44,19 @@ class FilteredList extends PureComponent {
         event.target.value.toLowerCase()) !== -1
     })
     this.setState({ currentItems: updatedList })
+  }
+
+  /**
+   * This method is called before every render. If the props have changed, update the state
+   * @param props The props passed to this component
+   * @param state The current component state
+   * @returns {*} The state values to update or null if no update is required
+   */
+  static getDerivedStateFromProps (props, state) {
+    if (props.items !== state.initialItems) {
+      return { initialItems: props.items, currentItems: props.items }
+    }
+    return null
   }
 
   /**

@@ -5,6 +5,9 @@ import StudentApiCalls from '../../javascript/StudentApiCalls'
 import PropTypes from 'prop-types'
 import LoadingOverlay from '../loading/LoadingOverlay'
 
+/**
+ * This component manages what the student writes, and advances if they wrote the correct letter
+ */
 class StudentWriting extends Component {
   constructor (props) {
     super(props)
@@ -18,15 +21,28 @@ class StudentWriting extends Component {
     this.checkWrittenCorrectly = this.checkWrittenCorrectly.bind(this)
   }
 
+  /**
+   * This method is called right before the component is mounted to the DOM
+   */
   componentDidMount () { this._isMounted = true }
 
+  /**
+   * This method is called right before the component is unmounted from the DOM
+   */
   componentWillUnmount () { this._isMounted = false }
 
+  /**
+   * This is called when the clear button is clicked
+   */
   clearCanvas = () => {
     this._sketch.clear()
     this._sketch.setBackgroundFromDataUrl('')
   };
 
+  /**
+   * This is called when the submit button is clicked, It perform an api call that detexts the text written
+   * @returns {Promise<void>}
+   */
   async checkWrittenCorrectly () {
     const base64Image = this._sketch.toDataURL()
 

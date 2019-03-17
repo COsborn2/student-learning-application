@@ -40,6 +40,7 @@ class StudentView extends Component {
     this.onLoadingAnimationStop = this.onLoadingAnimationStop.bind(this)
     this.advanceToNextAssignment = this.advanceToNextAssignment.bind(this)
     this.onCourseCompleted = this.onCourseCompleted.bind(this)
+    this.getAreLetterCompleted = this.getAreLetterCompleted.bind(this)
   }
 
   /***
@@ -252,6 +253,21 @@ class StudentView extends Component {
     }
   }
 
+  /**
+   * Determines if all the letters for the current assignment have been completed
+   * @returns {boolean} True if all letters have been written
+   */
+  getAreLetterCompleted () {
+    const { currentAssignment, currentAssignmentIndex, progress } = this.state
+    console.log(progress)
+
+    if (currentAssignmentIndex < progress.currentAssignmentIndex) { return true }
+    if (currentAssignmentIndex === progress.currentAssignmentIndex) {
+      return progress.currentLetterIndex === currentAssignment.letters.length
+    }
+    return false
+  }
+
   render () {
     const { jwt, currentAssignment, currentLetterIndex, currentWordIndex, isLoading } = this.state
     if (isLoading) return <LoadingScreen triggerFadeAway={this._triggerAnimFade} onStopped={this.onLoadingAnimationStop} />
@@ -260,7 +276,7 @@ class StudentView extends Component {
         <Toolbar />
         <Switch>
           <Route exact path='/student/:username' render={(props) =>
-            <StudentHome {...props} letterLineInfo={this.getLetterLineInfo()}
+            <StudentHome {...props} disableSpellingButton={!this.getAreLetterCompleted()} letterLineInfo={this.getLetterLineInfo()}
               onLetterLineSelection={(assignment, letter) => this.onLetterLineSelection(assignment, letter)} />}
           />
           <Route path='/student/:username/writing' render={() =>

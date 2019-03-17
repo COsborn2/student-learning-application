@@ -8,12 +8,12 @@ import Toolbar from '../menu/Toolbar'
 import CreateCourse from './CreateCourse'
 import LoadingOverlay from '../loading/LoadingOverlay'
 import ExpandingSection from '../helpers/ExpandingSection'
-
-/* The instructor view manages all screens and routes for a specific instructor user
- the login screen creates and authenticates an instructor object, and passes it
- to this component. If the user object ever becomes null or not authentic, it redirects
- to the login screen */
-
+/**
+ * The instructor view manages all screens and routes for a specific instructor user
+ the login screen or signup screen authenticates or create an instructor object, and passes it
+ to this component. If the user object ever becomes null or not authenticated, it redirects
+ to the login screen
+ */
 class InstructorView extends Component {
   constructor (props) {
     super(props)
@@ -36,7 +36,7 @@ class InstructorView extends Component {
   }
 
   /***
-   * This method is called when the component is mounted to the DOM.
+   * This method is called right before the component is mounted to the DOM.
    * It loads the instructors courses
    */
   async componentDidMount () {
@@ -58,7 +58,7 @@ class InstructorView extends Component {
   }
 
   /**
-   * This method is called when the component is unmounted
+   * This method is called right before the component is unmounted from the DOM
    */
   componentWillUnmount () {
     this._isMounted = false
@@ -122,6 +122,19 @@ class InstructorView extends Component {
     return -1
   }
 
+  onDeleteCourse (id) {
+    let { courses } = this.state
+    window.alert(`The API does not support this operation yet.\nThe changes will only persist the page is reloaded`)
+    delete courses[this.findCourseWithId(courses, id)]
+    this.setState({ courses })
+  }
+
+  async onDeleteStudent (id) {
+    await InstructorApiCalls.deleteStudentById(this.state.jwt, id)
+    this.props.history.replace(`/`)
+    this.props.history.replace(`/instructor/${this.props.user.name}`)
+  }
+
   /**
    * This method is called each time this component renders. It constructs the list of
    * Courses that can be expanded. If there are no courses, it is displayed. If a course is not
@@ -140,14 +153,14 @@ class InstructorView extends Component {
             let courseToRender = <div />
 
             if (isSelectedCourse || isCollapsingCourse) {
-              courseToRender = <Course {...this.props} course={course} />
+              courseToRender = <Course {...this.props} course={course} onDeleteCourse={id => this.onDeleteCourse(id)} onDeleteStudent={id => this.onDeleteStudent(id)} />
             }
 
             return (
               <div key={index}>
                 <Button onClick={() => this.onCourseClick(index)}
                   className='btn-lg btn-primary rounded-pill'>{course.classcode}</Button>
-                <ExpandingSection show={isSelectedCourse} onCollapsed={() => this.setState({ courseCollapsingIndex: -1 })}>
+                <ExpandingSection show={isSelectedCourse} className='badge-light' onCollapsed={() => this.setState({ courseCollapsingIndex: -1 })}>
                   {courseToRender}
                 </ExpandingSection>
 
@@ -162,7 +175,7 @@ class InstructorView extends Component {
   }
 
   /**
-   * This method gets called everytime a new course is being created. If it was created successfully, the courseIds are updated
+   * This method gets called every time a new course is being created. If it was created successfully, the courseIds are updated
    * @param courseCode Course code of the course to create
    * @returns {Promise<*>} The course created, or error returned from api
    */

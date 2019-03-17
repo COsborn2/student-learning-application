@@ -12,6 +12,11 @@ const styles = {
   }
 }
 
+/**
+ * This component renders a loading overlay when the prop show is true
+ * @param show Whether or not to display the overlay
+ * @returns {*} The overlay to render
+ */
 const LoadingOverlay = ({ show }) => {
   if (!show) return <div />
   return (
