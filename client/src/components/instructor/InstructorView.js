@@ -122,6 +122,19 @@ class InstructorView extends Component {
     return -1
   }
 
+  onDeleteCourse (id) {
+    let { courses } = this.state
+    window.alert(`The API does not support this operation yet.\nThe changes will only persist the page is reloaded`)
+    delete courses[this.findCourseWithId(courses, id)]
+    this.setState({ courses })
+  }
+
+  async onDeleteStudent (id) {
+    await InstructorApiCalls.deleteStudentById(this.state.jwt, id)
+    this.props.history.replace(`/`)
+    this.props.history.replace(`/instructor/${this.props.user.name}`)
+  }
+
   /**
    * This method is called each time this component renders. It constructs the list of
    * Courses that can be expanded. If there are no courses, it is displayed. If a course is not
@@ -140,7 +153,7 @@ class InstructorView extends Component {
             let courseToRender = <div />
 
             if (isSelectedCourse || isCollapsingCourse) {
-              courseToRender = <Course {...this.props} course={course} />
+              courseToRender = <Course {...this.props} course={course} onDeleteCourse={id => this.onDeleteCourse(id)} onDeleteStudent={id => this.onDeleteStudent(id)} />
             }
 
             return (
@@ -162,7 +175,7 @@ class InstructorView extends Component {
   }
 
   /**
-   * This method gets called everytime a new course is being created. If it was created successfully, the courseIds are updated
+   * This method gets called every time a new course is being created. If it was created successfully, the courseIds are updated
    * @param courseCode Course code of the course to create
    * @returns {Promise<*>} The course created, or error returned from api
    */

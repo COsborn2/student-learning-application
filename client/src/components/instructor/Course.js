@@ -72,10 +72,21 @@ class Course extends React.PureComponent {
     this.setState({ showAssignmentIndex: index, showAssignment: true, assignmentsDropdownSelected: false, assignments })
   }
 
+  async onDeleteCourse () {
+    const shouldDelete = window.confirm(`Are you sure you want to delete ${this.props.course.classcode}?
+All of the students will be deleted as well. This action cannot be undone`)
+
+    if (shouldDelete) {
+      await this.props.onDeleteCourse(this.props.course._id)
+    }
+  }
+
   render () {
     const { students, assignments, isLoading,
       classcode, studentsDropdownSelected, assignmentsDropdownSelected,
       showStudentIndex, showStudent, showAssignmentIndex, showAssignment } = this.state
+
+    console.log(students)
 
     const studentFilter = students.length === 0
       ? <h3>There are no students in this course yet</h3>
@@ -85,7 +96,7 @@ class Course extends React.PureComponent {
       ? <h3>There are no assignments in this course yet</h3>
       : <FilteredList items={assignments.map((assignment) => assignment.name)} onItemClick={index => this.onAssignmentSelected(index)} />
 
-    const studentToShow = showStudentIndex !== -1 ? <StudentInfo onCloseStudent={() => this.setState({ showStudent: false })} student={students[showStudentIndex]} assignments={assignments} /> : <div />
+    const studentToShow = showStudentIndex !== -1 ? <StudentInfo onCloseStudent={() => this.setState({ showStudent: false })} onDeleteStudent={(id) => this.props.onDeleteStudent(id)} student={students[showStudentIndex]} assignments={assignments} /> : <div />
     const assignmentToShow = showAssignmentIndex !== -1 ? <AssignmentInfo onCloseAssignment={() => this.setState({ showAssignment: false })} assignment={assignments[showAssignmentIndex]} /> : <div />
     const studentDropdownArrow = studentsDropdownSelected ? '↑' : '↓'
     const assignmentDropdownArrow = assignmentsDropdownSelected ? '↑' : '↓'
@@ -93,9 +104,11 @@ class Course extends React.PureComponent {
     return (
       <div>
         <LoadingOverlay show={isLoading} />
-        <h1 className='card-header rounded'>
-          {classcode}
-        </h1>
+        <div className='row card-header rounded '>
+          <h1>{classcode}</h1>
+          <div className='flex-fill' />
+          <Button className='badge-danger mr-2 fa' onClick={() => this.onDeleteCourse()}>&#xf014;</Button>
+        </div>
         <div className='row p-2 m-2'>
 
           <div className='col text-center'>
@@ -114,8 +127,8 @@ class Course extends React.PureComponent {
 
           </div>
 
-          <div className='col-1 text-center'>
-            <p style={{ borderLeft: '2px solid grey', height: '100%', position: 'absolute', left: '50%', marginLeft: '-1px' }} />
+          <div className='col-1'>
+            <p style={{ borderLeft: '4px solid #4085bd', height: '100%', position: 'absolute', left: '50%', marginLeft: '-2px' }} />
           </div>
 
           <div className='col text-center'>
@@ -140,7 +153,9 @@ class Course extends React.PureComponent {
 
 Course.propTypes = {
   match: PropTypes.object.isRequired,
-  course: PropTypes.object.isRequired
+  course: PropTypes.object.isRequired,
+  onDeleteStudent: PropTypes.func.isRequired,
+  onDeleteCourse: PropTypes.func.isRequired
 }
 
 export default Course

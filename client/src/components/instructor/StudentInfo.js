@@ -39,12 +39,14 @@ If they are currently logged in, they will need to sign back in`)
     this.setState({ showEdit: false })
   }
 
-  onDeleteStudent () {
+  async onDeleteStudent () {
     const shouldDelete = window.confirm(`Are you sure you want to delete ${this.props.student.username}?
 All of their progress will be deleted. This action cannot be undone`)
 
-    if (shouldDelete) console.log('Deleted')
-    else console.log('Not Deleted')
+    if (shouldDelete) {
+      console.log(this.props.student)
+      await this.props.onDeleteStudent(this.props.student._id)
+    }
   }
 
   /***
@@ -119,6 +121,7 @@ All of their progress will be deleted. This action cannot be undone`)
 StudentInfo.propTypes = {
   student: PropTypes.object.isRequired,
   assignments: PropTypes.array.isRequired,
+  onDeleteStudent: PropTypes.func.isRequired,
   onCloseStudent: PropTypes.func.isRequired
 }
 

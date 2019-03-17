@@ -4,9 +4,10 @@ import fetch from 'isomorphic-fetch'
 const signupURL = '/api/instructor'
 const loginURL = '/api/instructor/login'
 const getCoursesURL = '/api/instructor'
-const getAssignmentByIdURL = '/api/assignment/'
 const createCourseURL = '/api/classrooms'
 const getCourseByIdURL = '/api/classrooms/'
+const getAssignmentByIdURL = '/api/assignment/'
+const deleteStudentById = '/api/student/'
 
 class InstructorApiCalls {
   /***
@@ -173,6 +174,28 @@ class InstructorApiCalls {
     }
 
     return body.assignment
+  }
+
+  static async deleteStudentById (jwt, id) {
+    let httpMessage = {
+      method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-auth': jwt
+      }
+    }
+
+    const res = await fetch(deleteStudentById + id, httpMessage)
+    const body = await res.json()
+    if (res.status !== 200) {
+      console.log(httpMessage) // todo remove log statements
+      console.log(res)
+      console.log(`Error: ${body.error}`)
+      return { error: body.error }
+    }
+
+    console.log(body)
+    return body
   }
 }
 
