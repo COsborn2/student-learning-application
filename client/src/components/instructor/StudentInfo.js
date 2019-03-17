@@ -4,6 +4,9 @@ import Button from 'react-bootstrap/Button'
 import EditStudent from './EditStudent'
 import ExpandingSection from '../helpers/ExpandingSection'
 
+/**
+ * This component displays the information for the student passed as a prop
+ */
 class StudentInfo extends PureComponent {
   constructor (props) {
     super(props)
@@ -17,11 +20,17 @@ class StudentInfo extends PureComponent {
     this.onDeleteStudent = this.onDeleteStudent.bind(this)
   }
 
+  /**
+   * This is called when the close student info button is clicked
+   */
   onCloseStudent () {
     this.setState({ show: false })
     this.props.onCloseStudent()
   }
 
+  /**
+   * This is called when the edit student button is clicked
+   */
   onEditStudent () {
     if (this.state.showEdit) {
       this.setState({ showEdit: false })
@@ -33,6 +42,11 @@ If they are currently logged in, they will need to sign back in`)
     if (shouldEdit) { this.setState({ showEdit: true }) }
   }
 
+  /**
+   * This is called when the edit submit button is clicked
+   * @param username The username to update to
+   * @param password The password to update to
+   */
   onEditSubmit (username, password) {
     window.alert(`The API does not support this operation yet.\nThe changes will only persist until the course is closed`)
     console.log(password)
@@ -40,6 +54,9 @@ If they are currently logged in, they will need to sign back in`)
     this.setState({ showEdit: false })
   }
 
+  /**
+   * This is called when the delete student button is clicked
+   */
   async onDeleteStudent () {
     const shouldDelete = window.confirm(`Are you sure you want to delete ${this.props.student.username}?
 All of their progress will be deleted. This action cannot be undone`)

@@ -14,6 +14,10 @@ class EditStudent extends Component {
     this.onSubmit = this.onSubmit.bind(this)
   }
 
+  /**
+   * This is called when the submit button is clicked
+   * @param event The onSubmit event created by the form
+   */
   onSubmit (event) {
     const form = event.currentTarget
     event.preventDefault()

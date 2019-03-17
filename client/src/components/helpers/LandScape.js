@@ -2,6 +2,9 @@ import React, { PureComponent } from 'react'
 
 const centerStyle = { top: 0, bottom: 0, left: 0, right: 0 }
 
+/**
+ * This component is used to display an image suggesting to rotate the device to landscape mode
+ */
 class LandScape extends PureComponent {
   constructor (props) {
     super(props)
@@ -9,15 +12,25 @@ class LandScape extends PureComponent {
     this.onWindowResize = this.onWindowResize.bind(this)
   }
 
+  /**
+   * This method is called right before the component is mounted from the DOM
+   * It registers the screen size event handler
+   */
   componentDidMount () {
     this.onWindowResize()
     window.addEventListener('resize', this.onWindowResize)
   }
 
+  /**
+   * This method is called right before the component is unmounted from the DOM
+   */
   componentWillUnmount () {
     window.removeEventListener('resize', this.onWindowResize)
   }
 
+  /**
+   * This is called when the size of the screen changes
+   */
   onWindowResize () {
     this.setState({ isPortrait: window.innerHeight > window.innerWidth })
   }

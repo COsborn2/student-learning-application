@@ -10,6 +10,9 @@ import InstructorApiCalls from '../../javascript/InstructorApiCalls'
 import LoadingOverlay from '../loading/LoadingOverlay'
 import AssignmentInfo from './AssignmentInfo'
 
+/**
+ * This component displays info about the course passed as a prop
+ */
 class Course extends React.PureComponent {
   constructor (props) {
     super(props)
@@ -86,6 +89,10 @@ class Course extends React.PureComponent {
     this.setState({ showAssignmentIndex: index, showAssignment: true, assignmentsDropdownSelected: false, assignments })
   }
 
+  /**
+   * This is called when the delete button is clicked
+   * @returns {Promise<void>}
+   */
   async onDeleteCourse () {
     const shouldDelete = window.confirm(`Are you sure you want to delete ${this.props.course.classcode}?
 All of the students will be deleted as well. This action cannot be undone`)

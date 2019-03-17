@@ -7,6 +7,10 @@ import { Link } from 'react-router-dom'
 
 const tempSizingImage = 'https://via.placeholder.com/540x400'
 
+/**
+ * This is main home screen of the application
+ * @returns {*} The screen to render
+ */
 const Home = () => (
   <div className='mx-auto text-center' style={{ background: '#b9d5e0', minHeight: '100vh', display: 'flex', alignItems: 'center', overflow: 'hidden' }}>
     <div className='mx-auto text-center'>

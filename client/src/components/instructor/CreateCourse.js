@@ -20,6 +20,9 @@ const MessageStyles = {
   }
 }
 
+/**
+ * This component is used to create a new course
+ */
 class CreateCourse extends PureComponent {
   constructor (props) {
     super(props)
@@ -33,10 +36,21 @@ class CreateCourse extends PureComponent {
     this.submitBtnHandler = this.submitBtnHandler.bind(this)
   }
 
+  /**
+   * This is called right before the component gets mounted to the dom
+   */
   componentWillMount () { this._isMounted = true }
 
+  /**
+   * This is called right before the component gets unmounted to the dom
+   */
   componentWillUnmount () { this._isMounted = false }
 
+  /**
+   * This method is called when the submit button is pressed
+   * @param event The onSubmit event created by the form
+   * @returns {Promise<void>}
+   */
   async submitBtnHandler (event) {
     const form = event.currentTarget
     event.preventDefault()

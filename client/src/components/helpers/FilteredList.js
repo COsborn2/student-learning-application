@@ -18,7 +18,9 @@ const List = (props) => {
 }
 
 /**
- * This class serves as a filterable list of items.
+ * This serves as a simple list that displays the string items passed to it as a prop,
+ * and calls the onItemClick prop and passes it the index of the item clicked. The filter
+ * can be used to show less items and make selecting from a large list easier
  */
 class FilteredList extends PureComponent {
   constructor (props) {

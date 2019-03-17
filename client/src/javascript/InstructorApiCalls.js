@@ -176,6 +176,13 @@ class InstructorApiCalls {
     return body.assignment
   }
 
+  /**
+   *
+   * This method calls the delete student by id api
+   * @param jwt Web Token
+   * @param id Id of the student to delete
+   * @returns {Promise<*>} The success of the call
+   */
   static async deleteStudentById (jwt, id) {
     let httpMessage = {
       method: 'DELETE',
@@ -194,7 +201,6 @@ class InstructorApiCalls {
       return { error: body.error }
     }
 
-    console.log(body)
     return body
   }
 }

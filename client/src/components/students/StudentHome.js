@@ -5,6 +5,9 @@ import LetterLine from './utils/LetterLine'
 
 const tempSizingImage = 'https://via.placeholder.com/270x200'
 
+/**
+ * This is the student home screen.
+ */
 class StudentHome extends PureComponent {
   render () {
     const { match, history, letterLineInfo, onLetterLineSelection } = this.props

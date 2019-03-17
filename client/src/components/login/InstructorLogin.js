@@ -12,6 +12,9 @@ import Col from 'react-bootstrap/Col'
 import { AuthMessageStyles as messageStyles } from './AuthMessageStyles'
 import LoadingOverlay from '../loading/LoadingOverlay'
 
+/**
+ * This component manages the instructor login
+ */
 class InstructorLogin extends Component {
   constructor (props) {
     super(props)
@@ -25,7 +28,10 @@ class InstructorLogin extends Component {
     this.handleSkipLogin = this.handleSkipLogin.bind(this) // todo remove dev skip
   }
 
-  // Hit backend for verification
+  /**
+   * This method is called when the login button is clicked
+   * @param event The onSubmit event created by the form
+   */
   async handleLogin (event) {
     const form = event.currentTarget
     event.preventDefault()
@@ -60,6 +66,10 @@ class InstructorLogin extends Component {
     } else this.animateMessage('Whoops... An error occurred, Try again')
   }
 
+  /**
+   * This is called when an error message needs to be displayed. It fades out after 3 seconds
+   * @param msg The message to display to the user
+   */
   animateMessage (msg) {
     this.setState({ failedMessage: msg, showMessage: true })
 

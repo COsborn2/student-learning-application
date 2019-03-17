@@ -1,6 +1,9 @@
 import React, { Component } from 'react'
 import { Link } from 'react-router-dom'
 
+/**
+ * This component is rendered when an error occurs
+ */
 class ErrorScreen extends Component {
   constructor (props) {
     super(props)

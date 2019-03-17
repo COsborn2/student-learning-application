@@ -2,6 +2,9 @@ import React, { PureComponent } from 'react'
 import PropTypes from 'prop-types'
 import Button from 'react-bootstrap/Button'
 
+/**
+ * This component displays information about the assignment passed as a prop
+ */
 class AssignmentInfo extends PureComponent {
   constructor (props) {
     super(props)
@@ -11,6 +14,9 @@ class AssignmentInfo extends PureComponent {
     this.onCloseAssignment = this.onCloseAssignment.bind(this)
   }
 
+  /**
+   * This is called when the close button is clicked
+   */
   onCloseAssignment () {
     this.setState({ show: false })
     this.props.onCloseAssignment()
