@@ -8,6 +8,7 @@ import StudentInfo from './StudentInfo'
 import HorizontalExpandingSection from '../helpers/HorizontalExpandingSection'
 import InstructorApiCalls from '../../javascript/InstructorApiCalls'
 import LoadingOverlay from '../loading/LoadingOverlay'
+import AssignmentInfo from './AssignmentInfo'
 
 class Course extends React.PureComponent {
   constructor (props) {
@@ -22,10 +23,11 @@ class Course extends React.PureComponent {
       studentsDropdownSelected: false,
       showStudentIndex: -1,
       showStudent: false,
+      showAssignmentIndex: -1,
+      showAssignment: false,
       isLoading: false
     }
     this.onStudentSelected = this.onStudentSelected.bind(this)
-    this.onCloseStudent = this.onCloseStudent.bind(this)
     this.onAssignmentSelected = this.onAssignmentSelected.bind(this)
   }
 
@@ -60,16 +62,20 @@ class Course extends React.PureComponent {
    * This is triggered when the user selects an assignment from the assignments list
    * @param index The index of the assignment clicked
    */
-  onAssignmentSelected (index) {
-    console.log('assignment selected: ' + index)
-  }
+  async onAssignmentSelected (index) {
+    const { assignments } = this.state
 
-  onCloseStudent () {
-    this.setState({ showStudentIndex: -1, studentsDropdownSelected: true })
+    this.setState({ isLoading: true })
+    assignments[index] = await InstructorApiCalls.getAssignmentById(assignments[index]._id)
+    this.setState({ isLoading: false })
+
+    this.setState({ showAssignmentIndex: index, showAssignment: true, assignmentsDropdownSelected: false, assignments })
   }
 
   render () {
-    const { students, assignments, isLoading, classcode, studentsDropdownSelected, assignmentsDropdownSelected, showStudentIndex, showStudent } = this.state
+    const { students, assignments, isLoading,
+      classcode, studentsDropdownSelected, assignmentsDropdownSelected,
+      showStudentIndex, showStudent, showAssignmentIndex, showAssignment } = this.state
 
     const studentFilter = students.length === 0
       ? <h3>There are no students in this course yet</h3>
@@ -80,6 +86,7 @@ class Course extends React.PureComponent {
       : <FilteredList items={assignments.map((assignment) => assignment.name)} onItemClick={index => this.onAssignmentSelected(index)} />
 
     const studentToShow = showStudentIndex !== -1 ? <StudentInfo onCloseStudent={() => this.setState({ showStudent: false })} student={students[showStudentIndex]} assignments={assignments} /> : <div />
+    const assignmentToShow = showAssignmentIndex !== -1 ? <AssignmentInfo onCloseAssignment={() => this.setState({ showAssignment: false })} assignment={assignments[showAssignmentIndex]} /> : <div />
     const studentDropdownArrow = studentsDropdownSelected ? '↑' : '↓'
     const assignmentDropdownArrow = assignmentsDropdownSelected ? '↑' : '↓'
 
@@ -92,26 +99,38 @@ class Course extends React.PureComponent {
         <div className='row p-2 m-2'>
 
           <div className='col text-center'>
-            <Button className='btn-lg btn-primary rounded-pill m-2' onClick={() => this.setState({ studentsDropdownSelected: !studentsDropdownSelected })}>
+            <Button className='btn-lg btn-primary rounded-pill m-2'
+              onClick={() => this.setState({ studentsDropdownSelected: !studentsDropdownSelected })}>
             Students {studentDropdownArrow}
             </Button>
             <hr />
             <ExpandingSection show={studentsDropdownSelected}>
               {studentFilter}
             </ExpandingSection>
-            <HorizontalExpandingSection className='badge-secondary' show={showStudent} onCollapsed={() => this.setState({ showStudentIndex: -1, studentsDropdownSelected: true })}>
+            <HorizontalExpandingSection className='badge-secondary' show={showStudent}
+              onCollapsed={() => this.setState({ showStudentIndex: -1, studentsDropdownSelected: true })}>
               {studentToShow}
             </HorizontalExpandingSection>
 
           </div>
+
+          <div className='col-1 text-center'>
+            <p style={{ borderLeft: '2px solid grey', height: '100%', position: 'absolute', left: '50%', marginLeft: '-1px' }} />
+          </div>
+
           <div className='col text-center'>
-            <Button className='btn-lg btn-primary rounded-pill m-2' onClick={() => this.setState({ assignmentsDropdownSelected: !assignmentsDropdownSelected })}>
+            <Button className='btn-lg btn-primary rounded-pill m-2'
+              onClick={() => this.setState({ assignmentsDropdownSelected: !assignmentsDropdownSelected })}>
             Assignments {assignmentDropdownArrow}
             </Button>
             <hr />
             <ExpandingSection show={assignmentsDropdownSelected}>
               {assignmentsFilter}
             </ExpandingSection>
+            <HorizontalExpandingSection className='badge-secondary' show={showAssignment}
+              onCollapsed={() => this.setState({ showAssignmentIndex: -1, assignmentsDropdownSelected: true })}>
+              {assignmentToShow}
+            </HorizontalExpandingSection>
           </div>
         </div>
       </div>

@@ -66,7 +66,6 @@ All of their progress will be deleted. This action cannot be undone`)
     const currentAssignment = assignments[this.clampValue(student.currentAssignment, assignments.length)]
     let currentLetter = ''
     let currentWord = ''
-    console.log(currentAssignment)
 
     if (student.finishedCourse) {
       console.log('Student has completed the course')
