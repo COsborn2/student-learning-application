@@ -147,7 +147,7 @@ class InstructorView extends Component {
               <div key={index}>
                 <Button onClick={() => this.onCourseClick(index)}
                   className='btn-lg btn-primary rounded-pill'>{course.classcode}</Button>
-                <ExpandingSection show={isSelectedCourse} onCollapsed={() => this.setState({ courseCollapsingIndex: -1 })}>
+                <ExpandingSection show={isSelectedCourse} className='badge-light' onCollapsed={() => this.setState({ courseCollapsingIndex: -1 })}>
                   {courseToRender}
                 </ExpandingSection>
 

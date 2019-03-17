@@ -1,4 +1,4 @@
-import React, { Component } from 'react'
+import React, { PureComponent } from 'react'
 import PropTypes from 'prop-types'
 import Form from 'react-bootstrap/Form'
 import Col from 'react-bootstrap/Col'
@@ -20,7 +20,7 @@ const MessageStyles = {
   }
 }
 
-class CreateCourse extends Component {
+class CreateCourse extends PureComponent {
   constructor (props) {
     super(props)
     this.state = {
@@ -70,7 +70,7 @@ class CreateCourse extends Component {
       <div>
         <LoadingOverlay show={isLoading} />
         <Button className='test btn-lg btn-primary rounded-pill' onClick={() => this.setState({ show: !this.state.show })}>New Course</Button>
-        <ExpandingSection show={show}>
+        <ExpandingSection show={show} className='badge-light'>
 
           <Form validated={validated} onSubmit={e => this.submitBtnHandler(e)}>
             <h1 className='text-center'>Create New Course</h1>

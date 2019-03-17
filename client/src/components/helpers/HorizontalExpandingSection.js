@@ -39,8 +39,7 @@ class HorizontalExpandingSection extends PureComponent {
   render () {
     const { show } = this.state
     let additionalStyles = ''
-    if(this.props.className)
-      additionalStyles = this.props.className
+    if (this.props.className) { additionalStyles = this.props.className }
     let outerCss = show ? 'section-horizontal expand ' : 'section-horizontal '
     let innerCss = show ? 'section-content expand ' : 'section-content '
 
