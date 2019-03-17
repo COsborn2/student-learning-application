@@ -37,11 +37,14 @@ class ExpandingSection extends PureComponent {
 
   render () {
     const { show } = this.state
+    let additionalStyles = ''
+    if(this.props.className)
+      additionalStyles = this.props.className
     let outerCss = show ? 'section expand ' : 'section '
     let innerCss = show ? 'section-content expand ' : 'section-content '
 
     return (
-      <div className={outerCss + `container badge-light rounded my-4 py-1`}>
+      <div className={outerCss + additionalStyles + ` container rounded my-4 py-1`}>
         <div className={innerCss}>
           {this.props.children}
         </div>
@@ -53,6 +56,7 @@ class ExpandingSection extends PureComponent {
 
 ExpandingSection.propTypes = {
   show: PropTypes.bool.isRequired,
+  className: PropTypes.string,
   onCollapsed: PropTypes.func,
   onExpanded: PropTypes.func
 }
