@@ -43,8 +43,8 @@ class StudentApiCalls {
       classcode: body.classcode,
       progress: {
         currentAssignmentIndex: body.currentAssignment,
-        currentWordIndex: body.currentLetter, // if word index is equal to the array size, all words have been spelled
-        currentLetterIndex: body.currentWord,
+        currentWordIndex: body.currentWord, // if word index is equal to the array size, all words have been spelled
+        currentLetterIndex: body.currentLetter,
         finishedCourse: body.finishedCourse
       }
     }
@@ -84,8 +84,8 @@ class StudentApiCalls {
       classcode: body.classcode,
       progress: {
         currentAssignmentIndex: body.currentAssignment,
-        currentWordIndex: body.currentLetter, // if word index is equal to the array size, all words have been spelled
-        currentLetterIndex: body.currentWord,
+        currentWordIndex: body.currentWord, // if word index is equal to the array size, all words have been spelled
+        currentLetterIndex: body.currentLetter,
         finishedCourse: body.finishedCourse
       }
     }
@@ -204,8 +204,8 @@ class StudentApiCalls {
       classcode: body.classcode,
       progress: {
         currentAssignmentIndex: body.currentAssignment,
-        currentWordIndex: body.currentLetter, // if word index is equal to the array size, all words have been spelled
-        currentLetterIndex: body.currentWord,
+        currentWordIndex: body.currentWord, // if word index is equal to the array size, all words have been spelled
+        currentLetterIndex: body.currentLetter,
         finishedCourse: body.finishedCourse
       }
     }

@@ -166,32 +166,6 @@ let updateStudentProgress = async (req, res) => {
   res.send({ updatedStudent })
 }
 
-let devSetStudentProgress = async (req, res) => { // todo remove dev functionality
-  let token = req.header('x-auth')
-  let student = await Student.findByToken(token)
-  let body = _.pick(req.body, ['currentLetter', 'currentWord', 'currentAssignment'])
-  let newLetterIndex = _.toInteger(body.currentLetter)
-  let newWordIndex = _.toInteger(body.currentWord)
-  let newAssignmentIndex = _.toInteger(body.currentAssignment)
-
-  let updatedStudent = await Student.findOneAndUpdate({
-    _id: new ObjectID(student._id)
-  }, {
-    $set: {
-      currentLetter: newLetterIndex,
-      currentWord: newWordIndex,
-      currentAssignment: newAssignmentIndex,
-      finishedCourse: false
-    }
-  }, {
-    new: true
-  })
-
-  SuccessMessage(`Student progress successfully set by developer\n\tAssignment: ${newAssignmentIndex}\n\tLetter: ${newLetterIndex}\n\tWord: ${newWordIndex}`)
-
-  res.send({ updatedStudent })
-}
-
 // /api/students/id
 let deleteStudent = async (req, res) => {
   let studentId = req.params.id
@@ -231,7 +205,6 @@ module.exports = {
   createStudent,
   loginStudent,
   updateStudentProgress,
-  devSetStudentProgress,
   deleteStudent,
   initalizeStudent
 }

@@ -25,7 +25,6 @@ class StudentLogin extends Component {
       isLoading: false
     }
     this.handleLogin = this.handleLogin.bind(this)
-    this.handleSkipLogin = this.handleSkipLogin.bind(this) // todo remove dev skip
   }
 
   /**
@@ -47,18 +46,6 @@ class StudentLogin extends Component {
 
     this.setState({ isLoading: true })
     let res = await StudentApiCalls.login(classCode, username)
-    this.setState({ isLoading: false })
-
-    if (res.error) this.animateMessage(res.error)
-    else if (res.jwt) {
-      window.sessionStorage.setItem('student', JSON.stringify(res))
-      this.props.history.replace(`/student/${res.username}`)
-    } else this.animateMessage('Whoops... An error occurred, Try again')
-  }
-
-  async handleSkipLogin () { // todo remove dev skip
-    this.setState({ isLoading: true })
-    let res = await StudentApiCalls.login('someClasscode', 'studentDEV')
     this.setState({ isLoading: false })
 
     if (res.error) this.animateMessage(res.error)
@@ -91,7 +78,6 @@ class StudentLogin extends Component {
             <ModalHeader>
               <ModalTitle>Student Login</ModalTitle>
               <div className='flex-fill' />
-              <Button className='btn-warning mx-2' onClick={this.handleSkipLogin}>Dev Skip</Button>
               <Button onClick={() => this.props.history.push('/signup/student')}>Signup</Button>
             </ModalHeader>
 
