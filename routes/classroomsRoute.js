@@ -67,7 +67,7 @@ let createClassroom = async (req, res) => {
   }, {
     $push: { class: classroom._id }
   }, {
-    returnOriginal: false
+    new: true
   })
 
   SuccessMessage('Instructor successfully updated with new classroom')
