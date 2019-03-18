@@ -9,7 +9,7 @@ const DefaultAssignments = [
     name: 'Assignment 1',
     letters: ['a', 'b', 'c'],
     words: [
-      { text: 'cab' }
+      { text: 'cab', picture: 'https://pawcab.com/wp-content/uploads/2017/05/cab.png' }
       // { text: 'Babb' }
     ]
   },
@@ -17,11 +17,11 @@ const DefaultAssignments = [
     name: 'Assignment 2',
     letters: ['d'],
     words: [
-      { text: 'add' },
-      { text: 'cad' },
-      { text: 'bad' },
-      { text: 'dab' },
-      { text: 'Dad' }
+      { text: 'add', picture: 'http://www.i2clipart.com/cliparts/2/9/b/9/12804529b967cd5a936866f563a46706421c4e.png' },
+      // { text: 'cad' }, FIXME: find picture for this
+      { text: 'bad', picture: 'http://www.i2clipart.com/cliparts/1/9/6/6/1280451966d3b9cd7943abe092031458699cc5.png' },
+      // { text: 'dab' }, FIXME: find picture for this
+      { text: 'Dad', picture: 'http://www.i2clipart.com/cliparts/b/8/9/3/128135b893e7ba673bd86b23024f54e417ab2e.png' }
     ]
   },
   {
