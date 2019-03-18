@@ -153,20 +153,20 @@ class StudentView extends Component {
       progress.currentAssignmentIndex++
       progress.currentWordIndex = 0
       progress.currentLetterIndex = 0
+      currentWordIndex = 0
+      currentLetterIndex = 0
+      await this.updateStudentProgress(progress)
     }
-
-    if (progress.currentAssignmentIndex === assignmentIds.length) this.onCourseCompleted()
 
     currentAssignmentIndex++
 
-    // if the new assignment, is the current students assignment, instead of resetting, load progress
-    if (progress.currentAssignmentIndex === currentAssignmentIndex) {
+    // if the new assignment is the current assignment for the student load the progress values instead of reseting to 0
+    if (currentAssignmentIndex === progress.currentAssignmentIndex) {
       currentWordIndex = progress.currentWordIndex
       currentLetterIndex = progress.currentLetterIndex
-    } else {
-      currentWordIndex = 0
-      currentLetterIndex = 0
     }
+
+    if (progress.currentAssignmentIndex === assignmentIds.length) this.onCourseCompleted()
 
     this.setState({ isLoading: true })
     currentAssignment = await StudentApiCalls.getAssignmentById(assignmentIds[currentAssignmentIndex].assignmentId)
@@ -178,7 +178,6 @@ class StudentView extends Component {
       currentWordIndex: this.clampValue(currentWordIndex, currentAssignment.words.length),
       currentLetterIndex: this.clampValue(currentLetterIndex, currentAssignment.letters.length)
     })
-    console.log(`Current assignment: ${currentAssignmentIndex}`)
   }
 
   /**
@@ -262,7 +261,6 @@ class StudentView extends Component {
    */
   getAreLetterCompleted () {
     const { currentAssignment, currentAssignmentIndex, progress } = this.state
-    console.log(progress)
 
     if (currentAssignmentIndex < progress.currentAssignmentIndex) { return true }
     if (currentAssignmentIndex === progress.currentAssignmentIndex) {
