@@ -3,7 +3,11 @@ import PropTypes from 'prop-types'
 import Button from 'react-bootstrap/Button'
 import LetterLine from './utils/LetterLine'
 
-const tempSizingImage = 'https://via.placeholder.com/270x200'
+// const tempSizingImage = 'https://via.placeholder.com/270x200'
+
+const reviewImage = 'https://i.gyazo.com/b0349898ad116bd5d7ccd1ea16eed540.png'
+const writingImage = 'https://i.gyazo.com/e7c00ac9dd4c8eecf4d9052f442f3437.png'
+const spellingImage = 'https://i.gyazo.com/dc5f0a30fd614cb65b4039a713973142.png'
 
 /**
  * This is the student home screen.
@@ -15,26 +19,26 @@ class StudentHome extends PureComponent {
       <div className='mx-auto text-center align-middle' style={{ background: '#b9d5e0', width: '90%', marginTop: '0', paddingTop: '2%' }}>
 
         <div className='row'>
-          <div className='col-md-4' style={{ maxWidth: '25vw', marginLeft: 'auto', marginRight: 'auto', minWidth: '200px', minHeight: '200px' }}>
+          <div className='col-4' style={{ maxWidth: '25vw', marginLeft: 'auto', marginRight: 'auto', minWidth: '200px', minHeight: '200px' }}>
             <Button className='btn-info' onClick={() => history.push(match.url + '/video')}
               style={{ background: '#408fbd', boxShadow: '10px 10px 5px 1px #6b6b6b', paddingLeft: '5%', paddingRight: '5%' }}>
-              <img src={tempSizingImage} alt='Letter Video' style={{ maxWidth: '80%', maxHeight: '80%', marginTop: '10%', marginBottom: '2%' }} />
+              <img src={reviewImage} alt='Letter Video' style={{ maxWidth: '80%', maxHeight: '80%', marginTop: '10%', marginBottom: '2%' }} />
               <h1 className='mb-4' style={{ fontSize: '200%' }}>Review</h1>
             </Button>
           </div>
 
-          <div className='col-md-4' style={{ maxWidth: '25vw', marginLeft: 'auto', marginRight: 'auto', minWidth: '200px', minHeight: '200px' }}>
+          <div className='col4' style={{ maxWidth: '25vw', marginLeft: 'auto', marginRight: 'auto', minWidth: '200px', minHeight: '200px' }}>
             <Button className='btn-info' onClick={() => history.push(match.url + '/writing')}
               style={{ background: '#408fbd', boxShadow: '10px 10px 5px 1px #6b6b6b', paddingLeft: '5%', paddingRight: '5%' }}>
-              <img src={tempSizingImage} alt='Letter Video' style={{ maxWidth: '80%', maxHeight: '80%', marginTop: '10%', marginBottom: '2%' }} />
+              <img src={writingImage} alt='Letter Video' style={{ maxWidth: '80%', maxHeight: '80%', marginTop: '10%', marginBottom: '2%' }} />
               <h1 className='mb-4' style={{ fontSize: '200%' }}>Writing</h1>
             </Button>
           </div>
 
-          <div className='col-md-4' style={{ maxWidth: '25vw', marginLeft: 'auto', marginRight: 'auto', minWidth: '200px', minHeight: '200px' }}>
+          <div className='col-4' style={{ maxWidth: '25vw', marginLeft: 'auto', marginRight: 'auto', minWidth: '200px', minHeight: '200px' }}>
             <Button className='btn-info' disabled={this.props.disableSpellingButton} onClick={() => history.push(match.url + '/spelling')}
               style={{ background: '#408fbd', boxShadow: '10px 10px 5px 1px #6b6b6b', paddingLeft: '5%', paddingRight: '5%' }}>
-              <img src={tempSizingImage} alt='Letter Video' style={{ maxWidth: '80%', maxHeight: '80%', marginTop: '10%', marginBottom: '2%' }} />
+              <img src={spellingImage} alt='Letter Video' style={{ maxWidth: '80%', maxHeight: '80%', marginTop: '10%', marginBottom: '2%' }} />
               <h1 className='mb-4' style={{ fontSize: '200%' }}>Spelling</h1>
             </Button>
           </div>
