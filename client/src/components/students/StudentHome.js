@@ -19,7 +19,7 @@ class StudentHome extends PureComponent {
       <div className='mx-auto text-center align-middle' style={{ background: '#b9d5e0', width: '90%', marginTop: '0', paddingTop: '2%' }}>
 
         <div className='row'>
-          <div className='col-md-4' style={{ maxWidth: '25vw', marginLeft: 'auto', marginRight: 'auto', minWidth: '200px', minHeight: '200px' }}>
+          <div className='col-4' style={{ maxWidth: '25vw', marginLeft: 'auto', marginRight: 'auto', minWidth: '200px', minHeight: '200px' }}>
             <Button className='btn-info' onClick={() => history.push(match.url + '/video')}
               style={{ background: '#408fbd', boxShadow: '10px 10px 5px 1px #6b6b6b', paddingLeft: '5%', paddingRight: '5%' }}>
               <img src={reviewImage} alt='Letter Video' style={{ maxWidth: '80%', maxHeight: '80%', marginTop: '10%', marginBottom: '2%' }} />
@@ -27,7 +27,7 @@ class StudentHome extends PureComponent {
             </Button>
           </div>
 
-          <div className='col-md-4' style={{ maxWidth: '25vw', marginLeft: 'auto', marginRight: 'auto', minWidth: '200px', minHeight: '200px' }}>
+          <div className='col4' style={{ maxWidth: '25vw', marginLeft: 'auto', marginRight: 'auto', minWidth: '200px', minHeight: '200px' }}>
             <Button className='btn-info' onClick={() => history.push(match.url + '/writing')}
               style={{ background: '#408fbd', boxShadow: '10px 10px 5px 1px #6b6b6b', paddingLeft: '5%', paddingRight: '5%' }}>
               <img src={writingImage} alt='Letter Video' style={{ maxWidth: '80%', maxHeight: '80%', marginTop: '10%', marginBottom: '2%' }} />
@@ -35,7 +35,7 @@ class StudentHome extends PureComponent {
             </Button>
           </div>
 
-          <div className='col-md-4' style={{ maxWidth: '25vw', marginLeft: 'auto', marginRight: 'auto', minWidth: '200px', minHeight: '200px' }}>
+          <div className='col-4' style={{ maxWidth: '25vw', marginLeft: 'auto', marginRight: 'auto', minWidth: '200px', minHeight: '200px' }}>
             <Button className='btn-info' disabled={this.props.disableSpellingButton} onClick={() => history.push(match.url + '/spelling')}
               style={{ background: '#408fbd', boxShadow: '10px 10px 5px 1px #6b6b6b', paddingLeft: '5%', paddingRight: '5%' }}>
               <img src={spellingImage} alt='Letter Video' style={{ maxWidth: '80%', maxHeight: '80%', marginTop: '10%', marginBottom: '2%' }} />

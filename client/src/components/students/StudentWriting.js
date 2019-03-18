@@ -16,7 +16,6 @@ class StudentWriting extends Component {
       isLowercase: true,
       currentLetter: this.props.letterToSpell
     }
-    window.alert('This is mocked for testing right now, so it will log what tesserct detected, but will accept it regardless of correctness')
     this.clearCanvas = this.clearCanvas.bind(this)
     this.checkWrittenCorrectly = this.checkWrittenCorrectly.bind(this)
   }

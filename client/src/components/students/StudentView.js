@@ -74,6 +74,9 @@ class StudentView extends Component {
     }
   }
 
+  /***
+   * This is called when the component unmounts from the DOM.
+   */
   componentWillUnmount () { this._isMounted = false }
 
   /***
