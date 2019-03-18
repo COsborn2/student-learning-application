@@ -1,6 +1,9 @@
 import React, { PureComponent } from 'react'
 import PropTypes from 'prop-types'
 
+/**
+ * This component displays the video for the current section
+ */
 class StudentVideo extends PureComponent {
   render () {
     const { video } = this.props
@@ -20,7 +23,7 @@ class StudentVideo extends PureComponent {
 }
 
 StudentVideo.propTypes = {
-  video: PropTypes.object.isRequired
+  video: PropTypes.string.isRequired
 }
 
 export default StudentVideo

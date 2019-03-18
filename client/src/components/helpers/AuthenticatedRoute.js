@@ -2,6 +2,15 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import { Redirect, Route } from 'react-router-dom'
 
+/**
+ * This component handles the redirection to login if the web token becomes invalid
+ * @param Component The component to render
+ * @param LazyComponent The lazy loaded component to render
+ * @param path The path of which to render the component
+ * @param props Any additional props to pass to the route
+ * @returns {*} The route to the component or a redirect to the login screen
+ * @constructor This just renames the props passed to it
+ */
 const AuthenticatedRoute = ({ component: Component, lazyComponent: LazyComponent, path, props }) => {
   const type = path.substring(1)
   const user = JSON.parse(window.sessionStorage.getItem(type))

@@ -5,6 +5,11 @@ import LoadingGif from '../../assets/images/LoadingScreenGif.gif'
 
 const centerStyle = { top: 0, bottom: 0, left: 0, right: 0 }
 
+/**
+ * This function is a loading animation to be displayed while components are lazy loaded or initial api calls for student and instructor
+ * @param props The props passed
+ * @returns {*} The loading animation to render
+ */
 function LoadingScreen (props) {
   let loadingStyle = 'img-fluid position-absolute m-auto '
 

@@ -1,6 +1,12 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 
+/**
+ * This is the letter line that allows a student to go back and redo previous sections
+ * @param letterLineInfo The information containing what letters correspond to which assignment and letter index
+ * @param onLetterLineSelection The callback method to fire when a letter is clicked
+ * @returns {Array} Returns the letter line to render
+ */
 const LetterLine = ({ letterLineInfo, onLetterLineSelection }) => {
   const { assignmentIds, unlockedAssignmentIndex, unlockedLetterIndex, selectedAssignmentIndex, selectedLetterIndex } = letterLineInfo
 

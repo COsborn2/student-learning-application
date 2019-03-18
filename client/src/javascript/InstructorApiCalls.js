@@ -3,12 +3,20 @@ import fetch from 'isomorphic-fetch'
 /* ROUTES */
 const signupURL = '/api/instructor'
 const loginURL = '/api/instructor/login'
-
-async function stall (stallTime = 3000) {
-  await new Promise(resolve => setTimeout(resolve, stallTime))
-}
+const getCoursesURL = '/api/instructor'
+const createCourseURL = '/api/classrooms'
+const getCourseByIdURL = '/api/classrooms/'
+const getAssignmentByIdURL = '/api/assignment/'
+const deleteStudentById = '/api/student/'
 
 class InstructorApiCalls {
+  /***
+   * This method calls the api to create a new Instructor
+   * @param name The name of the new Instructor
+   * @param email The email of the new Instructor
+   * @param password The password of the new Instructor
+   * @returns {Promise<*>} Returns the Instructor's name, email, and jwt. Or error if sign up failed
+   */
   static async signup (name, email, password) {
     let httpMessage = {
       method: 'POST',
@@ -32,9 +40,15 @@ class InstructorApiCalls {
     }
 
     let jwt = res.headers.get('x-auth')
-    return { jwt, name: body.name }
+    return { name: body.name, jwt, email: body.email, courseIds: body.class }
   }
 
+  /***
+   * This method calls the api to create a new Instructor
+   * @param email The email to attempt authentication with
+   * @param password The password to attempt authentication
+   * @returns {Promise<*>} Returns the Instructor's name, email, and jwt. Or error if login failed
+   */
   static async login (email, password) {
     let httpMessage = {
       method: 'POST',
@@ -56,39 +70,138 @@ class InstructorApiCalls {
       return { error: body.error }
     }
     let jwt = res.headers.get('x-auth')
-    return { jwt, name: body.name }
+    return { name: body.name, jwt, email: body.email, courseIds: body.class }
   }
 
-  // This is where the api call is made to retrieve the specific instructor's classes
-  static async getCourses () {
-    let courses = [
-      {
-        classCode: 1,
-        className: 'Classroom 1',
-        students: [{ userName: 'Rickey' }],
-        assignments: [{
-          id: 1,
-          letters: [],
-          words: [
-            { word: 'kite', imageURL: 'kiteURL.PNG' },
-            { word: 'car', imageURL: 'carURL.PNG' }]
-        }]
-      },
-      {
-        classCode: 2,
-        className: 'Classroom 2',
-        students: [{ userName: 'Clark' }, { userName: 'Timmy' }],
-        assignments: [{
-          id: 1,
-          letters: [],
-          words: [
-            { word: 'book', imageURL: 'bookURL.PNG' },
-            { word: 'plane', imageURL: 'planeURL.PNG' }]
-        }]
+  /***
+   * This method calls the api to retrieve the instructors courses
+   * @param jwt Web Token
+   * @returns {Promise<*>} Returns the Instructor's courses. Or error if failed
+   */
+  static async getCourses (jwt) {
+    let httpMessage = {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-auth': jwt
       }
-    ]
-    await stall(1500)
-    return courses
+    }
+
+    const res = await fetch(getCoursesURL, httpMessage)
+    const body = await res.json()
+    if (res.status !== 200) {
+      console.log(httpMessage) // todo remove log statements
+      console.log(res)
+      console.log(`Error: ${body.error}`)
+      return { error: body.error }
+    }
+    return { courses: body.class }
+  }
+
+  /**
+   * This method calls the api to create a new course with the given courseCode
+   * @param jwt Web token
+   * @param courseCode Course code to be used to create a new course
+   * @returns {Promise<*>} Returns the course created. Or error if failed
+   */
+  static async createCourse (jwt, courseCode) {
+    let httpMessage = {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-auth': jwt
+      },
+      body: JSON.stringify({ classcode: courseCode })
+    }
+
+    const res = await fetch(createCourseURL, httpMessage)
+    const body = await res.json()
+    if (res.status !== 200) {
+      console.log(httpMessage) // todo remove log statements
+      console.log(res)
+      console.log(`Error: ${body.error}`)
+      return { error: body.error }
+    }
+    return { course: body.classroom, courseIds: body.updatedInstructor.class }
+  }
+
+  /**
+   * This method calls the api to retrieve a course by its id
+   * @param jwt Web token
+   * @param id The id of the course to get
+   * @returns {Promise<*>} Returns the course. Or error if failed
+   */
+  static async getCourseById (jwt, id) {
+    let httpMessage = {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-auth': jwt
+      }
+    }
+
+    const res = await fetch(getCourseByIdURL + id, httpMessage)
+    const body = await res.json()
+    if (res.status !== 200) {
+      console.log(httpMessage) // todo remove log statements
+      console.log(res)
+      console.log(`Error: ${body.error}`)
+      return { error: body.error }
+    }
+
+    return body.classroom
+  }
+
+  /***
+   * This method calls the get assignment api
+   * @param id Id to get
+   * @returns {Promise<*>} Populated assignment
+   */
+  static async getAssignmentById (id) {
+    let httpMessage = {
+      method: 'GET',
+      headers: { 'Content-Type': 'application/json' }
+    }
+
+    const res = await fetch(getAssignmentByIdURL + id, httpMessage)
+    let body = await res.json()
+    if (res.status !== 200) {
+      const body = await res.json()
+      console.log(httpMessage) // todo remove log statements
+      console.log(res)
+      console.log(`Error: ${body.error}`)
+      return { error: body.error }
+    }
+
+    return body.assignment
+  }
+
+  /**
+   *
+   * This method calls the delete student by id api
+   * @param jwt Web Token
+   * @param id Id of the student to delete
+   * @returns {Promise<*>} The success of the call
+   */
+  static async deleteStudentById (jwt, id) {
+    let httpMessage = {
+      method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-auth': jwt
+      }
+    }
+
+    const res = await fetch(deleteStudentById + id, httpMessage)
+    const body = await res.json()
+    if (res.status !== 200) {
+      console.log(httpMessage) // todo remove log statements
+      console.log(res)
+      console.log(`Error: ${body.error}`)
+      return { error: body.error }
+    }
+
+    return body
   }
 }
 

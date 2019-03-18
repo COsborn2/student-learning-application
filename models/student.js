@@ -46,7 +46,7 @@ StudentSchema.methods.toJSON = function () {
   let student = this
   let studentObject = student.toObject()
 
-  return _.pick(studentObject, ['username', 'classcode', 'currentAssignment', 'currentLetter', 'currentWord', 'finishedCourse'])
+  return _.pick(studentObject, ['username', 'classcode', 'currentAssignment', 'currentLetter', 'currentWord', 'finishedCourse', '_id'])
 }
 
 StudentSchema.methods.getClass = async function () {

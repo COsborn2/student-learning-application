@@ -36,6 +36,7 @@ app.post('/api/student/writing', authenticateStudent, tesseractRoute.detectImage
 app.delete('/api/student/:id', authenticateInstructor, studentsRoute.deleteStudent)
 app.post('/api/student/login', studentsRoute.loginStudent)
 app.put('/api/student/progress', authenticateStudent, studentsRoute.updateStudentProgress)
+app.post('/api/student/progress', authenticateStudent, studentsRoute.devSetStudentProgress)
 app.get('/api/student', authenticateStudent, studentsRoute.initalizeStudent)
 
 app.get('/api/assignment/:id', assignmentsRoute.getAssignmentById)

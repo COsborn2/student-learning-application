@@ -3,7 +3,7 @@ import PropTypes from 'prop-types'
 import { DragLayer } from 'react-dnd'
 
 function collect (monitor) {
-  var item = monitor.getItem()
+  let item = monitor.getItem()
   return {
     id: item && item.id,
     name: item && item.name,
@@ -20,9 +20,9 @@ function getItemStyles (currentOffset) {
     }
   }
 
-  var x = currentOffset.x
-  var y = currentOffset.y
-  var transform = `translate(${x}px, ${y}px)`
+  let x = currentOffset.x
+  let y = currentOffset.y
+  let transform = `translate(${x}px, ${y}px)`
 
   return {
     pointerEvents: 'none',
@@ -50,14 +50,14 @@ function ItemPreview ({
   value
 }) {
   if (!isDragging) {
-    return null
+    return <div />
   }
 
   return (
     <div style={layerStyles}>
       <div key={id}
         style={getItemStyles(currentOffset)}
-        className='mx-auto'>
+        className='mx-auto rounded'>
         <h5 className='mx-auto'>
           {value}
         </h5>

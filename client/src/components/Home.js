@@ -10,6 +10,10 @@ const instructorImageSrc = 'https://i.gyazo.com/4e38420d2e6daf8ac8713d1423a0d52a
 
 // const tempSizingImage = 'https://via.placeholder.com/540x400'
 
+/**
+ * This is main home screen of the application
+ * @returns {*} The screen to render
+ */
 const Home = () => (
   <div className='mx-auto text-center' style={{ background: '#b9d5e0', minHeight: '100vh', display: 'flex', alignItems: 'center', overflow: 'hidden' }}>
     <div className='mx-auto text-center'>
