@@ -1,7 +1,7 @@
 {
   "name": "student-learning-program",
-  "version": "1.0.0",
-  "description": "",
+  "version": "0.9.0",
+  "description": "Student Learning Application designed to follow AlphaEd program",
   "main": "server.js",
   "directories": {
     "test": "tests"
@@ -26,7 +26,7 @@
   },
   "keywords": [],
   "author": "",
-  "license": "ISC",
+  "license": "MIT",
   "devDependencies": {
     "apidoc": "^0.17.7",
     "chai": "^4.2.0",
