@@ -21,12 +21,14 @@
     "test-client-standard": "cd client && npm run test-standard",
     "fix-client-standard": "cd client && npm run fix-standard",
     "test-all-standard": "npm run test-server-standard && npm run test-client-standard",
-    "fix-all-standard": "npm run fix-server-standard && npm run fix-client-standard"
+    "fix-all-standard": "npm run fix-server-standard && npm run fix-client-standard",
+    "doc": "apidoc -i \"./routes/**/*.js\""
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "devDependencies": {
+    "apidoc": "^0.17.7",
     "chai": "^4.2.0",
     "concurrently": "^4.1.0",
     "dotenv": "^6.2.0",
