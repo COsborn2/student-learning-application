@@ -18,9 +18,9 @@ const { DefaultAssignments } = require('../AlphaEd/staticAssignments')
  * @apiHeader {String} x-auth Json Web Token
  * @apiPermission Instructor
  *
- * @apiParam (Request body) {String}
+ * @apiParam (Request body) {String} classcode Desired classcode to add
  *
- * @apiSuccess {Object} classroom, updatedInstructor Classroom, Instructor objects
+ * @apiSuccess {Object} result Classroom, Instructor objects
  * @apiSuccessExample Success-Response:
  *    {
  *      "classroom": {
@@ -55,7 +55,7 @@ const { DefaultAssignments } = require('../AlphaEd/staticAssignments')
  *      }
  *    }
  *
- * @apiError 400 ClassroomIdAlreadyExists A classroom with the chosen Id already exists
+ * @apiError (400) ClassroomIdAlreadyExists A classroom with the chosen Id already exists
  * @apiErrorExample Error-Response
  *    {
  *      "error": "Classroom already exists with that classcode"
