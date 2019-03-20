@@ -325,12 +325,85 @@ let deleteStudent = async (req, res) => {
   res.send({ student })
 }
 
+/**
+ * @api {get} /api/student Initialize Student
+ * @apiVersion 0.9.0
+ * @apiName InitializeStudent
+ * @apiGroup Student
+ *
+ * @apiHeader {String} x-auth Json Web Token
+ * @apiPermission Student
+ *
+ * @apiParam {Number} id Student ObjectId
+ * @apiSuccess {[Object]} assignmentIds Object array of assignment ids and array of letters
+ * @apiSuccess {String} assignmentIds.assignmentId ObjectId of assignment
+ * @apiSuccess {[String]} assignmentIds.letters List of letters for the assignment
+ * @apiSuccess {Object} currentAssignment The current assignment the student is on. Type of Assignment
+ * @apiSuccessExample {json} Success-Response:
+ *    {
+ *      "assignmentIds": [
+ *        {
+ *          "assignmentId": "<id>",
+ *          "letters": [
+ *            "a",
+ *            "b",
+ *            "c"
+ *          ]
+ *        },
+ *        {
+ *          "assignmentId": "<id>",
+ *          "letters": [
+ *            "c"
+ *          ]
+ *        }
+ *      ],
+ *      "currentAssignment": {
+ *        "videos": [],
+ *        "letters": [
+ *          "a",
+ *          "b",
+ *          "c"
+ *        ],
+ *        "words": [
+ *          {
+ *            "_id": "<id>",
+ *            "text": "cab",
+ *            "picture": "<url>",
+ *            "__v": 0
+ *          }
+ *        ],
+ *        "_id": "<id>",
+ *        "name": "Assignment 1",
+ *        "__v": 0
+ *      }
+ *    }
+ *
+ * @apiError (404) TokenNotFound A student was not found with that token
+ * @apiError (404) IdNotFound The students classroom could not be found
+ *
+ * @apiErrorExample {json} Error-Response:
+ *    {
+ *      "error": "<error message>"
+ *    }
+ */
 let initalizeStudent = async (req, res) => {
   let token = req.header('x-auth')
 
   let student = await Student.findByToken(token)
 
+  if (!student) {
+    const err = `Student was not found with that token`
+    ErrorMessage(err)
+    return res.send(404).send({ error: err })
+  }
+
   let classroom = await Classroom.findById(student.class)
+
+  if (!classroom) {
+    const err = `Students classroom could not be found`
+    ErrorMessage(err)
+    return res.send(404).send({ error: err })
+  }
 
   let assignmentIds = await classroom.getLetters()
 
