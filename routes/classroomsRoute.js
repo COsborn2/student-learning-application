@@ -56,7 +56,7 @@ const { DefaultAssignments } = require('../AlphaEd/staticAssignments')
  *    }
  *
  * @apiError (400) ClassroomIdAlreadyExists A classroom with the chosen Id already exists
- * @apiErrorExample Error-Response
+ * @apiErrorExample ClassroomIdAlreadyExists
  *    {
  *      "error": "Classroom already exists with that classcode"
  *    }
@@ -160,6 +160,44 @@ let seedDatabase = async (index) => {
   return newAssignment._id
 }
 
+/** FIXME: Change errors to 404
+ * @api {get} /api/classrooms Get Classroom of Student
+ * @apiVersion 0.9.0
+ * @apiName GetStudentClassroom
+ * @apiGroup Classroom
+ *
+ * @apiHeader {String} x-auth Json Web Token
+ * @apiPermission Student
+ *
+ * @apiSuccess {Object} classroom Classroom object
+ * @apiSuccessExample Success-Response:
+ *    {
+ *      "classroom": {
+ *        "assignments": [
+ *            "<id>",
+ *        ],
+ *        "students": [
+ *            "<id>"
+ *        ],
+ *        "_id": "<id>",
+ *        "classcode": "courseCode",
+ *        "instructor": "<id>",
+ *        "__v": 0
+ *      }
+ *    }
+ *
+ * @apiError (400) IdNotFound Student not found with specified _id
+ * @apiErrorExample IdNotFound
+ *    {
+ *      "error": "Student not found with specified _id"
+ *    }
+ *
+ * @apiError (400) ClassroomNotFound Students classroom could not be found
+ * @apiErrorExample ClassroomNotFound
+ *    {
+ *      "error": "Classroom not found"
+ *    }
+ */
 let getStudentClassroom = async (req, res) => {
   let token = req.header('x-auth')
 
