@@ -9,9 +9,58 @@ const { Token } = require('../models/token')
 
 const { DefaultAssignments } = require('../AlphaEd/staticAssignments')
 
-/* ClassroomsRoute requires Instructor JWT and classcode property
-   It checks the database for the default assignments.
-   If the default assignments do not exist the database is seeded with them. */
+/**
+ * @api {post} /classrooms Create Classroom
+ * @apiVersion 0.9.0
+ * @apiName CreateClassroom
+ * @apiGroup Classroom
+ *
+ * @apiHeader {String} x-auth Json Web Token
+ * @apiPermission Instructor
+ *
+ * @apiParam (Request body) {String}
+ *
+ * @apiSuccess {Object} classroom, updatedInstructor Classroom, Instructor objects
+ * @apiSuccessExample Success-Response:
+ *    {
+ *      "classroom": {
+ *        "assignments": [
+ *          {
+ *              "videos": [],
+ *              "letters": [
+ *                  "a",
+ *                  "b",
+ *                  "c"
+ *              ],
+ *              "words": [
+ *                  "<id>"
+ *              ],
+ *              "_id": "<id>",
+ *              "name": "Assignment 1",
+ *              "__v": 0
+ *          }
+ *        ],
+ *        "students": [],
+ *        "_id": "<id>",
+ *        "classcode": "someClasscode",
+ *        "instructor": "<id>",
+ *        "__v": 0
+ *      },
+ *      "updatedInstructor": {
+ *        "name": "Cameron Osborn",
+ *        "email": "<email>",
+ *        "class": [
+ *            "<id>"
+ *        ]
+ *      }
+ *    }
+ *
+ * @apiError 400 ClassroomIdAlreadyExists A classroom with the chosen Id already exists
+ * @apiErrorExample Error-Response
+ *    {
+ *      "error": "Classroom already exists with that classcode"
+ *    }
+ */
 let createClassroom = async (req, res) => {
   let token = req.header('x-auth')
 
