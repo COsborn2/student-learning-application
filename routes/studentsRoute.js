@@ -154,7 +154,7 @@ let loginStudent = async (req, res) => {
 }
 
 /**
- * @api {post} /api/student/progress Update Student
+ * @api {put} /api/student/progress Update Student
  * @apiVersion 0.9.0
  * @apiName UpdateStudent
  * @apiGroup Student
@@ -272,11 +272,47 @@ let updateStudentProgress = async (req, res) => {
   res.send({ updatedStudent })
 }
 
-// /api/students/id
+/**
+ * @api {delete} /api/student/:id Delete Student
+ * @apiVersion 0.9.0
+ * @apiName DeleteStudent
+ * @apiGroup Student
+ *
+ * @apiHeader {String} x-auth Json Web Token
+ * @apiPermission Instructor
+ *
+ * @apiParam {Number} id Student ObjectId
+ * @apiSuccess {Object} student Student object of deleted student
+ * @apiSuccessExample {json} Success-Response:
+ *    {
+ *      "student": {
+ *        "username": "SomeUsername",
+ *        "classcode": "SomeCoursecode",
+ *        "currentAssignment": 0,
+ *        "currentLetter": 0,
+ *        "currentWord": 0,
+ *        "finishedCourse": false,
+ *        "_id": "<id>"
+ *      }
+ *    }
+ *
+ * @apiError (404) IdNotFound A student was not found with the requested id
+ *
+ * @apiErrorExample {json} Error-Response:
+ *    {
+ *      "error": "<error message>"
+ *    }
+ */
 let deleteStudent = async (req, res) => {
   let studentId = req.params.id
 
   let student = await Student.findById(studentId)
+
+  if (!student) {
+    const err = `Student was not found with an id of (${studentId})`
+    ErrorMessage(err)
+    return res.send(404).send({ error: err })
+  }
 
   // remove student from classroom
   await Classroom.findByIdAndUpdate(student.class, {
