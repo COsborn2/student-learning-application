@@ -49,5 +49,9 @@
     "node-tesseract": "^0.2.7",
     "tesseract.js": "^1.0.14",
     "validator": "^10.11.0"
+  },
+  "apidoc": {
+    "title": "API Documentation",
+    "url": "/api"
   }
 }

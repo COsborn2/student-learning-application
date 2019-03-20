@@ -2,7 +2,7 @@ const { Assignment } = require('../models/assignment')
 const { WarningMessage, SuccessMessage } = require('../middleware/message')
 
 /**
- * @api {get} /api/assignment/:id Get Assignment Information
+ * @api {get} /assignment/:id Get Assignment Information
  * @apiVersion 0.9.0
  * @apiName GetAssignment
  * @apiGroup Assignment
