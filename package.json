@@ -22,7 +22,7 @@
     "fix-client-standard": "cd client && npm run fix-standard",
     "test-all-standard": "npm run test-server-standard && npm run test-client-standard",
     "fix-all-standard": "npm run fix-server-standard && npm run fix-client-standard",
-    "doc": "apidoc -i routes/"
+    "doc": "apidoc -i routes/ -o docs/"
   },
   "keywords": [],
   "author": "",
