@@ -37,7 +37,7 @@ const { WarningMessage, SuccessMessage } = require('../middleware/message')
  *
  * @apiError (404) IdNotFound The id of that Assignment was not found
  *
- * @apiErrorExample
+ * @apiErrorExample Error-Response
  *    {
  *      "error": "Assignment with that id of (<id>) could not be found"
  *    }
