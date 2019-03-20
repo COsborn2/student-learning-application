@@ -153,6 +153,45 @@ let loginStudent = async (req, res) => {
   }
 }
 
+/**
+ * @api {post} /api/student/progress Update Student
+ * @apiVersion 0.9.0
+ * @apiName UpdateStudent
+ * @apiGroup Student
+ *
+ * @apiHeader {String} x-auth Json Web Token
+ * @apiPermission Student
+ *
+ * @apiHeader {String} Content-Type application/json
+ *
+ * @apiParam (Request body) {String} currentLetter The letter the student is ready to work on
+ * @apiParam (Request body) {String} currentWord The word the student is ready to work on
+ * @apiParam (Request body) {String} currentAssignment The assignment the student is ready to work on
+ *
+ * @apiSuccess {Object} updatedStudent Student object of updated student
+ * @apiSuccessExample {json} Success-Response:
+ *    {
+ *      "updatedStudent": {
+ *        "username": "SomeUsername",
+ *        "classcode": "SomeCoursecode",
+ *        "currentAssignment": 0,
+ *        "currentLetter": 0,
+ *        "currentWord": 0,
+ *        "finishedCourse": false,
+ *        "_id": "<id>"
+ *      }
+ *    }
+ *
+ * @apiError (400) MissingData One of the required parameters (currentLetter, currentWord, currentAssignment) is missing
+ * @apiError (400) UpdateErrorReverse New index cannot be lower than previous index
+ * @apiError (400) UpdateErrorSkip New index is greater than previous index plus one
+ * @apiError (400) InvalidUpdate The new word index and the new letter index cannot be updated at the same time
+ *
+ * @apiErrorExample {json} Error-Response:
+ *    {
+ *      "error": "<error message>"
+ *    }
+ */
 let updateStudentProgress = async (req, res) => {
   let token = req.header('x-auth')
 
