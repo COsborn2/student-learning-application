@@ -9,7 +9,7 @@ const tesseractOptions = {
 }
 
 /**
- * @api {post} /api/student/writing Get Classroom - Student
+ * @api {post} /api/student/writing Tesseract Detection
  * @apiVersion 0.9.0
  * @apiName DetectImageText
  * @apiGroup Tesseract
@@ -17,7 +17,11 @@ const tesseractOptions = {
  * @apiHeader {String} x-auth Json Web Token
  * @apiPermission Student
  *
- * @apiSuccess {Object} classroom Classroom object
+ * @apiHeader {String} Content-Type application/json
+ *
+ * @apiParam (Request body) {String} image Base64 encoded image
+ *
+ * @apiSuccess {String} textDetected The text that Tesseract detected from the passed in image
  * @apiSuccessExample {json} Success-Response:
  *    {
  *      "textDetected": "<text>"
