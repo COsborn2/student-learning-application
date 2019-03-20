@@ -4,6 +4,35 @@ const { Instructor } = require('../models/instructor')
 const { SuccessMessage, ErrorMessage } = require('../middleware/message')
 const bcrypt = require('bcrypt')
 
+/**
+ * @api {post} /instructor
+ * @apiVersion 0.9.0
+ * @apiName CreateInstructor
+ * @apiGroup Instructor
+ *
+ * @apiPermisssion none
+ *
+ * @apiHeader {String} Content-Type application/json
+ *
+ * @apiParam (Request body) {String} email Instructors email
+ * @apiParam (Request body) {String} password Instructors password
+ * @apiParam (Request body) {String} name Instructors name. Can be first and last
+ *
+ * @apiSuccess {Object} instructor Instructor object of new instructor
+ * @apiSuccessExample Success-Response:
+ *    {
+ *      "name": "Cameron Osborn",
+ *      "email": "<email>",
+ *      "class": []
+ *    }
+ *
+ * @apiError (400) UserAlreadyExists A user already exists with that email
+ *
+ * @apiErrorExample Error-Response:
+ *    {
+ *      "error": "Classroom already exists with that classcode"
+ *    }
+ */
 let createInstructor = async (req, res) => {
   let body = _.pick(req.body, ['email', 'password', 'name'])
 

@@ -36,11 +36,11 @@ const { WarningMessage, SuccessMessage } = require('../middleware/message')
  *    }
  *
  * @apiError (404) IdNotFound The id of that Assignment was not found
- * @apiErrorExample IdNotFound
- *    {
- *      "error": "Assignment with that id of (<id>) could not be found"
- *    }
  *
+ * @apiErrorExample Error-Response:
+ *    {
+ *      "error": "<error message>"
+ *    }
  */
 let getAssignmentById = async (req, res) => {
   let assignmentId = req.params.id

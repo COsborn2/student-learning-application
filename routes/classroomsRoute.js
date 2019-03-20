@@ -18,6 +18,8 @@ const { DefaultAssignments } = require('../AlphaEd/staticAssignments')
  * @apiHeader {String} x-auth Json Web Token
  * @apiPermission Instructor
  *
+ * @apiHeader {String} Content-Type application/json
+ *
  * @apiParam (Request body) {String} classcode Desired classcode to add
  *
  * @apiSuccess {Object} result Classroom, Instructor objects
@@ -56,9 +58,10 @@ const { DefaultAssignments } = require('../AlphaEd/staticAssignments')
  *    }
  *
  * @apiError (400) ClassroomIdAlreadyExists A classroom with the chosen Id already exists
- * @apiErrorExample ClassroomIdAlreadyExists
+ *
+ * @apiErrorExample Error-Response:
  *    {
- *      "error": "Classroom already exists with that classcode"
+ *      "error": "<error message>"
  *    }
  */
 let createClassroom = async (req, res) => {
@@ -160,7 +163,7 @@ let seedDatabase = async (index) => {
   return newAssignment._id
 }
 
-/** FIXME: Change errors to 404
+/**
  * @api {get} /classrooms Get Classroom - Student
  * @apiVersion 0.9.0
  * @apiName GetStudentClassroom
@@ -186,16 +189,12 @@ let seedDatabase = async (index) => {
  *      }
  *    }
  *
- * @apiError (400) IdNotFound Student not found with specified _id
- * @apiErrorExample IdNotFound
- *    {
- *      "error": "Student not found with specified _id"
- *    }
+ * @apiError (404) IdNotFound Student not found with specified _id
+ * @apiError (404) ClassroomNotFound Students classroom could not be found
  *
- * @apiError (400) ClassroomNotFound Students classroom could not be found
- * @apiErrorExample ClassroomNotFound
+ * @apiErrorExample Error-Response:
  *    {
- *      "error": "Classroom not found"
+ *      "error": "<error message>"
  *    }
  */
 let getStudentClassroom = async (req, res) => {
@@ -205,14 +204,14 @@ let getStudentClassroom = async (req, res) => {
 
   if (!student) {
     ErrorMessage('Student not found with specified _id')
-    return res.status(400).send({ error: 'Student not found with specified _id' })
+    return res.status(404).send({ error: 'Student not found with specified _id' })
   }
 
   let classroom = await Classroom.findById(student.class)
 
   if (!classroom) {
     ErrorMessage('Classroom not found')
-    return res.status(400).send({ error: 'Classroom not found' })
+    return res.status(404).send({ error: 'Classroom not found' })
   }
 
   res.send({ classroom })
@@ -265,14 +264,11 @@ let getStudentClassroom = async (req, res) => {
  *    }
  *
  * @apiError (404) ClassroomIdNotFound Classroom with that id could not be found
- * @apiErrorExample ClassroomIdNotFound
- *    {
- *      "error": "Classroom with id of (<id>) could not be found"
- *    }
- *
  * @apiError (401) InvalidInstructor Instructors token id does not match teacher of classroom
+ *
+ * @apiErrorExample Error-Response:
  *    {
- *      "error": "You are not the instructor for the requested classroom"
+ *      "error": "<error message>"
  *    }
  */
 let getInstructorClass = async (req, res) => {
