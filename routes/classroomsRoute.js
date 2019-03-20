@@ -22,7 +22,8 @@ const { DefaultAssignments } = require('../AlphaEd/staticAssignments')
  *
  * @apiParam (Request body) {String} classcode Desired classcode to add
  *
- * @apiSuccess {Object} result Classroom, Instructor objects
+ * @apiSuccess {Object} classroom Classroom object of created classroom
+ * @apiSuccess {Object} updatedInstructor Instructor object of classroom instructor
  * @apiSuccessExample {json} Success-Response:
  *    {
  *      "classroom": {
