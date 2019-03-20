@@ -161,7 +161,7 @@ let seedDatabase = async (index) => {
 }
 
 /** FIXME: Change errors to 404
- * @api {get} /api/classrooms Get Classroom of Student
+ * @api {get} /classrooms Get Classroom - Student
  * @apiVersion 0.9.0
  * @apiName GetStudentClassroom
  * @apiGroup Classroom
@@ -218,12 +218,72 @@ let getStudentClassroom = async (req, res) => {
   res.send({ classroom })
 }
 
+/**
+ * @api {get} /classrooms/:id Get Classroom - Instructor
+ * @apiVersion 0.9.0
+ * @apiName GetInstructorClassroom
+ * @apiGroup Classroom
+ *
+ * @apiHeader {String} x-auth Json Web Token
+ * @apiPermission Instructor
+ *
+ * @apiParam {Number} id Classroom ObjectId
+ *
+ * @apiSuccess {Object} classroom Classroom object
+ * @apiSuccessExample Success-Response:
+ *    {
+ *      "classroom": {
+ *        "assignments": [
+ *          {
+ *              "videos": [],
+ *              "letters": [
+ *                  "a",
+ *                  "b",
+ *                  "c"
+ *              ],
+ *              "words": [
+ *                  "<id>"
+ *              ],
+ *              "_id": "<id>",
+ *              "name": "Assignment 1",
+ *              "__v": 0
+ *          }
+ *        ],
+ *        "students": [],
+ *        "_id": "<id>",
+ *        "classcode": "someClasscode",
+ *        "instructor": "<id>",
+ *        "__v": 0
+ *      },
+ *      "updatedInstructor": {
+ *        "name": "Cameron Osborn",
+ *        "email": "<email>",
+ *        "class": [
+ *            "<id>"
+ *        ]
+ *      }
+ *    }
+ *
+ * @apiError (404) ClassroomIdNotFound Classroom with that id could not be found
+ * @apiErrorExample ClassroomIdNotFound
+ *    {
+ *      "error": "Classroom with id of (<id>) could not be found"
+ *    }
+ *
+ * @apiError (401) InvalidInstructor Instructors token id does not match teacher of classroom
+ *    {
+ *      "error": "You are not the instructor for the requested classroom"
+ *    }
+ */
 let getInstructorClass = async (req, res) => {
   let rawToken = req.header('x-auth')
 
   let classroomId = req.params.id
 
-  let classroom = await Classroom.findById(classroomId).populate('class').populate('students').populate('assignments')
+  let classroom = await Classroom.findById(classroomId)
+    .populate('class')
+    .populate('students')
+    .populate('assignments')
 
   if (!classroom) {
     const err = `Classroom with id of (${classroomId}) could not be found`
