@@ -92,6 +92,39 @@ let createStudent = async (req, res) => {
   res.header('x-auth', token.token).send(student)
 }
 
+/**
+ * @api {post} /api/student/login Login Student
+ * @apiVersion 0.9.0
+ * @apiName LoginStudent
+ * @apiGroup Student
+ *
+ * @apiPermission none
+ *
+ * @apiHeader {String} Content-Type application/json
+ *
+ * @apiParam (Request body) {String} username Student username
+ * @apiParam (Request body) {String} classcode Classcode student is enrolled in
+ *
+ * @apiHeader (Response Headers) {String} x-auth Json Web Token
+ * @apiSuccess {Object} student Student object of new student
+ * @apiSuccessExample {json} Success-Response:
+ *    {
+ *      "username": "SomeUsername",
+ *      "classcode": "SomeCoursecode",
+ *      "currentAssignment": 0,
+ *      "currentLetter": 0,
+ *      "currentWord": 0,
+ *      "finishedCourse": false,
+ *      "_id": "<id>"
+ *    }
+ *
+ * @apiError (401) IncorrectCredentials Wrong classcode or username
+ *
+ * @apiErrorExample {json} Error-Response:
+ *    {
+ *      "error": "<error message>"
+ *    }
+ */
 let loginStudent = async (req, res) => {
   let body = _.pick(req.body, ['classcode', 'username'])
 

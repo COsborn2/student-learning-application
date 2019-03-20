@@ -32,9 +32,9 @@ app.get('/api/instructor', authenticateInstructor, instructorsRoute.getInstructo
 app.post('/api/instructor/login', instructorsRoute.loginInstructor)
 
 app.post('/api/student', studentsRoute.createStudent)
+app.post('/api/student/login', studentsRoute.loginStudent)
 app.post('/api/student/writing', authenticateStudent, tesseractRoute.detectImageText)
 app.delete('/api/student/:id', authenticateInstructor, studentsRoute.deleteStudent)
-app.post('/api/student/login', studentsRoute.loginStudent)
 app.put('/api/student/progress', authenticateStudent, studentsRoute.updateStudentProgress)
 app.get('/api/student', authenticateStudent, studentsRoute.initalizeStudent)
 
