@@ -18,8 +18,9 @@ const bcrypt = require('bcrypt')
  * @apiParam (Request body) {String} password Instructors password
  * @apiParam (Request body) {String} name Instructors name. Can be first and last
  *
+ * @apiHeader (Response Headers) {String} x-auth Json Web Token
  * @apiSuccess {Object} instructor Instructor object of new instructor
- * @apiSuccessExample Success-Response:
+ * @apiSuccessExample {json} Success-Response:
  *    {
  *      "name": "Cameron Osborn",
  *      "email": "<email>",
@@ -28,7 +29,7 @@ const bcrypt = require('bcrypt')
  *
  * @apiError (400) UserAlreadyExists A user already exists with that email
  *
- * @apiErrorExample Error-Response:
+ * @apiErrorExample {json} Error-Response:
  *    {
  *      "error": "<error message>"
  *    }
@@ -82,8 +83,9 @@ let createInstructor = async (req, res) => {
  * @apiParam (Request body) {String} email Instructors email
  * @apiParam (Request body) {String} password Instructors password
  *
+ * @apiHeader (Response Headers) {String} x-auth Json Web Token
  * @apiSuccess {Object} instructor Instructor object of logged in instructor
- * @apiSuccessExample Success-Response:
+ * @apiSuccessExample {json} Success-Response:
  *    {
  *      "name": "Cameron Osborn",
  *      "email": "<email>",
@@ -95,7 +97,7 @@ let createInstructor = async (req, res) => {
  * @apiError (401) WrongPassword Incorrect password
  * @apiError (401) WrongEmail Instructor with that email could not be found
  *
- * @apiErrorExample Error-Response:
+ * @apiErrorExample {json} Error-Response:
  *    {
  *      "error": "<error message>"
  *    }
@@ -138,7 +140,7 @@ let loginInstructor = async (req, res) => {
  * @apiPermission Instructor
  *
  * @apiSuccess {Object} instructor Instructor matching token
- * @apiSuccessExample Success-Response:
+ * @apiSuccessExample {json} Success-Response:
  *    {
  *      "name": "Cameron Osborn",
  *      "email": "<email>",
@@ -149,7 +151,7 @@ let loginInstructor = async (req, res) => {
  *
  * @apiError (401) InstructorNotFound Instructor with token could not be found
  *
- * @apiErrorExample Error-Response:
+ * @apiErrorExample {json} Error-Response:
  *    {
  *      "error": "<error message>"
  *    }

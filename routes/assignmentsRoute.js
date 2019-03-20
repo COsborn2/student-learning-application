@@ -12,7 +12,7 @@ const { WarningMessage, SuccessMessage } = require('../middleware/message')
  * @apiParam {Number} id Assignment ObjectId
  *
  * @apiSuccess {Object} assignment Assignment object
- * @apiSuccessExample Success-Response:
+ * @apiSuccessExample {json} Success-Response:
  *    {
  *      "assignment": {
  *        "videos": [],
@@ -37,7 +37,7 @@ const { WarningMessage, SuccessMessage } = require('../middleware/message')
  *
  * @apiError (404) IdNotFound The id of that Assignment was not found
  *
- * @apiErrorExample Error-Response:
+ * @apiErrorExample {json} Error-Response:
  *    {
  *      "error": "<error message>"
  *    }

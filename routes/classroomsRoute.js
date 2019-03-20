@@ -23,7 +23,7 @@ const { DefaultAssignments } = require('../AlphaEd/staticAssignments')
  * @apiParam (Request body) {String} classcode Desired classcode to add
  *
  * @apiSuccess {Object} result Classroom, Instructor objects
- * @apiSuccessExample Success-Response:
+ * @apiSuccessExample {json} Success-Response:
  *    {
  *      "classroom": {
  *        "assignments": [
@@ -59,7 +59,7 @@ const { DefaultAssignments } = require('../AlphaEd/staticAssignments')
  *
  * @apiError (400) ClassroomIdAlreadyExists A classroom with the chosen Id already exists
  *
- * @apiErrorExample Error-Response:
+ * @apiErrorExample {json} Error-Response:
  *    {
  *      "error": "<error message>"
  *    }
@@ -173,7 +173,7 @@ let seedDatabase = async (index) => {
  * @apiPermission Student
  *
  * @apiSuccess {Object} classroom Classroom object
- * @apiSuccessExample Success-Response:
+ * @apiSuccessExample {json} Success-Response:
  *    {
  *      "classroom": {
  *        "assignments": [
@@ -192,7 +192,7 @@ let seedDatabase = async (index) => {
  * @apiError (404) IdNotFound Student not found with specified _id
  * @apiError (404) ClassroomNotFound Students classroom could not be found
  *
- * @apiErrorExample Error-Response:
+ * @apiErrorExample {json} Error-Response:
  *    {
  *      "error": "<error message>"
  *    }
@@ -229,7 +229,7 @@ let getStudentClassroom = async (req, res) => {
  * @apiParam {Number} id Classroom ObjectId
  *
  * @apiSuccess {Object} classroom Classroom object
- * @apiSuccessExample Success-Response:
+ * @apiSuccessExample {json} Success-Response:
  *    {
  *      "classroom": {
  *        "assignments": [
@@ -266,7 +266,7 @@ let getStudentClassroom = async (req, res) => {
  * @apiError (404) ClassroomIdNotFound Classroom with that id could not be found
  * @apiError (401) InvalidInstructor Instructors token id does not match teacher of classroom
  *
- * @apiErrorExample Error-Response:
+ * @apiErrorExample {json} Error-Response:
  *    {
  *      "error": "<error message>"
  *    }

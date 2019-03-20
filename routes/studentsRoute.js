@@ -6,6 +6,40 @@ const { Classroom } = require('../models/classroom')
 const { ErrorMessage, SuccessMessage } = require('../middleware/message')
 const { ObjectID } = require('mongodb')
 
+/**
+ * @api {post} /api/student Create Student
+ * @apiVersion 0.9.0
+ * @apiName CreateStudent
+ * @apiGroup Student
+ *
+ * @apiPermission none
+ *
+ * @apiHeader {String} Content-Type application/json
+ *
+ * @apiParam (Request body) {String} username Student username
+ * @apiParam (Request body) {String} classcode Classcode that student is enrolling in
+ *
+ * @apiHeader (Response Headers) {String} x-auth Json Web Token
+ * @apiSuccess {Object} student Student object of new student
+ * @apiSuccessExample {json} Success-Response:
+ *    {
+ *      "username": "SomeUsername",
+ *      "classcode": "SomeCoursecode",
+ *      "currentAssignment": 0,
+ *      "currentLetter": 0,
+ *      "currentWord": 0,
+ *      "finishedCourse": false,
+ *      "_id": "<id>"
+ *    }
+ *
+ * @apiError (400) NoClassroomFound Classroom with that classcode could not be found
+ * @apiError (400) UsernameTaken Another student already exists with that username
+ *
+ * @apiErrorExample {json} Error-Response:
+ *    {
+ *      "error": "<error message>"
+ *    }
+ */
 let createStudent = async (req, res) => {
   let body = _.pick(req.body, ['classcode', 'username'])
 
