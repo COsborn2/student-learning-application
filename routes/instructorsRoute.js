@@ -5,12 +5,12 @@ const { SuccessMessage, ErrorMessage } = require('../middleware/message')
 const bcrypt = require('bcrypt')
 
 /**
- * @api {post} /instructor
+ * @api {post} /api/instructor Create Instructor
  * @apiVersion 0.9.0
  * @apiName CreateInstructor
  * @apiGroup Instructor
  *
- * @apiPermisssion none
+ * @apiPermission none
  *
  * @apiHeader {String} Content-Type application/json
  *
@@ -30,7 +30,7 @@ const bcrypt = require('bcrypt')
  *
  * @apiErrorExample Error-Response:
  *    {
- *      "error": "Classroom already exists with that classcode"
+ *      "error": "<error message>"
  *    }
  */
 let createInstructor = async (req, res) => {
@@ -69,7 +69,38 @@ let createInstructor = async (req, res) => {
   })
 }
 
-let loginInstructor = async (req, res) => { // need to find instructor from email
+/**
+ * @api {post} /api/instructor/login Login Instructor
+ * @apiVersion 0.9.0
+ * @apiName LoginInstructor
+ * @apiGroup Instructor
+ *
+ * @apiPermission none
+ *
+ * @apiHeader {String} Content-Type application/json
+ *
+ * @apiParam (Request body) {String} email Instructors email
+ * @apiParam (Request body) {String} password Instructors password
+ *
+ * @apiSuccess {Object} instructor Instructor object of logged in instructor
+ * @apiSuccessExample Success-Response:
+ *    {
+ *      "name": "Cameron Osborn",
+ *      "email": "<email>",
+ *      "class": [
+ *        "<id>"
+ *      ]
+ *    }
+ *
+ * @apiError (401) WrongPassword Incorrect password
+ * @apiError (401) WrongEmail Instructor with that email could not be found
+ *
+ * @apiErrorExample Error-Response:
+ *    {
+ *      "error": "<error message>"
+ *    }
+ */
+let loginInstructor = async (req, res) => {
   let body = _.pick(req.body, ['email', 'password'])
 
   try {
@@ -97,10 +128,42 @@ let loginInstructor = async (req, res) => { // need to find instructor from emai
   }
 }
 
+/**
+ * @api {post} /api/instructor Get Instructor
+ * @apiVersion 0.9.0
+ * @apiName GetInstructor
+ * @apiGroup Instructor
+ *
+ * @apiHeader {String} x-auth Json Web Token
+ * @apiPermission Instructor
+ *
+ * @apiSuccess {Object} instructor Instructor matching token
+ * @apiSuccessExample Success-Response:
+ *    {
+ *      "name": "Cameron Osborn",
+ *      "email": "<email>",
+ *      "class": [
+ *        "<id>"
+ *      ]
+ *    }
+ *
+ * @apiError (401) InstructorNotFound Instructor with token could not be found
+ *
+ * @apiErrorExample Error-Response:
+ *    {
+ *      "error": "<error message>"
+ *    }
+ */
 let getInstructor = async (req, res) => {
   let token = req.header('x-auth')
 
   let instructor = await Instructor.findByToken(token)
+
+  if (!instructor) {
+    const err = 'Instructor with that token could not be found'
+    ErrorMessage(err)
+    return res.status(401).send({ error: err })
+  }
 
   res.send(instructor)
 }

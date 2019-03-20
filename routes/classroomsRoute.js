@@ -10,7 +10,7 @@ const { Token } = require('../models/token')
 const { DefaultAssignments } = require('../AlphaEd/staticAssignments')
 
 /**
- * @api {post} /classrooms Create Classroom
+ * @api {post} /api/classrooms Create Classroom
  * @apiVersion 0.9.0
  * @apiName CreateClassroom
  * @apiGroup Classroom
@@ -164,7 +164,7 @@ let seedDatabase = async (index) => {
 }
 
 /**
- * @api {get} /classrooms Get Classroom - Student
+ * @api {get} /api/classrooms Get Classroom - Student
  * @apiVersion 0.9.0
  * @apiName GetStudentClassroom
  * @apiGroup Classroom
@@ -218,7 +218,7 @@ let getStudentClassroom = async (req, res) => {
 }
 
 /**
- * @api {get} /classrooms/:id Get Classroom - Instructor
+ * @api {get} /api/classrooms/:id Get Classroom - Instructor
  * @apiVersion 0.9.0
  * @apiName GetInstructorClassroom
  * @apiGroup Classroom
