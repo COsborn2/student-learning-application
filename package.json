@@ -1,7 +1,7 @@
 {
   "name": "student-learning-program",
-  "version": "1.0.0",
-  "description": "",
+  "version": "0.9.0",
+  "description": "Student Learning Application designed to follow AlphaEd program",
   "main": "server.js",
   "directories": {
     "test": "tests"
@@ -21,12 +21,14 @@
     "test-client-standard": "cd client && npm run test-standard",
     "fix-client-standard": "cd client && npm run fix-standard",
     "test-all-standard": "npm run test-server-standard && npm run test-client-standard",
-    "fix-all-standard": "npm run fix-server-standard && npm run fix-client-standard"
+    "fix-all-standard": "npm run fix-server-standard && npm run fix-client-standard",
+    "doc": "apidoc -i routes/"
   },
   "keywords": [],
   "author": "",
-  "license": "ISC",
+  "license": "MIT",
   "devDependencies": {
+    "apidoc": "^0.17.7",
     "chai": "^4.2.0",
     "concurrently": "^4.1.0",
     "dotenv": "^6.2.0",
@@ -47,5 +49,9 @@
     "node-tesseract": "^0.2.7",
     "tesseract.js": "^1.0.14",
     "validator": "^10.11.0"
+  },
+  "apidoc": {
+    "title": "API Documentation",
+    "url": ""
   }
 }

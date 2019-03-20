@@ -9,9 +9,62 @@ const { Token } = require('../models/token')
 
 const { DefaultAssignments } = require('../AlphaEd/staticAssignments')
 
-/* ClassroomsRoute requires Instructor JWT and classcode property
-   It checks the database for the default assignments.
-   If the default assignments do not exist the database is seeded with them. */
+/**
+ * @api {post} /api/classrooms Create Classroom
+ * @apiVersion 0.9.0
+ * @apiName CreateClassroom
+ * @apiGroup Classroom
+ *
+ * @apiHeader {String} x-auth Json Web Token
+ * @apiPermission Instructor
+ *
+ * @apiHeader {String} Content-Type application/json
+ *
+ * @apiParam (Request body) {String} classcode Desired classcode to add
+ *
+ * @apiSuccess {Object} classroom Classroom object of created classroom
+ * @apiSuccess {Object} updatedInstructor Instructor object of classroom instructor
+ * @apiSuccessExample {json} Success-Response:
+ *    {
+ *      "classroom": {
+ *        "assignments": [
+ *          {
+ *              "videos": [],
+ *              "letters": [
+ *                  "a",
+ *                  "b",
+ *                  "c"
+ *              ],
+ *              "words": [
+ *                  "<id>"
+ *              ],
+ *              "_id": "<id>",
+ *              "name": "Assignment 1",
+ *              "__v": 0
+ *          }
+ *        ],
+ *        "students": [],
+ *        "_id": "<id>",
+ *        "classcode": "someClasscode",
+ *        "instructor": "<id>",
+ *        "__v": 0
+ *      },
+ *      "updatedInstructor": {
+ *        "name": "Cameron Osborn",
+ *        "email": "<email>",
+ *        "class": [
+ *            "<id>"
+ *        ]
+ *      }
+ *    }
+ *
+ * @apiError (400) ClassroomIdAlreadyExists A classroom with the chosen Id already exists
+ *
+ * @apiErrorExample {json} Error-Response:
+ *    {
+ *      "error": "<error message>"
+ *    }
+ */
 let createClassroom = async (req, res) => {
   let token = req.header('x-auth')
 
@@ -111,6 +164,40 @@ let seedDatabase = async (index) => {
   return newAssignment._id
 }
 
+/**
+ * @api {get} /api/classrooms Get Classroom - Student
+ * @apiVersion 0.9.0
+ * @apiName GetStudentClassroom
+ * @apiGroup Classroom
+ *
+ * @apiHeader {String} x-auth Json Web Token
+ * @apiPermission Student
+ *
+ * @apiSuccess {Object} classroom Classroom object
+ * @apiSuccessExample {json} Success-Response:
+ *    {
+ *      "classroom": {
+ *        "assignments": [
+ *            "<id>",
+ *        ],
+ *        "students": [
+ *            "<id>"
+ *        ],
+ *        "_id": "<id>",
+ *        "classcode": "courseCode",
+ *        "instructor": "<id>",
+ *        "__v": 0
+ *      }
+ *    }
+ *
+ * @apiError (404) IdNotFound Student not found with specified _id
+ * @apiError (404) ClassroomNotFound Students classroom could not be found
+ *
+ * @apiErrorExample {json} Error-Response:
+ *    {
+ *      "error": "<error message>"
+ *    }
+ */
 let getStudentClassroom = async (req, res) => {
   let token = req.header('x-auth')
 
@@ -118,25 +205,82 @@ let getStudentClassroom = async (req, res) => {
 
   if (!student) {
     ErrorMessage('Student not found with specified _id')
-    return res.status(400).send({ error: 'Student not found with specified _id' })
+    return res.status(404).send({ error: 'Student not found with specified _id' })
   }
 
   let classroom = await Classroom.findById(student.class)
 
   if (!classroom) {
     ErrorMessage('Classroom not found')
-    return res.status(400).send({ error: 'Classroom not found' })
+    return res.status(404).send({ error: 'Classroom not found' })
   }
 
   res.send({ classroom })
 }
 
+/**
+ * @api {get} /api/classrooms/:id Get Classroom - Instructor
+ * @apiVersion 0.9.0
+ * @apiName GetInstructorClassroom
+ * @apiGroup Classroom
+ *
+ * @apiHeader {String} x-auth Json Web Token
+ * @apiPermission Instructor
+ *
+ * @apiParam {Number} id Classroom ObjectId
+ *
+ * @apiSuccess {Object} classroom Classroom object
+ * @apiSuccessExample {json} Success-Response:
+ *    {
+ *      "classroom": {
+ *        "assignments": [
+ *          {
+ *              "videos": [],
+ *              "letters": [
+ *                  "a",
+ *                  "b",
+ *                  "c"
+ *              ],
+ *              "words": [
+ *                  "<id>"
+ *              ],
+ *              "_id": "<id>",
+ *              "name": "Assignment 1",
+ *              "__v": 0
+ *          }
+ *        ],
+ *        "students": [],
+ *        "_id": "<id>",
+ *        "classcode": "someClasscode",
+ *        "instructor": "<id>",
+ *        "__v": 0
+ *      },
+ *      "updatedInstructor": {
+ *        "name": "Cameron Osborn",
+ *        "email": "<email>",
+ *        "class": [
+ *            "<id>"
+ *        ]
+ *      }
+ *    }
+ *
+ * @apiError (404) ClassroomIdNotFound Classroom with that id could not be found
+ * @apiError (401) InvalidInstructor Instructors token id does not match teacher of classroom
+ *
+ * @apiErrorExample {json} Error-Response:
+ *    {
+ *      "error": "<error message>"
+ *    }
+ */
 let getInstructorClass = async (req, res) => {
   let rawToken = req.header('x-auth')
 
   let classroomId = req.params.id
 
-  let classroom = await Classroom.findById(classroomId).populate('class').populate('students').populate('assignments')
+  let classroom = await Classroom.findById(classroomId)
+    .populate('class')
+    .populate('students')
+    .populate('assignments')
 
   if (!classroom) {
     const err = `Classroom with id of (${classroomId}) could not be found`

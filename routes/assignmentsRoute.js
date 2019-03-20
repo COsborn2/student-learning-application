@@ -1,7 +1,47 @@
 const { Assignment } = require('../models/assignment')
 const { WarningMessage, SuccessMessage } = require('../middleware/message')
 
-// /api/assignment/id
+/**
+ * @api {get} /api/assignment/:id Get Assignment
+ * @apiVersion 0.9.0
+ * @apiName GetAssignment
+ * @apiGroup Assignment
+ *
+ * @apiPermission none
+ *
+ * @apiParam {Number} id Assignment ObjectId
+ *
+ * @apiSuccess {Object} assignment Assignment object
+ * @apiSuccessExample {json} Success-Response:
+ *    {
+ *      "assignment": {
+ *        "videos": [],
+ *        "letters": [
+ *          "a",
+ *          "b",
+ *          "c"
+ *        ],
+ *        "words": [
+ *          {
+ *            "_id": "<id>",
+ *            "text": "cab",
+ *            "picture": "<url>",
+ *            "__v": 0
+ *          }
+ *        ],
+ *        "_id": "<id>",
+ *        "name": "Assignment 1",
+ *        "__v": 0
+ *      }
+ *    }
+ *
+ * @apiError (404) IdNotFound The id of that Assignment was not found
+ *
+ * @apiErrorExample {json} Error-Response:
+ *    {
+ *      "error": "<error message>"
+ *    }
+ */
 let getAssignmentById = async (req, res) => {
   let assignmentId = req.params.id
 

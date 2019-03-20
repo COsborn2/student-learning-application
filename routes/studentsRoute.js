@@ -6,6 +6,40 @@ const { Classroom } = require('../models/classroom')
 const { ErrorMessage, SuccessMessage } = require('../middleware/message')
 const { ObjectID } = require('mongodb')
 
+/**
+ * @api {post} /api/student Create Student
+ * @apiVersion 0.9.0
+ * @apiName CreateStudent
+ * @apiGroup Student
+ *
+ * @apiPermission none
+ *
+ * @apiHeader {String} Content-Type application/json
+ *
+ * @apiParam (Request body) {String} username Student username
+ * @apiParam (Request body) {String} classcode Classcode that student is enrolling in
+ *
+ * @apiHeader (Response Headers) {String} x-auth Json Web Token
+ * @apiSuccess {Object} student Student object of new student
+ * @apiSuccessExample {json} Success-Response:
+ *    {
+ *      "username": "SomeUsername",
+ *      "classcode": "SomeCoursecode",
+ *      "currentAssignment": 0,
+ *      "currentLetter": 0,
+ *      "currentWord": 0,
+ *      "finishedCourse": false,
+ *      "_id": "<id>"
+ *    }
+ *
+ * @apiError (400) NoClassroomFound Classroom with that classcode could not be found
+ * @apiError (400) UsernameTaken Another student already exists with that username
+ *
+ * @apiErrorExample {json} Error-Response:
+ *    {
+ *      "error": "<error message>"
+ *    }
+ */
 let createStudent = async (req, res) => {
   let body = _.pick(req.body, ['classcode', 'username'])
 
@@ -58,6 +92,39 @@ let createStudent = async (req, res) => {
   res.header('x-auth', token.token).send(student)
 }
 
+/**
+ * @api {post} /api/student/login Login Student
+ * @apiVersion 0.9.0
+ * @apiName LoginStudent
+ * @apiGroup Student
+ *
+ * @apiPermission none
+ *
+ * @apiHeader {String} Content-Type application/json
+ *
+ * @apiParam (Request body) {String} username Student username
+ * @apiParam (Request body) {String} classcode Classcode student is enrolled in
+ *
+ * @apiHeader (Response Headers) {String} x-auth Json Web Token
+ * @apiSuccess {Object} student Student object of new student
+ * @apiSuccessExample {json} Success-Response:
+ *    {
+ *      "username": "SomeUsername",
+ *      "classcode": "SomeCoursecode",
+ *      "currentAssignment": 0,
+ *      "currentLetter": 0,
+ *      "currentWord": 0,
+ *      "finishedCourse": false,
+ *      "_id": "<id>"
+ *    }
+ *
+ * @apiError (401) IncorrectCredentials Wrong classcode or username
+ *
+ * @apiErrorExample {json} Error-Response:
+ *    {
+ *      "error": "<error message>"
+ *    }
+ */
 let loginStudent = async (req, res) => {
   let body = _.pick(req.body, ['classcode', 'username'])
 
@@ -86,6 +153,45 @@ let loginStudent = async (req, res) => {
   }
 }
 
+/**
+ * @api {put} /api/student/progress Update Student
+ * @apiVersion 0.9.0
+ * @apiName UpdateStudent
+ * @apiGroup Student
+ *
+ * @apiHeader {String} x-auth Json Web Token
+ * @apiPermission Student
+ *
+ * @apiHeader {String} Content-Type application/json
+ *
+ * @apiParam (Request body) {String} currentLetter The letter the student is ready to work on
+ * @apiParam (Request body) {String} currentWord The word the student is ready to work on
+ * @apiParam (Request body) {String} currentAssignment The assignment the student is ready to work on
+ *
+ * @apiSuccess {Object} updatedStudent Student object of updated student
+ * @apiSuccessExample {json} Success-Response:
+ *    {
+ *      "updatedStudent": {
+ *        "username": "SomeUsername",
+ *        "classcode": "SomeCoursecode",
+ *        "currentAssignment": 0,
+ *        "currentLetter": 0,
+ *        "currentWord": 0,
+ *        "finishedCourse": false,
+ *        "_id": "<id>"
+ *      }
+ *    }
+ *
+ * @apiError (400) MissingData One of the required parameters (currentLetter, currentWord, currentAssignment) is missing
+ * @apiError (400) UpdateErrorReverse New index cannot be lower than previous index
+ * @apiError (400) UpdateErrorSkip New index is greater than previous index plus one
+ * @apiError (400) InvalidUpdate The new word index and the new letter index cannot be updated at the same time
+ *
+ * @apiErrorExample {json} Error-Response:
+ *    {
+ *      "error": "<error message>"
+ *    }
+ */
 let updateStudentProgress = async (req, res) => {
   let token = req.header('x-auth')
 
@@ -166,11 +272,47 @@ let updateStudentProgress = async (req, res) => {
   res.send({ updatedStudent })
 }
 
-// /api/students/id
+/**
+ * @api {delete} /api/student/:id Delete Student
+ * @apiVersion 0.9.0
+ * @apiName DeleteStudent
+ * @apiGroup Student
+ *
+ * @apiHeader {String} x-auth Json Web Token
+ * @apiPermission Instructor
+ *
+ * @apiParam {Number} id Student ObjectId
+ * @apiSuccess {Object} student Student object of deleted student
+ * @apiSuccessExample {json} Success-Response:
+ *    {
+ *      "student": {
+ *        "username": "SomeUsername",
+ *        "classcode": "SomeCoursecode",
+ *        "currentAssignment": 0,
+ *        "currentLetter": 0,
+ *        "currentWord": 0,
+ *        "finishedCourse": false,
+ *        "_id": "<id>"
+ *      }
+ *    }
+ *
+ * @apiError (404) IdNotFound A student was not found with the requested id
+ *
+ * @apiErrorExample {json} Error-Response:
+ *    {
+ *      "error": "<error message>"
+ *    }
+ */
 let deleteStudent = async (req, res) => {
   let studentId = req.params.id
 
   let student = await Student.findById(studentId)
+
+  if (!student) {
+    const err = `Student was not found with an id of (${studentId})`
+    ErrorMessage(err)
+    return res.send(404).send({ error: err })
+  }
 
   // remove student from classroom
   await Classroom.findByIdAndUpdate(student.class, {
@@ -183,12 +325,85 @@ let deleteStudent = async (req, res) => {
   res.send({ student })
 }
 
+/**
+ * @api {get} /api/student Initialize Student
+ * @apiVersion 0.9.0
+ * @apiName InitializeStudent
+ * @apiGroup Student
+ *
+ * @apiHeader {String} x-auth Json Web Token
+ * @apiPermission Student
+ *
+ * @apiParam {Number} id Student ObjectId
+ * @apiSuccess {[Object]} assignmentIds Object array of assignment ids and array of letters
+ * @apiSuccess {String} assignmentIds.assignmentId ObjectId of assignment
+ * @apiSuccess {[String]} assignmentIds.letters List of letters for the assignment
+ * @apiSuccess {Object} currentAssignment The current assignment the student is on. Type of Assignment
+ * @apiSuccessExample {json} Success-Response:
+ *    {
+ *      "assignmentIds": [
+ *        {
+ *          "assignmentId": "<id>",
+ *          "letters": [
+ *            "a",
+ *            "b",
+ *            "c"
+ *          ]
+ *        },
+ *        {
+ *          "assignmentId": "<id>",
+ *          "letters": [
+ *            "c"
+ *          ]
+ *        }
+ *      ],
+ *      "currentAssignment": {
+ *        "videos": [],
+ *        "letters": [
+ *          "a",
+ *          "b",
+ *          "c"
+ *        ],
+ *        "words": [
+ *          {
+ *            "_id": "<id>",
+ *            "text": "cab",
+ *            "picture": "<url>",
+ *            "__v": 0
+ *          }
+ *        ],
+ *        "_id": "<id>",
+ *        "name": "Assignment 1",
+ *        "__v": 0
+ *      }
+ *    }
+ *
+ * @apiError (404) TokenNotFound A student was not found with that token
+ * @apiError (404) IdNotFound The students classroom could not be found
+ *
+ * @apiErrorExample {json} Error-Response:
+ *    {
+ *      "error": "<error message>"
+ *    }
+ */
 let initalizeStudent = async (req, res) => {
   let token = req.header('x-auth')
 
   let student = await Student.findByToken(token)
 
+  if (!student) {
+    const err = `Student was not found with that token`
+    ErrorMessage(err)
+    return res.send(404).send({ error: err })
+  }
+
   let classroom = await Classroom.findById(student.class)
+
+  if (!classroom) {
+    const err = `Students classroom could not be found`
+    ErrorMessage(err)
+    return res.send(404).send({ error: err })
+  }
 
   let assignmentIds = await classroom.getLetters()
 

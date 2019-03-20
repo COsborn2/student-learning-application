@@ -8,6 +8,32 @@ const tesseractOptions = {
   tessedit_char_blacklist: '1234567890!@#$%^&*()_+{}:"<>?`~,./;-=[];\''
 }
 
+/**
+ * @api {post} /api/student/writing Tesseract Detection
+ * @apiVersion 0.9.0
+ * @apiName DetectImageText
+ * @apiGroup Tesseract
+ *
+ * @apiHeader {String} x-auth Json Web Token
+ * @apiPermission Student
+ *
+ * @apiHeader {String} Content-Type application/json
+ *
+ * @apiParam (Request body) {String} image Base64 encoded image
+ *
+ * @apiSuccess {String} textDetected The text that Tesseract detected from the passed in image
+ * @apiSuccessExample {json} Success-Response:
+ *    {
+ *      "textDetected": "<text>"
+ *    }
+ *
+ * @apiError (400) DetectionFailure Tesseract encountered an error while processing the image
+ *
+ * @apiErrorExample {json} Error-Response:
+ *    {
+ *      "error": "<error message>"
+ *    }
+ */
 const detectImageText = async (req, res) => {
   InfoMessage('Detecting text in image')
   let imageReceived = req.body.image
