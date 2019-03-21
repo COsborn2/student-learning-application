@@ -15,6 +15,9 @@ const InstructorSignup = lazy(() => import('./components/login/InstructorSignup'
 const ErrorScreen = lazy(() => import('./components/helpers/ErrorScreen'))
 const centerStyle = { top: 0, bottom: 0, left: 0, right: 0 }
 
+/**
+ * This class is the base component that contains all other components in this application
+ */
 class App extends Component {
   render () {
     return (

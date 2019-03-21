@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: components/instructor/Course.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: components/instructor/Course.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>import React from 'react'
+import PropTypes from 'prop-types'
+import '../../assets/css/instructorStyles.css'
+import FilteredList from '../helpers/FilteredList'
+import Button from 'react-bootstrap/Button'
+import ExpandingSection from '../helpers/ExpandingSection'
+import StudentInfo from './StudentInfo'
+import HorizontalExpandingSection from '../helpers/HorizontalExpandingSection'
+import InstructorApiCalls from '../../javascript/InstructorApiCalls'
+import LoadingOverlay from '../loading/LoadingOverlay'
+import AssignmentInfo from './AssignmentInfo'
+
+/**
+ * This component displays info about the course passed as a prop
+ */
+class Course extends React.PureComponent {
+  constructor (props) {
+    super(props)
+    let course = this.props.course
+    this.state = {
+      course: course,
+      classcode: course.classcode,
+      students: course.students,
+      assignments: course.assignments,
+      assignmentsDropdownSelected: false,
+      studentsDropdownSelected: false,
+      showStudentIndex: -1,
+      showStudent: false,
+      showAssignmentIndex: -1,
+      showAssignment: false,
+      isLoading: false
+    }
+    this.onStudentSelected = this.onStudentSelected.bind(this)
+    this.onAssignmentSelected = this.onAssignmentSelected.bind(this)
+    this.onEditStudent = this.onEditStudent.bind(this)
+  }
+
+  /***
+   * This is used to ensure the current assignment index, current word index, current letter index are all valid
+   * @param valueToClamp The letter to ensure is never to large
+   * @param maximum The ceiling of the number, It cannot be equal to this
+   * @returns {number} The clamped number
+   */
+  clampValue (valueToClamp, maximum) {
+    return (valueToClamp >= maximum)
+      ? valueToClamp - 1
+      : valueToClamp
+  }
+
+  /**
+   * This is triggered when the user selects a student from the students list
+   * @param index The index of the student clicked
+   */
+  async onStudentSelected (index) {
+    const { students, assignments } = this.state
+    const currentAssignmentIndex = students[this.clampValue(index, assignments.length)].currentAssignment
+
+    this.setState({ isLoading: true })
+    assignments[currentAssignmentIndex] = await InstructorApiCalls.getAssignmentById(assignments[currentAssignmentIndex]._id)
+    this.setState({ isLoading: false })
+
+    this.setState({ showStudentIndex: index, showStudent: true, studentsDropdownSelected: false, assignments })
+  }
+
+  /**
+   * This is called every time a student is updated by the instructor, It simply mocks it until the course is refreshed
+   * @param username The username to update to
+   * @param password The password to update to
+   */
+  onEditStudent (username, password) {
+    let { students, showStudentIndex } = this.state
+    let studentToUpdate = students[showStudentIndex]
+    studentToUpdate.username = username
+    students[showStudentIndex] = studentToUpdate
+    this.setState({ students })
+  }
+
+  /**
+   * This is triggered when the user selects an assignment from the assignments list
+   * @param index The index of the assignment clicked
+   */
+  async onAssignmentSelected (index) {
+    const { assignments } = this.state
+
+    this.setState({ isLoading: true })
+    assignments[index] = await InstructorApiCalls.getAssignmentById(assignments[index]._id)
+    this.setState({ isLoading: false })
+
+    this.setState({ showAssignmentIndex: index, showAssignment: true, assignmentsDropdownSelected: false, assignments })
+  }
+
+  /**
+   * This is called when the delete button is clicked
+   * @returns {Promise&lt;void>}
+   */
+  async onDeleteCourse () {
+    const shouldDelete = window.confirm(`Are you sure you want to delete ${this.props.course.classcode}?
+All of the students will be deleted as well. This action cannot be undone`)
+
+    if (shouldDelete) {
+      await this.props.onDeleteCourse(this.props.course._id)
+    }
+  }
+
+  render () {
+    const { students, assignments, isLoading,
+      classcode, studentsDropdownSelected, assignmentsDropdownSelected,
+      showStudentIndex, showStudent, showAssignmentIndex, showAssignment } = this.state
+    console.log(students)
+
+    const studentFilter = students.length === 0
+      ? &lt;h3>There are no students in this course yet&lt;/h3>
+      : &lt;FilteredList items={students.map(student => student.username)} onItemClick={index => this.onStudentSelected(index)} />
+
+    const assignmentsFilter = assignments.length === 0
+      ? &lt;h3>There are no assignments in this course yet&lt;/h3>
+      : &lt;FilteredList items={assignments.map((assignment) => assignment.name)} onItemClick={index => this.onAssignmentSelected(index)} />
+
+    const studentToShow = showStudentIndex !== -1 ? &lt;StudentInfo onCloseStudent={() => this.setState({ showStudent: false })} onEditStudent={(username, student) => this.onEditStudent(username, student)} onDeleteStudent={(id) => this.props.onDeleteStudent(id)} student={students[showStudentIndex]} assignments={assignments} /> : &lt;div />
+    const assignmentToShow = showAssignmentIndex !== -1 ? &lt;AssignmentInfo onCloseAssignment={() => this.setState({ showAssignment: false })} assignment={assignments[showAssignmentIndex]} /> : &lt;div />
+    const studentDropdownArrow = studentsDropdownSelected ? '↑' : '↓'
+    const assignmentDropdownArrow = assignmentsDropdownSelected ? '↑' : '↓'
+
+    return (
+      &lt;div>
+        &lt;LoadingOverlay show={isLoading} />
+        &lt;div className='row card-header rounded '>
+          &lt;h1>{classcode}&lt;/h1>
+          &lt;div className='flex-fill' />
+          &lt;Button className='badge-danger mr-2 fa' onClick={() => this.onDeleteCourse()}>&amp;#xf014;&lt;/Button>
+        &lt;/div>
+        &lt;div className='row p-2 m-2'>
+
+          &lt;div className='col text-center'>
+            &lt;Button className='btn-lg btn-primary rounded-pill m-2'
+              onClick={() => this.setState({ studentsDropdownSelected: !studentsDropdownSelected })}>
+            Students {studentDropdownArrow}
+            &lt;/Button>
+            &lt;hr />
+            &lt;ExpandingSection show={studentsDropdownSelected}>
+              {studentFilter}
+            &lt;/ExpandingSection>
+            &lt;HorizontalExpandingSection className='badge-secondary' show={showStudent}
+              onCollapsed={() => this.setState({ showStudentIndex: -1, studentsDropdownSelected: true })}>
+              {studentToShow}
+            &lt;/HorizontalExpandingSection>
+
+          &lt;/div>
+
+          &lt;div className='col-1'>
+            &lt;p style={{ borderLeft: '4px solid #4085bd', height: '100%', position: 'absolute', left: '50%', marginLeft: '-2px' }} />
+          &lt;/div>
+
+          &lt;div className='col text-center'>
+            &lt;Button className='btn-lg btn-primary rounded-pill m-2'
+              onClick={() => this.setState({ assignmentsDropdownSelected: !assignmentsDropdownSelected })}>
+            Assignments {assignmentDropdownArrow}
+            &lt;/Button>
+            &lt;hr />
+            &lt;ExpandingSection show={assignmentsDropdownSelected}>
+              {assignmentsFilter}
+            &lt;/ExpandingSection>
+            &lt;HorizontalExpandingSection className='badge-secondary' show={showAssignment}
+              onCollapsed={() => this.setState({ showAssignmentIndex: -1, assignmentsDropdownSelected: true })}>
+              {assignmentToShow}
+            &lt;/HorizontalExpandingSection>
+          &lt;/div>
+        &lt;/div>
+      &lt;/div>
+    )
+  }
+}
+
+Course.propTypes = {
+  match: PropTypes.object.isRequired,
+  course: PropTypes.object.isRequired,
+  onDeleteStudent: PropTypes.func.isRequired,
+  onDeleteCourse: PropTypes.func.isRequired
+}
+
+export default Course
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="App.html">App</a></li><li><a href="AssignmentInfo.html">AssignmentInfo</a></li><li><a href="Course.html">Course</a></li><li><a href="CreateCourse.html">CreateCourse</a></li><li><a href="ErrorScreen.html">ErrorScreen</a></li><li><a href="ExpandingSection.html">ExpandingSection</a></li><li><a href="FilteredList.html">FilteredList</a></li><li><a href="HorizontalExpandingSection.html">HorizontalExpandingSection</a></li><li><a href="InstructorApiCalls.html">InstructorApiCalls</a></li><li><a href="InstructorLogin.html">InstructorLogin</a></li><li><a href="InstructorSignup.html">InstructorSignup</a></li><li><a href="InstructorView.html">InstructorView</a></li><li><a href="LandScape.html">LandScape</a></li><li><a href="StudentApiCalls.html">StudentApiCalls</a></li><li><a href="StudentHome.html">StudentHome</a></li><li><a href="StudentInfo.html">StudentInfo</a></li><li><a href="StudentLogin.html">StudentLogin</a></li><li><a href="StudentSignup.html">StudentSignup</a></li><li><a href="StudentVideo.html">StudentVideo</a></li><li><a href="StudentView.html">StudentView</a></li><li><a href="StudentWriting.html">StudentWriting</a></li></ul><h3>Global</h3><ul><li><a href="global.html#AuthenticatedRoute">AuthenticatedRoute</a></li><li><a href="global.html#Home">Home</a></li><li><a href="global.html#LetterLine">LetterLine</a></li><li><a href="global.html#List">List</a></li><li><a href="global.html#LoadingOverlay">LoadingOverlay</a></li><li><a href="global.html#LoadingScreen">LoadingScreen</a></li><li><a href="global.html#LoadingSpinner">LoadingSpinner</a></li><li><a href="global.html#onSignoutBtnHandler">onSignoutBtnHandler</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a> on Wed Mar 20 2019 18:24:39 GMT-0700 (Pacific Daylight Time)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

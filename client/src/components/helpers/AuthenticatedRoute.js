@@ -9,7 +9,6 @@ import { Redirect, Route } from 'react-router-dom'
  * @param path The path of which to render the component
  * @param props Any additional props to pass to the route
  * @returns {*} The route to the component or a redirect to the login screen
- * @constructor This just renames the props passed to it
  */
 const AuthenticatedRoute = ({ component: Component, lazyComponent: LazyComponent, path, props }) => {
   const type = path.substring(1)

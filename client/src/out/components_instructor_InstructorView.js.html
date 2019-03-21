@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: components/instructor/InstructorView.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: components/instructor/InstructorView.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>import React, { Component } from 'react'
+import PropTypes from 'prop-types'
+import InstructorApiCalls from '../../javascript/InstructorApiCalls'
+import Course from './Course'
+import Button from 'react-bootstrap/Button'
+import LoadingScreen from '../loading/LoadingScreen'
+import Toolbar from '../menu/Toolbar'
+import CreateCourse from './CreateCourse'
+import LoadingOverlay from '../loading/LoadingOverlay'
+import ExpandingSection from '../helpers/ExpandingSection'
+/**
+ * The instructor view manages all screens and routes for a specific instructor user
+ the login screen or signup screen authenticates or create an instructor object, and passes it
+ to this component. If the user object ever becomes null or not authenticated, it redirects
+ to the login screen
+ */
+class InstructorView extends Component {
+  constructor (props) {
+    super(props)
+    this.state = {
+      name: this.props.user.name,
+      courseIds: this.props.user.courseIds,
+      courses: null,
+      jwt: this.props.user.jwt,
+      courseSelected: null,
+      courseSelectedIndex: -1,
+      courseCollapsingIndex: -1,
+      isLoading: true,
+      isLoadingCourse: false
+    }
+    this._triggerAnimFade = false
+    this._isMounted = true
+    this.onCourseClick = this.onCourseClick.bind(this)
+    this.onLoadingAnimationStop = this.onLoadingAnimationStop.bind(this)
+    this.createCourse = this.createCourse.bind(this)
+  }
+
+  /***
+   * This method is called right before the component is mounted to the DOM.
+   * It loads the instructors courses
+   */
+  async componentDidMount () {
+    let { jwt } = this.state
+    let res = await InstructorApiCalls.getCourses(jwt)
+
+    if (res.error) {
+      this.props.history.push('/error', res.error)
+    }
+
+    const courses = res.courses
+
+    if (courses &amp;&amp; this._isMounted) {
+      this._triggerAnimFade = true
+      this.setState({ courses })
+    } else {
+      this.props.history.push('/error', `Error retrieving course from api: ${res.error}`)
+    }
+  }
+
+  /**
+   * This method is called right before the component is unmounted from the DOM
+   */
+  componentWillUnmount () {
+    this._isMounted = false
+  }
+
+  /**
+   * This is triggered when the loading animation is completely faded away
+   */
+  onLoadingAnimationStop () {
+    if (this._isMounted) {
+      this._triggerAnimFade = false
+      this.setState({ isLoading: false })
+      this.props.history.replace(`/instructor/${this.state.name}`)
+    }
+  }
+
+  /**
+   * This method is called when a user clicks to expand, or collapse a course.
+   * If clicked to expand, it fetches the selected course from the api
+   * @param newCourseSelected The index of the course the user selected.
+   * @returns {Promise&lt;void>} Nothing. It is async to await fetch call
+   */
+  async onCourseClick (newCourseSelected) {
+    let { courseSelectedIndex, courseIds, jwt, courses, courseCollapsingIndex } = this.state
+    this.setState({ isLoadingCourse: true })
+
+    courseCollapsingIndex = courseSelectedIndex
+
+    if (newCourseSelected !== courseSelectedIndex) { // if they selected a new course, expand it
+      let res = await InstructorApiCalls.getCourseById(jwt, courseIds[newCourseSelected])
+      if (res.error) {
+        console.log('error: ' + res.error)
+      }
+
+      const indexOfUpdatedCourse = this.findCourseWithId(courses, res._id)
+
+      if (indexOfUpdatedCourse === -1) { // the course is not in the courses array, add it
+        courses.push(res)
+      } else { // course found, update it in the courses array
+        courses[indexOfUpdatedCourse] = res
+      }
+      courseSelectedIndex = newCourseSelected // set the selected course index
+    } else { // else close the course
+      courseSelectedIndex = -1 // reset the selected course index
+    }
+
+    this.setState({ isLoadingCourse: false, courses, courseSelectedIndex, courseCollapsingIndex })
+  }
+
+  /**
+   * This method finds the index of the course that has the id specified
+   * @param courses An array of courses to search
+   * @param idToFind The id to find in the array of courses
+   * @returns {number} The index of the course with id specified, or -1 if not found
+   */
+  findCourseWithId (courses, idToFind) {
+    if (!courses) return -1
+    for (let i = 0; i &lt; courses.length; i++) {
+      if (courses[i]._id === idToFind) return i
+    }
+    return -1
+  }
+
+  onDeleteCourse (id) {
+    let { courses } = this.state
+    window.alert(`The API does not support this operation yet.\nThe changes will only persist the page is reloaded`)
+    delete courses[this.findCourseWithId(courses, id)]
+    this.setState({ courses })
+  }
+
+  async onDeleteStudent (id) {
+    await InstructorApiCalls.deleteStudentById(this.state.jwt, id)
+    this.props.history.replace(`/`)
+    this.props.history.replace(`/instructor/${this.props.user.name}`)
+  }
+
+  /**
+   * This method is called each time this component renders. It constructs the list of
+   * Courses that can be expanded. If there are no courses, it is displayed. If a course is not
+   * selected, a div is rendered
+   * @param courses The courses to render
+   * @returns {*} The buttons to expand/collapse the courses, and the currently selected course
+   */
+  createCourseComponents (courses) {
+    if (!courses || courses.length === 0) return &lt;h1 className='rounded-lg w-75 text-center badge-light p-1'>You have no courses yet&lt;/h1>
+    return (
+      &lt;div>
+        {
+          courses.map((course, index) => {
+            const isSelectedCourse = index === this.state.courseSelectedIndex
+            const isCollapsingCourse = index === this.state.courseCollapsingIndex
+            let courseToRender = &lt;div />
+
+            if (isSelectedCourse || isCollapsingCourse) {
+              courseToRender = &lt;Course {...this.props} course={course} onDeleteCourse={id => this.onDeleteCourse(id)} onDeleteStudent={id => this.onDeleteStudent(id)} />
+            }
+
+            return (
+              &lt;div key={index}>
+                &lt;Button onClick={() => this.onCourseClick(index)}
+                  className='btn-lg btn-primary rounded-pill'>{course.classcode}&lt;/Button>
+                &lt;ExpandingSection show={isSelectedCourse} className='badge-light' onCollapsed={() => this.setState({ courseCollapsingIndex: -1 })}>
+                  {courseToRender}
+                &lt;/ExpandingSection>
+
+                &lt;hr />
+              &lt;/div>
+            )
+          }
+          )
+        }
+      &lt;/div>
+    )
+  }
+
+  /**
+   * This method gets called every time a new course is being created. If it was created successfully, the courseIds are updated
+   * @param courseCode Course code of the course to create
+   * @returns {Promise&lt;*>} The course created, or error returned from api
+   */
+  async createCourse (courseCode) {
+    const res = await InstructorApiCalls.createCourse(this.state.jwt, courseCode)
+
+    if (!res.error &amp;&amp; res.courseIds) {
+      let courses = this.state.courses
+      courses.push(res.course)
+      this.setState({ courseIds: res.courseIds, courses })
+    }
+    return res
+  }
+
+  render () {
+    let { name, courses, isLoading } = this.state
+    if (isLoading) return &lt;LoadingScreen triggerFadeAway={this._triggerAnimFade} onStopped={this.onLoadingAnimationStop} />
+    return (
+      &lt;div>
+        &lt;LoadingOverlay show={this.state.isLoadingCourse} />
+        &lt;Toolbar />
+        &lt;div className='container'>
+          &lt;header className='jumbotron my-3 bg-info text-center'>
+            &lt;h1 className='display-4 font-weight-bold'> Hello {name}&lt;/h1>
+          &lt;/header>
+          &lt;CreateCourse createCourse={(courseCode) => this.createCourse(courseCode)} />
+          &lt;div className='container-fluid'>
+            {this.createCourseComponents(courses)}
+          &lt;/div>
+        &lt;/div>
+      &lt;/div>
+
+    )
+  }
+}
+
+InstructorView.propTypes = {
+  user: PropTypes.object.isRequired,
+  match: PropTypes.object.isRequired,
+  history: PropTypes.object.isRequired
+}
+
+export default InstructorView
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="App.html">App</a></li><li><a href="AssignmentInfo.html">AssignmentInfo</a></li><li><a href="Course.html">Course</a></li><li><a href="CreateCourse.html">CreateCourse</a></li><li><a href="ErrorScreen.html">ErrorScreen</a></li><li><a href="ExpandingSection.html">ExpandingSection</a></li><li><a href="FilteredList.html">FilteredList</a></li><li><a href="HorizontalExpandingSection.html">HorizontalExpandingSection</a></li><li><a href="InstructorApiCalls.html">InstructorApiCalls</a></li><li><a href="InstructorLogin.html">InstructorLogin</a></li><li><a href="InstructorSignup.html">InstructorSignup</a></li><li><a href="InstructorView.html">InstructorView</a></li><li><a href="LandScape.html">LandScape</a></li><li><a href="StudentApiCalls.html">StudentApiCalls</a></li><li><a href="StudentHome.html">StudentHome</a></li><li><a href="StudentInfo.html">StudentInfo</a></li><li><a href="StudentLogin.html">StudentLogin</a></li><li><a href="StudentSignup.html">StudentSignup</a></li><li><a href="StudentVideo.html">StudentVideo</a></li><li><a href="StudentView.html">StudentView</a></li><li><a href="StudentWriting.html">StudentWriting</a></li></ul><h3>Global</h3><ul><li><a href="global.html#AuthenticatedRoute">AuthenticatedRoute</a></li><li><a href="global.html#Home">Home</a></li><li><a href="global.html#LetterLine">LetterLine</a></li><li><a href="global.html#List">List</a></li><li><a href="global.html#LoadingOverlay">LoadingOverlay</a></li><li><a href="global.html#LoadingScreen">LoadingScreen</a></li><li><a href="global.html#LoadingSpinner">LoadingSpinner</a></li><li><a href="global.html#onSignoutBtnHandler">onSignoutBtnHandler</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a> on Wed Mar 20 2019 18:24:39 GMT-0700 (Pacific Daylight Time)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>
