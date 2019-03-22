@@ -2,13 +2,8 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import { Link } from 'react-router-dom'
 
-// const instructorImageSrc = 'https://surfberbere.com/wp-content/uploads/2016/04/Teacher-02-256.png'
-// const studentImageSrc = 'https://publiciq.com/wp-content/uploads/2018/08/student.png'
-
 const studentImageSrc = 'https://i.gyazo.com/90f380a3dff8a5c603c56f1498544d3c.png'
 const instructorImageSrc = 'https://i.gyazo.com/4e38420d2e6daf8ac8713d1423a0d52a.png'
-
-// const tempSizingImage = 'https://via.placeholder.com/540x400'
 
 /**
  * This is main home screen of the application

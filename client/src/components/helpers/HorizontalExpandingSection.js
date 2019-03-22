@@ -14,8 +14,8 @@ class HorizontalExpandingSection extends PureComponent {
 
   /**
    * This is triggered before every render to check if the props have changed
-   * If the component prop show went from true to false, the onCollapsed prop function is called after is it collapsed if it is defined
-   * If the component prop show went from false to true, the onExpanded prop function is called after is it expanded if it is defined
+   * If the component prop show went from true to false, the onCollapsed prop function is called after it is collapsed if it is defined
+   * If the component prop show went from false to true, the onExpanded prop function is called after it is expanded if it is defined
    * @param props The props passed to this component
    * @param state The current state
    * @returns {*} The state items to update, or null if no update is needed

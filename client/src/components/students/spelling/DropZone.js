@@ -22,6 +22,10 @@ function collect (connect, monitor) {
   }
 }
 
+/**
+ * This is an area where the student can drop a letter card on to spell a word.
+ * @returns {*} The drop area to render
+ */
 function DropZone (props) {
   const { id, expectedLetter, currentLetter, connectDropTarget } = props
   dropZoneID = id
