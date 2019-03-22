@@ -12,7 +12,7 @@ const StudentSpelling = lazy(() => import('./StudentSpelling'))
 const StudentWriting = lazy(() => import('./StudentWriting'))
 const StudentVideo = lazy(() => import('./StudentVideo'))
 
-/***
+/**
  The student view manages all screens and routes for a specific student user
  the login screen creates and authenticates a student object, and passes it
  to this component. If the user object ever becomes null or not authentic, it redirects
@@ -43,7 +43,7 @@ class StudentView extends Component {
     this.getAreLetterCompleted = this.getAreLetterCompleted.bind(this)
   }
 
-  /***
+  /**
    * This is called when the component mounts. It loads assignmentIds, populated current assignment, and letters
    */
   async componentDidMount () {
@@ -74,12 +74,12 @@ class StudentView extends Component {
     }
   }
 
-  /***
+  /**
    * This is called when the component unmounts from the DOM.
    */
   componentWillUnmount () { this._isMounted = false }
 
-  /***
+  /**
    * This method is called when the loading animation has finished fading out
    */
   onLoadingAnimationStop () {
@@ -90,7 +90,7 @@ class StudentView extends Component {
     }
   }
 
-  /***
+  /**
    * Is called every time a word was successfully spelled. Updates user progress
    */
   async onWordCompletion () {
@@ -115,7 +115,7 @@ class StudentView extends Component {
     }
   }
 
-  /***
+  /**
    * Is called every time a letter was successfully written. Updates user progress
    * If it was the last letter in the assignment, The user is redirected to the home screen
    */
@@ -142,7 +142,7 @@ class StudentView extends Component {
     }
   }
 
-  /***
+  /**
    * Is triggered when all the words in an assignment are complete
    * @returns {Promise<void>}
    */
@@ -191,7 +191,7 @@ class StudentView extends Component {
     window.alert('Yay you finished the course')
   }
 
-  /***
+  /**
    * This is used to ensure the current assignment index, current word index, current letter index are all valid
    * @param valueToClamp The letter to ensure is never to large
    * @param maximum The ceiling of the number, It cannot be equal to this
@@ -203,7 +203,7 @@ class StudentView extends Component {
       : valueToClamp
   }
 
-  /***
+  /**
    * Calls api to update progress
    * @param progress Student's progress to update
    * @returns {Promise<boolean>} If the update was successful
@@ -220,7 +220,7 @@ class StudentView extends Component {
     }
   }
 
-  /***
+  /**
    * Is triggered when the user clicks an unlocked letter on the letterLine
    * @param selectedAssignmentIndex The assignment index of the letter selected
    * @param selectedLetterIndex The letter index of the letter selected
@@ -240,7 +240,7 @@ class StudentView extends Component {
     this.setState({ progress, currentAssignment, currentAssignmentIndex, currentWordIndex, currentLetterIndex })
   }
 
-  /***
+  /**
    * Bundles and returns all data necessary to determine the style of the letterLine buttons
    * @returns {{unlockedLetterIndex: number, assignmentIds: array, unlockedAssignmentIndex: number, selectedAssignmentIndex: number, selectedLetterIndex: number}}
    */

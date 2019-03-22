@@ -9,8 +9,11 @@ const getCourseByIdURL = '/api/classrooms/'
 const getAssignmentByIdURL = '/api/assignment/'
 const deleteStudentById = '/api/student/'
 
+/**
+ * This class contains all the api calls needed for instructor
+ */
 class InstructorApiCalls {
-  /***
+  /**
    * This method calls the api to create a new Instructor
    * @param name The name of the new Instructor
    * @param email The email of the new Instructor
@@ -43,7 +46,7 @@ class InstructorApiCalls {
     return { name: body.name, jwt, email: body.email, courseIds: body.class }
   }
 
-  /***
+  /**
    * This method calls the api to create a new Instructor
    * @param email The email to attempt authentication with
    * @param password The password to attempt authentication
@@ -73,7 +76,7 @@ class InstructorApiCalls {
     return { name: body.name, jwt, email: body.email, courseIds: body.class }
   }
 
-  /***
+  /**
    * This method calls the api to retrieve the instructors courses
    * @param jwt Web Token
    * @returns {Promise<*>} Returns the Instructor's courses. Or error if failed
@@ -152,7 +155,7 @@ class InstructorApiCalls {
     return body.classroom
   }
 
-  /***
+  /**
    * This method calls the get assignment api
    * @param id Id to get
    * @returns {Promise<*>} Populated assignment
@@ -177,7 +180,6 @@ class InstructorApiCalls {
   }
 
   /**
-   *
    * This method calls the delete student by id api
    * @param jwt Web Token
    * @param id Id of the student to delete

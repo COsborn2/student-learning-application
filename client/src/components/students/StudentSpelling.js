@@ -76,6 +76,11 @@ function debugConvertToMinutes (time) {
   When each word is completed, call the `onWordCompletion()` method passed as a property.
  */
 
+/**
+ * This class manages the spelling portion of the assignment.
+ * It is passed the word to spell as well as a callback method called
+ * when the word is successfully spelled
+ */
 class StudentSpelling extends React.Component {
   constructor (props) {
     super(props)

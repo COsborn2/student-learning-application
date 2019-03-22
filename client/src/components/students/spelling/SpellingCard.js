@@ -29,6 +29,11 @@ function collect (connect, monitor) {
   }
 }
 
+/**
+ * This function is used to create a letter card the student can use to spell words
+ * @returns {*} The letter card to render
+ * @constructor
+ */
 function SpellingCard (props) {
   const { id, letter, isDragging, connectDragSource } = props
 

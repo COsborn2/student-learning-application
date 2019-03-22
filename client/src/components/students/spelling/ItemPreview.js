@@ -43,6 +43,14 @@ const layerStyles = {
   width: '5%'
 }
 
+/**
+ * This function is used to render a letter preview when a card is being dragged.
+ * @param id The id used by the React-dnd package
+ * @param isDragging A boolean indicating if the letter card is being dragged
+ * @param currentOffset The offset of the preview render location
+ * @param value The value of the letter to be used in the preview
+ * @returns {*} The item preview to render
+ */
 function ItemPreview ({
   id,
   isDragging,

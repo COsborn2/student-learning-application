@@ -8,8 +8,11 @@ const getAssignmentURL = '/api/assignment/'
 const updateProgressURL = '/api/student/progress'
 const detectWritingURL = '/api/student/writing'
 
+/**
+ * This class contains all the api calls needed for students
+ */
 class StudentApiCalls {
-  /***
+  /**
    * This method calls the signup api.
    * @param classCode classcode used to signup
    * @param username username used to signup
@@ -50,7 +53,7 @@ class StudentApiCalls {
     }
   }
 
-  /***
+  /**
    * This method calls the login api.
    * @param classCode classcode used to login
    * @param username username used to login
@@ -91,7 +94,7 @@ class StudentApiCalls {
     }
   }
 
-  /***
+  /**
    * This method calls the init student api.
    * @param jwt Web token
    * @returns {Promise<*>} AssignmentIds and populated letters
@@ -117,7 +120,7 @@ class StudentApiCalls {
     return body
   }
 
-  /***
+  /**
    * This method calls the get assignment api
    * @param id Id to get
    * @returns {Promise<*>} Populated assignment
@@ -141,7 +144,7 @@ class StudentApiCalls {
     return body.assignment
   }
 
-  /***
+  /**
    * This method is used to call the detectWriting api.
    * @param jwt Web token
    * @param image64 Base 64 encoded image
@@ -169,7 +172,7 @@ class StudentApiCalls {
     return body
   }
 
-  /***
+  /**
    * This method is used to call the update student progress route
    * @param jwt Web token
    * @param progress Current students progress
