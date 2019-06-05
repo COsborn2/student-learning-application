@@ -47,7 +47,7 @@
     "mongodb": "^3.1.13",
     "mongoose": "^5.4.17",
     "node-tesseract": "^0.2.7",
-    "tesseract.js": "^1.0.14",
+    "tesseract.js": "^1.0.19",
     "validator": "^10.11.0"
   },
   "apidoc": {
